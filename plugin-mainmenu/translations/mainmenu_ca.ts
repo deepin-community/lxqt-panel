@@ -4,45 +4,46 @@
 <context>
     <name>LXQtMainMenu</name>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="106"/>
+        <location filename="../lxqtmainmenu.cpp" line="117"/>
         <source>Search...</source>
         <translation>Cerca...</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="114"/>
+        <location filename="../lxqtmainmenu.cpp" line="127"/>
         <source>Show/hide main menu</source>
         <translation>Mostra o oculta el menú principal</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="496"/>
+        <location filename="../lxqtmainmenu.cpp" line="530"/>
         <source>Add to desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix a l&apos;escriptori</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="504"/>
+        <location filename="../lxqtmainmenu.cpp" line="538"/>
         <source>Question</source>
-        <translation type="unfinished"></translation>
+        <translation>Pregunta</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="505"/>
+        <location filename="../lxqtmainmenu.cpp" line="539"/>
         <source>A file with the same name already exists.
 Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja existeix un fitxer amb el mateix nom.
+Voleu sobreescriure&apos;l?</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="511"/>
+        <location filename="../lxqtmainmenu.cpp" line="545"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Avís</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="512"/>
+        <location filename="../lxqtmainmenu.cpp" line="546"/>
         <source>The file cannot be overwritten.</source>
-        <translation type="unfinished"></translation>
+        <translation>No es pot sobreescriure el fitxer.</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="518"/>
+        <location filename="../lxqtmainmenu.cpp" line="552"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia</translation>
     </message>
 </context>
 <context>
@@ -54,7 +55,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="14"/>
-        <source>Main Menu settings</source>
+        <source>Main Menu Settings</source>
         <translation>Ajusts del menú principal</translation>
     </message>
     <message>
@@ -138,27 +139,27 @@ Do you want to overwrite it?</source>
         <translation>Feu clic al botó per enregistrar la drecera:</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="72"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="76"/>
         <source>Reset</source>
         <translation>Restableix</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="166"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="176"/>
         <source>Choose icon file</source>
         <translation>Trieu el fitxer de la icona</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="168"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="178"/>
         <source>Images (*.svg *.png)</source>
         <translation>Imatges (*.svg *.png)</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="180"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="190"/>
         <source>Choose menu file</source>
         <translation>Trieu el fitxer del menú</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="182"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="192"/>
         <source>Menu files (*.menu)</source>
         <translation>Fitxers de menús (*.menu)</translation>
     </message>

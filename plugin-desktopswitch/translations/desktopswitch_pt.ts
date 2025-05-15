@@ -4,13 +4,13 @@
 <context>
     <name>DesktopSwitch</name>
     <message>
-        <location filename="../desktopswitch.cpp" line="85"/>
+        <location filename="../desktopswitch.cpp" line="95"/>
         <source>Switch to desktop %1</source>
         <translation>Trocar para a área de trabalho %1</translation>
     </message>
     <message>
-        <location filename="../desktopswitch.cpp" line="144"/>
-        <location filename="../desktopswitch.cpp" line="155"/>
+        <location filename="../desktopswitch.cpp" line="170"/>
+        <location filename="../desktopswitch.cpp" line="181"/>
         <source>Desktop %1</source>
         <translation>Área de trabalho %1</translation>
     </message>
@@ -19,8 +19,8 @@
     <name>DesktopSwitchConfiguration</name>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="14"/>
-        <source>DesktopSwitch settings</source>
-        <translation>Definições do alternador</translation>
+        <source>DesktopSwitch Settings</source>
+        <translation>Definições do DesktopSwitch</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="46"/>
@@ -65,7 +65,25 @@
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="85"/>
         <source>Desktop names</source>
-        <translation>Nome das áreas de trabalho</translation>
+        <translation>Nomes da áreas de trabalho</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitchconfiguration.cpp" line="78"/>
+        <source>Desktop %1:</source>
+        <translation>Área de trabalho %1:</translation>
+    </message>
+</context>
+<context>
+    <name>DesktopSwitchUnsupported</name>
+    <message>
+        <location filename="../desktopswitch.cpp" line="342"/>
+        <source>n/a</source>
+        <translation>n/d</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitch.cpp" line="344"/>
+        <source>DesktopSwitch is unsupported on current platform: %1</source>
+        <translation>O DesktopSwitch não é suportado na plataforma atual: %1</translation>
     </message>
 </context>
 </TS>

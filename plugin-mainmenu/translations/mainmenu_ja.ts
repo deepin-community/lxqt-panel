@@ -4,43 +4,44 @@
 <context>
     <name>LXQtMainMenu</name>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="106"/>
+        <location filename="../lxqtmainmenu.cpp" line="117"/>
         <source>Search...</source>
         <translation>検索...</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="114"/>
+        <location filename="../lxqtmainmenu.cpp" line="127"/>
         <source>Show/hide main menu</source>
         <translation>アプリケーションメニューの表示/非表示</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="496"/>
+        <location filename="../lxqtmainmenu.cpp" line="530"/>
         <source>Add to desktop</source>
         <translation>デスクトップに追加する</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="504"/>
+        <location filename="../lxqtmainmenu.cpp" line="538"/>
         <source>Question</source>
         <translation>質問</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="505"/>
+        <location filename="../lxqtmainmenu.cpp" line="539"/>
         <source>A file with the same name already exists.
 Do you want to overwrite it?</source>
-        <translation>同じ名前のファイルが既に存在します。上書きしますか？</translation>
+        <translation>同じ名前のファイルが既に存在します。
+上書きしますか？</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="511"/>
+        <location filename="../lxqtmainmenu.cpp" line="545"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="512"/>
+        <location filename="../lxqtmainmenu.cpp" line="546"/>
         <source>The file cannot be overwritten.</source>
         <translation>ファイルを上書き出来ません。</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="518"/>
+        <location filename="../lxqtmainmenu.cpp" line="552"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
@@ -50,11 +51,11 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="20"/>
         <source>General</source>
-        <translation>一般</translation>
+        <translation>全般</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="14"/>
-        <source>Main Menu settings</source>
+        <source>Main Menu Settings</source>
         <translation>アプリケーションメニューの設定</translation>
     </message>
     <message>
@@ -100,7 +101,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="169"/>
         <source>Show matching entries:</source>
-        <translation>一致するエントリ名を表示:</translation>
+        <translation>一致するエントリ名を表示する:</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="183"/>
@@ -110,7 +111,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="190"/>
         <source>Filter menu entries</source>
-        <translation>メニューエントリの絞り込みをする</translation>
+        <translation>メニューエントリを絞り込む</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="197"/>
@@ -130,35 +131,35 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="127"/>
         <source>Keyboard Shortcut</source>
-        <translation>キーボードショートカット</translation>
+        <translation>ショートカットキー</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="146"/>
         <source>Click the button to record shortcut:</source>
-        <translation>ショートカットを記録するにはボタンをクリック:</translation>
+        <translation>ショートカットを記録するには次のボタンをクリック:</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="72"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="76"/>
         <source>Reset</source>
         <translation>リセット</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="166"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="176"/>
         <source>Choose icon file</source>
         <translation>アイコンファイルの選択</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="168"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="178"/>
         <source>Images (*.svg *.png)</source>
         <translation>画像 (*.svg *.png)</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="180"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="190"/>
         <source>Choose menu file</source>
         <translation>メニューファイルの選択</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="182"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="192"/>
         <source>Menu files (*.menu)</source>
         <translation>メニューファイル (*.menu)</translation>
     </message>

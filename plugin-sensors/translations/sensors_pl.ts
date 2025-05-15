@@ -51,7 +51,7 @@
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="152"/>
         <source>Sensors</source>
-        <translation>Sensory</translation>
+        <translation>Czujniki</translation>
     </message>
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="168"/>
@@ -64,17 +64,17 @@
         <translation>Cechy chipu:</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Enabled</source>
         <translation>Włączone</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Label</source>
         <translation>Etykieta</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Color</source>
         <translation>Kolor</translation>
     </message>

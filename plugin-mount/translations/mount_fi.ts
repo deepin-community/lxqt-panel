@@ -18,7 +18,7 @@
     </message>
     <message>
         <location filename="../configuration.ui" line="20"/>
-        <source>Behaviour</source>
+        <source>Behavior</source>
         <translation>Toiminta</translation>
     </message>
     <message>
@@ -28,34 +28,34 @@
     </message>
     <message>
         <location filename="../configuration.ui" line="42"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trigger the following action eject shortcut is pressed (&lt;span style=&quot; font-weight:600;&quot;&gt;XF86Eject&lt;/span&gt; by default)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trigger the following action when eject shortcut is pressed (&lt;span style=&quot; font-weight:600;&quot;&gt;XF86Eject&lt;/span&gt; by default)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suorita seuraava toiminto &apos;eject&apos; nappia painettaessa (&lt;span style=&quot; font-weight:600;&quot;&gt;XF86Eject&lt;/span&gt; oletuksena)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../configuration.ui" line="45"/>
         <source>When eject button is pressed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Eject-painiketta painettaessa:</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="43"/>
+        <location filename="../configuration.cpp" line="60"/>
         <source>Popup menu</source>
         <translation>Näytä valikko</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="44"/>
+        <location filename="../configuration.cpp" line="61"/>
         <source>Show info</source>
         <translation>Näytä ilmoitus</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="45"/>
-        <location filename="../configuration.cpp" line="50"/>
+        <location filename="../configuration.cpp" line="62"/>
+        <location filename="../configuration.cpp" line="64"/>
         <source>Do nothing</source>
         <translation>Älä tee mitään</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="51"/>
+        <location filename="../configuration.cpp" line="65"/>
         <source>Eject All Optical Drives</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista kaikki optiset levyt</translation>
     </message>
 </context>
 <context>
@@ -81,12 +81,12 @@
     <message>
         <location filename="../actions/ejectaction_optical.cpp" line="59"/>
         <source>Removable media/devices manager</source>
-        <translation type="unfinished">Irrotettavien laitteiden ja levyjen hallinta</translation>
+        <translation>Irrotettavien laitteiden ja levyjen hallinta</translation>
     </message>
     <message>
         <location filename="../actions/ejectaction_optical.cpp" line="59"/>
         <source>Ejected all optical drives</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaikki optiset levyt poistettu</translation>
     </message>
 </context>
 <context>
@@ -94,29 +94,29 @@
     <message>
         <location filename="../lxqtmountplugin.cpp" line="79"/>
         <source>Removable media/devices manager: Global shortcut &apos;%1&apos; cannot be registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Irrotettavien laitteiden ja levyjen hallinta: Globaalia pikavalintaa &apos;%1&apos; ei voida rekisteröidä</translation>
     </message>
     <message>
         <location filename="../lxqtmountplugin.cpp" line="116"/>
         <source>Eject removable media</source>
-        <translation type="unfinished"></translation>
+        <translation>Poista irrotettava tallennustila</translation>
     </message>
 </context>
 <context>
     <name>MenuDiskItem</name>
     <message>
-        <location filename="../menudiskitem.cpp" line="155"/>
+        <location filename="../menudiskitem.cpp" line="156"/>
         <source>Mounting of &lt;b&gt;&lt;nobr&gt;&quot;%1&quot;&lt;/nobr&gt;&lt;/b&gt; failed: %2</source>
         <translation>Laitteen &lt;b&gt;&lt;nobr&gt;&quot;%1&quot;&lt;/nobr&gt;&lt;/b&gt; liittäminen epäonnistui: %2</translation>
     </message>
     <message>
-        <location filename="../menudiskitem.cpp" line="157"/>
-        <location filename="../menudiskitem.cpp" line="178"/>
+        <location filename="../menudiskitem.cpp" line="158"/>
+        <location filename="../menudiskitem.cpp" line="179"/>
         <source>Removable media/devices manager</source>
         <translation>Irrotettavien laitteiden ja levyjen hallinta</translation>
     </message>
     <message>
-        <location filename="../menudiskitem.cpp" line="176"/>
+        <location filename="../menudiskitem.cpp" line="177"/>
         <source>Unmounting of &lt;strong&gt;&lt;nobr&gt;&quot;%1&quot;&lt;/nobr&gt;&lt;/strong&gt; failed: %2</source>
         <translation>Laitteen &lt;strong&gt;&lt;nobr&gt;&quot;%1&quot;&lt;/nobr&gt;&lt;/strong&gt; irrottaminen epäonnistui: %2</translation>
     </message>
@@ -124,7 +124,7 @@
 <context>
     <name>Popup</name>
     <message>
-        <location filename="../popup.cpp" line="68"/>
+        <location filename="../popup.cpp" line="67"/>
         <source>No devices are available</source>
         <translation>Ei laitteita</translation>
     </message>

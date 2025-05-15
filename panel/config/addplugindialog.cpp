@@ -49,7 +49,7 @@ AddPluginDialog::AddPluginDialog(QWidget *parent):
     ui->setupUi(this);
 
     QStringList desktopFilesDirs;
-    desktopFilesDirs << QString::fromLocal8Bit(qgetenv("LXQT_PANEL_PLUGINS_DIR")).split(QLatin1Char(':'), QString::SkipEmptyParts);
+    desktopFilesDirs << QString::fromLocal8Bit(qgetenv("LXQT_PANEL_PLUGINS_DIR")).split(QLatin1Char(':'), Qt::SkipEmptyParts);
     desktopFilesDirs << QStringLiteral("%1/%2").arg(XdgDirs::dataHome(), QStringLiteral("/lxqt/lxqt-panel"));
     desktopFilesDirs << QStringLiteral(PLUGIN_DESKTOPS_DIR);
 
@@ -107,7 +107,7 @@ void AddPluginDialog::filter()
 
         QListWidgetItem* item = new QListWidgetItem(ui->pluginList);
         // disable single-instances plugins already in use
-        if (dynamic_cast<LXQtPanelApplication const *>(qApp)->isPluginSingletonAndRunnig(plugin.id()))
+        if (dynamic_cast<LXQtPanelApplication const *>(qApp)->isPluginSingletonAndRunning(plugin.id()))
         {
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
             item->setBackground(palette().brush(QPalette::Disabled, QPalette::Text));

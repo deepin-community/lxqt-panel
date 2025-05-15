@@ -29,7 +29,6 @@
 #include "popup.h"
 #include "../panel/ilxqtpanelplugin.h"
 
-#include <QDesktopWidget>
 #include <QVBoxLayout>
 #include <QTimer>
 #include <Solid/StorageAccess>
@@ -39,7 +38,7 @@
 // Paulo: I'm not sure what this is for
 static bool hasRemovableParent(Solid::Device device)
 {
-    // qDebug() << "acess:" << device.udi();
+    // qDebug() << "access:" << device.udi();
     for ( ; !device.udi().isEmpty(); device = device.parent())
     {
         Solid::StorageDrive* drive = device.as<Solid::StorageDrive>();
@@ -61,7 +60,7 @@ Popup::Popup(ILXQtPanelPlugin * plugin, QWidget* parent):
     setObjectName(QStringLiteral("LXQtMountPopup"));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setLayout(new QVBoxLayout(this));
-    layout()->setMargin(0);
+    layout()->setContentsMargins(QMargins());
 
     setAttribute(Qt::WA_AlwaysShowToolTips);
 
@@ -72,14 +71,13 @@ Popup::Popup(ILXQtPanelPlugin * plugin, QWidget* parent):
     //Perform the potential long time operation after object construction
     //Note: can't use QTimer::singleShot with lambda in pre QT 5.4 code
     QTimer * aux_timer = new QTimer;
-    connect(aux_timer, &QTimer::timeout, [this, aux_timer]
-        {
-            delete aux_timer; //cleanup
-            const auto devices = Solid::Device::listFromType(Solid::DeviceInterface::StorageAccess);
-            for (const Solid::Device& device : devices)
-                if (hasRemovableParent(device))
-                    addItem(device);
-        });
+    connect(aux_timer, &QTimer::timeout, this, [this, aux_timer] {
+        delete aux_timer; //cleanup
+        const auto devices = Solid::Device::listFromType(Solid::DeviceInterface::StorageAccess);
+        for (const Solid::Device& device : devices)
+            if (hasRemovableParent(device))
+                addItem(device);
+    });
     aux_timer->setSingleShot(true);
     aux_timer->start(0);
 
@@ -139,6 +137,20 @@ void Popup::onDeviceRemoved(QString const & udi)
 
 void Popup::showEvent(QShowEvent *event)
 {
+    // NOTE: This is a workaround for the lack of "Solid::StorageAccess::accessibilityChanged"
+    // when an encrypted volume is mounted by GLib/GIO.
+    const int size = layout()->count() - 1;
+    for (int i = size; 0 <= i; --i)
+    {
+        QWidget *w = layout()->itemAt(i)->widget();
+        if (w == mPlaceholder)
+            continue;
+        if (MenuDiskItem *it = static_cast<MenuDiskItem *>(w))
+        {
+            it->setMountStatus();
+        }
+    }
+
     mPlaceholder->setVisible(mDisplayCount == 0);
     realign();
     setFocus();

@@ -18,7 +18,7 @@
     </message>
     <message>
         <location filename="../configuration.ui" line="20"/>
-        <source>Behaviour</source>
+        <source>Behavior</source>
         <translation>行为</translation>
     </message>
     <message>
@@ -28,34 +28,34 @@
     </message>
     <message>
         <location filename="../configuration.ui" line="42"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trigger the following action eject shortcut is pressed (&lt;span style=&quot; font-weight:600;&quot;&gt;XF86Eject&lt;/span&gt; by default)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trigger the following action when eject shortcut is pressed (&lt;span style=&quot; font-weight:600;&quot;&gt;XF86Eject&lt;/span&gt; by default)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt; &lt;head /&gt; &lt;body&gt; &lt;p&gt;在按下弹出快捷键时触发以下操作（默认为&lt;span style =&quot; font-weight：600;&quot;&gt; XF86Eject &lt;/ span&gt;）&lt;/ p&gt; &lt;/正文&gt; &lt;/ html&gt;</translation>
     </message>
     <message>
         <location filename="../configuration.ui" line="45"/>
         <source>When eject button is pressed:</source>
-        <translation type="unfinished"></translation>
+        <translation>当弹出按钮被按下时：</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="43"/>
+        <location filename="../configuration.cpp" line="60"/>
         <source>Popup menu</source>
         <translation>弹出菜单</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="44"/>
+        <location filename="../configuration.cpp" line="61"/>
         <source>Show info</source>
         <translation>显示信息</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="45"/>
-        <location filename="../configuration.cpp" line="50"/>
+        <location filename="../configuration.cpp" line="62"/>
+        <location filename="../configuration.cpp" line="64"/>
         <source>Do nothing</source>
         <translation>什么都不做</translation>
     </message>
     <message>
-        <location filename="../configuration.cpp" line="51"/>
+        <location filename="../configuration.cpp" line="65"/>
         <source>Eject All Optical Drives</source>
-        <translation type="unfinished"></translation>
+        <translation>弹出所有光盘驱动器</translation>
     </message>
 </context>
 <context>
@@ -81,12 +81,12 @@
     <message>
         <location filename="../actions/ejectaction_optical.cpp" line="59"/>
         <source>Removable media/devices manager</source>
-        <translation type="unfinished">可移动媒体管理器</translation>
+        <translation>可移动媒体/设备管理器</translation>
     </message>
     <message>
         <location filename="../actions/ejectaction_optical.cpp" line="59"/>
         <source>Ejected all optical drives</source>
-        <translation type="unfinished"></translation>
+        <translation>被弹出的所有光盘驱动器</translation>
     </message>
 </context>
 <context>
@@ -94,29 +94,29 @@
     <message>
         <location filename="../lxqtmountplugin.cpp" line="79"/>
         <source>Removable media/devices manager: Global shortcut &apos;%1&apos; cannot be registered</source>
-        <translation type="unfinished"></translation>
+        <translation>可移动媒体/设备管理器：全局快捷键 &apos;%1&apos; 无法被注册</translation>
     </message>
     <message>
         <location filename="../lxqtmountplugin.cpp" line="116"/>
         <source>Eject removable media</source>
-        <translation type="unfinished"></translation>
+        <translation>弹出可移动媒体</translation>
     </message>
 </context>
 <context>
     <name>MenuDiskItem</name>
     <message>
-        <location filename="../menudiskitem.cpp" line="155"/>
+        <location filename="../menudiskitem.cpp" line="156"/>
         <source>Mounting of &lt;b&gt;&lt;nobr&gt;&quot;%1&quot;&lt;/nobr&gt;&lt;/b&gt; failed: %2</source>
         <translation>挂载&lt;b&gt;&lt;nobr&gt;“%1”&lt;/nobr&gt;&lt;/b&gt;失败：%2</translation>
     </message>
     <message>
-        <location filename="../menudiskitem.cpp" line="157"/>
-        <location filename="../menudiskitem.cpp" line="178"/>
+        <location filename="../menudiskitem.cpp" line="158"/>
+        <location filename="../menudiskitem.cpp" line="179"/>
         <source>Removable media/devices manager</source>
         <translation>可移动媒体管理器</translation>
     </message>
     <message>
-        <location filename="../menudiskitem.cpp" line="176"/>
+        <location filename="../menudiskitem.cpp" line="177"/>
         <source>Unmounting of &lt;strong&gt;&lt;nobr&gt;&quot;%1&quot;&lt;/nobr&gt;&lt;/strong&gt; failed: %2</source>
         <translation>卸载&lt;strong&gt;&lt;nobr&gt;“%1”&lt;/nobr&gt;&lt;/strong&gt;失败：%2</translation>
     </message>
@@ -124,7 +124,7 @@
 <context>
     <name>Popup</name>
     <message>
-        <location filename="../popup.cpp" line="68"/>
+        <location filename="../popup.cpp" line="67"/>
         <source>No devices are available</source>
         <translation>没有可用设备</translation>
     </message>

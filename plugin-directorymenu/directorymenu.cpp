@@ -41,7 +41,7 @@
 DirectoryMenu::DirectoryMenu(const ILXQtPanelPluginStartupInfo &startupInfo) :
     QObject(),
     ILXQtPanelPlugin(startupInfo),
-    mMenu(0),
+    mMenu(nullptr),
     mDefaultIcon(XdgIcon::fromTheme(QStringLiteral("folder")))
 {
     mOpenDirectorySignalMapper = new QSignalMapper(this);
@@ -52,10 +52,11 @@ DirectoryMenu::DirectoryMenu(const ILXQtPanelPluginStartupInfo &startupInfo) :
     mButton.setAutoRaise(true);
     mButton.setIcon(XdgIcon::fromTheme(QStringLiteral("folder")));
 
-    connect(&mButton, SIGNAL(clicked()), this, SLOT(showMenu()));
-    connect(mOpenDirectorySignalMapper, SIGNAL(mapped(QString)), this, SLOT(openDirectory(QString)));
-    connect(mOpenTerminalSignalMapper, SIGNAL(mapped(QString)), this, SLOT(openInTerminal(QString)));
-    connect(mMenuSignalMapper, SIGNAL(mapped(QString)), this, SLOT(addMenu(QString)));
+    connect(&mButton, &QToolButton::clicked, this, &DirectoryMenu::showMenu);
+
+    connect(mOpenDirectorySignalMapper, &QSignalMapper::mappedString, this, &DirectoryMenu::openDirectory);
+    connect(mOpenTerminalSignalMapper,  &QSignalMapper::mappedString, this, &DirectoryMenu::openInTerminal);
+    connect(mMenuSignalMapper,          &QSignalMapper::mappedString, this, &DirectoryMenu::addMenu);
 
     settingsChanged();
 }
@@ -100,11 +101,8 @@ void DirectoryMenu::openDirectory(const QString& path)
 
 void DirectoryMenu::openInTerminal(const QString& path)
 {
-    // Create list of arguments
-    QStringList args;
-    args << QStringLiteral("--workdir") << QDir::toNativeSeparators(path);
-    // Execute the default terminal program with arguments
-    QProcess::startDetached(mDefaultTerminal, args);
+    // Execute the default terminal program in the given working directory
+    QProcess::startDetached(mDefaultTerminal, QStringList(), QDir::toNativeSeparators(path));
 }
 
 void DirectoryMenu::addMenu(QString path)
@@ -122,12 +120,12 @@ void DirectoryMenu::addActions(QMenu* menu, const QString& path)
 {
     mPathStrings.push_back(path);
 
-    QAction* openDirectoryAction = menu->addAction(XdgIcon::fromTheme(QStringLiteral("folder")), tr("Open"));
-    connect(openDirectoryAction, SIGNAL(triggered()), mOpenDirectorySignalMapper, SLOT(map()));
+    QAction* openDirectoryAction = menu->addAction(XdgIcon::fromTheme(QStringLiteral("document-open")), tr("Open"));
+    connect(openDirectoryAction, &QAction::triggered, mOpenDirectorySignalMapper, [this] { mOpenDirectorySignalMapper->map(); } );
     mOpenDirectorySignalMapper->setMapping(openDirectoryAction, mPathStrings.back());
 
-    QAction* openTerminalAction = menu->addAction(XdgIcon::fromTheme(QStringLiteral("folder")), tr("Open in terminal"));
-    connect(openTerminalAction, SIGNAL(triggered()), mOpenTerminalSignalMapper, SLOT(map()));
+    QAction* openTerminalAction = menu->addAction(XdgIcon::fromTheme(QStringLiteral("utilities-terminal")), tr("Open in terminal"));
+    connect(openTerminalAction, &QAction::triggered, mOpenTerminalSignalMapper, [this] { mOpenTerminalSignalMapper->map(); } );
     mOpenTerminalSignalMapper->setMapping(openTerminalAction, mPathStrings.back());
 
     menu->addSeparator();
@@ -143,7 +141,7 @@ void DirectoryMenu::addActions(QMenu* menu, const QString& path)
 
             QMenu* subMenu = menu->addMenu(XdgIcon::fromTheme(QStringLiteral("folder")), mPathStrings.back());
 
-            connect(subMenu, SIGNAL(aboutToShow()), mMenuSignalMapper, SLOT(map()));
+            connect(subMenu, &QMenu::aboutToShow, mMenuSignalMapper, [this] { mMenuSignalMapper->map(); } );
             mMenuSignalMapper->setMapping(subMenu, entry.absoluteFilePath());
         }
     }
@@ -158,21 +156,38 @@ void DirectoryMenu::settingsChanged()
 {
     mBaseDirectory.setPath(settings()->value(QStringLiteral("baseDirectory"), QDir::homePath()).toString());
 
+    // icon
+    bool customIcon = false;
     QString iconPath = settings()->value(QStringLiteral("icon"), QString()).toString();
     QIcon icon = QIcon(iconPath);
-
     if(!icon.isNull())
     {
         QIcon buttonIcon = QIcon(icon);
         if(!buttonIcon.pixmap(QSize(24,24)).isNull())
         {
             mButton.setIcon(buttonIcon);
-            return;
+            customIcon = true;
         }
     }
+    if (!customIcon)
+        mButton.setIcon(mDefaultIcon);
 
-    mButton.setIcon(mDefaultIcon);
+    // label
+    QString label = settings()->value(QStringLiteral("label"), QString()).toString();
+    mButton.setText(label);
+
+    // style
+    QString style = settings()->value(QStringLiteral("buttonStyle")).toString().toUpper();
+    if (style == QStringLiteral("ICON"))
+        mButton.setToolButtonStyle(Qt::ToolButtonIconOnly);
+    else if (!label.isEmpty())
+    {
+        if (style == QStringLiteral("TEXT"))
+            mButton.setToolButtonStyle(Qt::ToolButtonTextOnly);
+        else
+            mButton.setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    }
 
     // Set default terminal
-    mDefaultTerminal = settings()->value(QStringLiteral("defaultTerminal"), QString()).toString();
+    mDefaultTerminal = settings()->value(QStringLiteral("defaultTerminal"), QStringLiteral("xterm")).toString();
 }

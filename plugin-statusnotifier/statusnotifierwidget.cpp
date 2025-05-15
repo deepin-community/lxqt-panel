@@ -27,11 +27,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "statusnotifierwidget.h"
-#include <QApplication>
-#include <QDebug>
-#include <QFutureWatcher>
-#include <QtConcurrent>
-#include <QDBusConnectionInterface>
+#include "statusnotifierproxy.h"
 #include "../panel/pluginsettings.h"
 #include "../panel/ilxqtpanelplugin.h"
 
@@ -51,7 +47,7 @@ StatusNotifierWidget::StatusNotifierWidget(ILXQtPanelPlugin *plugin, QWidget *pa
     mShowBtn->setText(QStringLiteral("+"));
     layout()->addWidget(mShowBtn);
     mShowBtn->hide();
-    connect(mShowBtn, &QAbstractButton::clicked, [this] {
+    connect(mShowBtn, &QAbstractButton::clicked, this, [this] {
         if (mForceVisible)
             return; // all items are visible; nothing to do
         mShowBtn->hide();
@@ -83,41 +79,15 @@ StatusNotifierWidget::StatusNotifierWidget(ILXQtPanelPlugin *plugin, QWidget *pa
         }
     });
 
-    QFutureWatcher<StatusNotifierWatcher *> * future_watcher = new QFutureWatcher<StatusNotifierWatcher *>;
-    connect(future_watcher, &QFutureWatcher<StatusNotifierWatcher *>::finished, this, [this, future_watcher]
-        {
-            mWatcher = future_watcher->future().result();
-
-            connect(mWatcher, &StatusNotifierWatcher::StatusNotifierItemRegistered,
-                    this, &StatusNotifierWidget::itemAdded);
-            connect(mWatcher, &StatusNotifierWatcher::StatusNotifierItemUnregistered,
-                    this, &StatusNotifierWidget::itemRemoved);
-
-            qDebug() << mWatcher->RegisteredStatusNotifierItems();
-
-            future_watcher->deleteLater();
-        });
-
-    QFuture<StatusNotifierWatcher *> future = QtConcurrent::run([]
-        {
-            QString dbusName = QStringLiteral("org.kde.StatusNotifierHost-%1-%2").arg(QApplication::applicationPid()).arg(1);
-            if (QDBusConnectionInterface::ServiceNotRegistered == QDBusConnection::sessionBus().interface()->registerService(dbusName, QDBusConnectionInterface::DontQueueService))
-                qDebug() << "unable to register service for " << dbusName;
-
-            StatusNotifierWatcher * watcher = new StatusNotifierWatcher;
-            watcher->RegisterStatusNotifierHost(dbusName);
-            watcher->moveToThread(QApplication::instance()->thread());
-            return watcher;
-        });
-
-    future_watcher->setFuture(future);
-
     realign();
-}
 
-StatusNotifierWidget::~StatusNotifierWidget()
-{
-    delete mWatcher;
+    StatusNotifierProxy & proxy = StatusNotifierProxy::registerLifetimeUsage(this);
+    connect(&proxy, &StatusNotifierProxy::StatusNotifierItemRegistered,
+                    this, &StatusNotifierWidget::itemAdded);
+    connect(&proxy, &StatusNotifierProxy::StatusNotifierItemUnregistered,
+                    this, &StatusNotifierWidget::itemRemoved);
+    for (const auto & service: proxy.RegisteredStatusNotifierItems())
+        itemAdded(service);
 }
 
 void StatusNotifierWidget::leaveEvent(QEvent * /*event*/)
@@ -126,7 +96,7 @@ void StatusNotifierWidget::leaveEvent(QEvent * /*event*/)
         mHideTimer.start();
 }
 
-void StatusNotifierWidget::enterEvent(QEvent * /*event*/)
+void StatusNotifierWidget::enterEvent(QEnterEvent * /*event*/)
 {
     mHideTimer.stop();
 }
@@ -143,7 +113,7 @@ void StatusNotifierWidget::itemAdded(QString serviceAndPath)
     button->show();
 
     // show/hide the added item appropriately and show mShowBtn if needed
-    connect(button, &StatusNotifierButton::titleFound, [this, button] (const QString &title) {
+    connect(button, &StatusNotifierButton::titleFound, this, [this, button] (const QString &title) {
         mItemTitles << title;
         if (mAutoHideList.contains(title))
         {
@@ -162,7 +132,7 @@ void StatusNotifierWidget::itemAdded(QString serviceAndPath)
         }
     });
     // show/hide mShowBtn if needed whenever an item gets or loses attention
-    connect(button, &StatusNotifierButton::attentionChanged, [this, button] {
+    connect(button, &StatusNotifierButton::attentionChanged, mShowBtn, [this, button] {
         if (button->hasAttention())
         {
             if (mShowBtn->isVisible() || mForceVisible)
@@ -203,7 +173,7 @@ void StatusNotifierWidget::itemRemoved(const QString &serviceAndPath)
         if (mShowBtn->isVisible() || mForceVisible)
         { // hide mShowBtn if no (auto-)hidden item remains
             bool showBtn = false;
-            for (const auto &name : qAsConst(mItemTitles))
+            for (const auto &name : std::as_const(mItemTitles))
             {
                 if (mAutoHideList.contains(name) || mHideList.contains(name))
                 {
@@ -226,6 +196,16 @@ void StatusNotifierWidget::itemRemoved(const QString &serviceAndPath)
 
 void StatusNotifierWidget::settingsChanged()
 {
+    LXQt::GridLayout *layout = qobject_cast<LXQt::GridLayout*>(this->layout());
+    if (mPlugin->settings()->value(QStringLiteral("reverseOrder"), false).toBool())
+    {
+        layout->setItemsOrder(LXQt::GridLayout::ItemsOrder::LastToFirst);
+    }
+    else
+    {
+        layout->setItemsOrder(LXQt::GridLayout::ItemsOrder::FirstToLast);
+    }
+
     mAttentionPeriod = mPlugin->settings()->value(QStringLiteral("attentionPeriod"), 5).toInt();
     mAutoHideList = mPlugin->settings()->value(QStringLiteral("autoHideList")).toStringList();
     mHideList = mPlugin->settings()->value(QStringLiteral("hideList")).toStringList();

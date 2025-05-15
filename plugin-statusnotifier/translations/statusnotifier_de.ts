@@ -6,53 +6,58 @@
     <message>
         <location filename="../statusnotifierconfiguration.ui" line="14"/>
         <source>Status Notifier Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen Statusmeldungen</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.ui" line="28"/>
-        <location filename="../statusnotifierconfiguration.ui" line="38"/>
+        <location filename="../statusnotifierconfiguration.ui" line="25"/>
+        <source>Reverse the order of items</source>
+        <translation>Reihenfolge der Elemente umkehren</translation>
+    </message>
+    <message>
+        <location filename="../statusnotifierconfiguration.ui" line="39"/>
+        <location filename="../statusnotifierconfiguration.ui" line="49"/>
         <source>An auto-hiding item will remain visible for this period if it needs attention.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine automatisch verschwindende wichtige Meldung bleibt für diesen Zeitraum sichtbar.</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.ui" line="31"/>
+        <location filename="../statusnotifierconfiguration.ui" line="42"/>
         <source>Attention period:</source>
-        <translation type="unfinished"></translation>
+        <translation>Benachrichtigungszeitraum:</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.ui" line="41"/>
+        <location filename="../statusnotifierconfiguration.ui" line="52"/>
         <source> minute(s)</source>
-        <translation type="unfinished"></translation>
+        <translation> Minute(n)</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.ui" line="72"/>
+        <location filename="../statusnotifierconfiguration.ui" line="83"/>
         <source>Change visibility of items</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändere Sichtbarkeit der Einträge</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.ui" line="85"/>
+        <location filename="../statusnotifierconfiguration.ui" line="96"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Eintrag</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.ui" line="90"/>
+        <location filename="../statusnotifierconfiguration.ui" line="101"/>
         <source>Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichtbarkeit</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.cpp" line="84"/>
+        <location filename="../statusnotifierconfiguration.cpp" line="87"/>
         <source>Always show</source>
-        <translation type="unfinished"></translation>
+        <translation>Immer sichtbar</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.cpp" line="84"/>
+        <location filename="../statusnotifierconfiguration.cpp" line="87"/>
         <source>Auto-hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch verbergen</translation>
     </message>
     <message>
-        <location filename="../statusnotifierconfiguration.cpp" line="84"/>
+        <location filename="../statusnotifierconfiguration.cpp" line="87"/>
         <source>Always hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Immer verbergen</translation>
     </message>
 </context>
 </TS>

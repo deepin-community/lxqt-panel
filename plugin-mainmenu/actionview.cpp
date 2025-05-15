@@ -39,6 +39,12 @@
 #include <QScrollBar>
 #include <QProxyStyle>
 #include <QStyledItemDelegate>
+#include <QApplication>
+#include <QDrag>
+#include <QMouseEvent>
+#include <QMimeData>
+#include <QUrl>
+
 //==============================
 #ifdef HAVE_MENU_CACHE
 #include <QSortFilterProxyModel>
@@ -47,8 +53,7 @@ FilterProxyModel::FilterProxyModel(QObject* parent) :
     QSortFilterProxyModel(parent) {
 }
 
-FilterProxyModel::~FilterProxyModel() {
-}
+FilterProxyModel::~FilterProxyModel() = default;
 
 bool FilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const {
     if (filterStr_.isEmpty())
@@ -79,7 +84,7 @@ namespace
     {
     public:
         using QProxyStyle::QProxyStyle;
-        virtual int styleHint(StyleHint hint, const QStyleOption * option = 0, const QWidget * widget = 0, QStyleHintReturn * returnData = 0) const override
+        int styleHint(StyleHint hint, const QStyleOption * option = nullptr, const QWidget * widget = nullptr, QStyleHintReturn * returnData = nullptr) const override
         {
             if(hint == QStyle::SH_ItemView_ActivateItemOnSingleClick)
                 return 1;
@@ -93,7 +98,6 @@ namespace
     public:
         DelayedIconDelegate(QObject * parent = nullptr)
             : QStyledItemDelegate(parent)
-            , mMaxItemWidth(300)
         {
         }
 
@@ -102,7 +106,7 @@ namespace
             mMaxItemWidth = max;
         }
 
-        virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
         {
             QIcon icon = index.data(Qt::DecorationRole).value<QIcon>();
             //the XdgCachedMenuAction/XdgAction does load the icon upon showing its menu
@@ -130,7 +134,7 @@ namespace
             return s;
         }
     private:
-        int mMaxItemWidth;
+        int mMaxItemWidth{300};
     };
 
 }
@@ -160,11 +164,11 @@ ActionView::ActionView(QWidget * parent /*= nullptr*/)
     mProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
     mProxy->sort(0);
     {
-        QScopedPointer<QItemSelectionModel> guard{selectionModel()};
+        std::unique_ptr<QItemSelectionModel> guard{selectionModel()};
         setModel(mProxy);
     }
     {
-        QScopedPointer<QAbstractItemDelegate> guard{itemDelegate()};
+        std::unique_ptr<QAbstractItemDelegate> guard{itemDelegate()};
         setItemDelegate(new DelayedIconDelegate{this});
     }
     connect(this, &QAbstractItemView::activated, this, &ActionView::onActivated);
@@ -275,6 +279,38 @@ QSize ActionView::viewportSizeHint() const
 QSize ActionView::minimumSizeHint() const
 {
     return QSize{0, 0};
+}
+
+void ActionView::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+        mDragStartPosition = event->position().toPoint();
+
+    QListView::mousePressEvent(event);
+}
+
+void ActionView::mouseMoveEvent(QMouseEvent *event)
+{
+    if (!(event->buttons() & Qt::LeftButton))
+        return;
+
+    if ((event->position().toPoint() - mDragStartPosition).manhattanLength() < QApplication::startDragDistance())
+        return;
+
+    XdgAction *a = qobject_cast<XdgAction*>(indexAt(mDragStartPosition).data(ActionView::ActionRole).value<QAction*>());
+    if (!a)
+        return;
+
+    QList<QUrl> urls;
+    urls << QUrl::fromLocalFile(a->desktopFile().fileName());
+
+    QMimeData *mimeData = new QMimeData();
+    mimeData->setUrls(urls);
+
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+    drag->exec(Qt::CopyAction | Qt::LinkAction);
+    emit requestShowHideMenu();
 }
 
 void ActionView::onActivated(QModelIndex const & index)

@@ -4,7 +4,7 @@
 <context>
     <name>LXQtWorldClock</name>
     <message>
-        <location filename="../lxqtworldclock.cpp" line="246"/>
+        <location filename="../lxqtworldclock.cpp" line="245"/>
         <source>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM yyyy&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</source>
         <translation>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;dddd, d. MMMM yyyy.&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</translation>
     </message>
@@ -59,12 +59,12 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="96"/>
         <source>Pad &amp;hour with zero</source>
-        <translation>Prikaži sate dvoznamenkasto</translation>
+        <translation>Prikaži &amp;sate s vodećom nulom</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="116"/>
         <source>T&amp;ime zone</source>
-        <translation>&amp;Vremenska zona</translation>
+        <translation>Vremenska &amp;zona</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="128"/>
@@ -103,7 +103,7 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="186"/>
         <source>Offset from UTC</source>
-        <translation>Odmak od UTC-a</translation>
+        <translation>Odstupanje od UTC-a</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="191"/>
@@ -118,7 +118,7 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="201"/>
         <location filename="../lxqtworldclockconfiguration.ui" line="436"/>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="586"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="585"/>
         <source>Custom name</source>
         <translation>Prilagođeno ime</translation>
     </message>
@@ -165,12 +165,12 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="330"/>
         <source>Pad d&amp;ay with zero</source>
-        <translation>Prikaži datum d&amp;ana dvoznamenkasto</translation>
+        <translation>Prikaži d&amp;ane s vodećom nulom</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="337"/>
         <source>&amp;Long month and day of week names</source>
-        <translation>&amp;Ispiši mjesec i dan tjedna</translation>
+        <translation>&amp;Ispiši mjesece i dane tjedna</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="350"/>
@@ -179,7 +179,7 @@
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="377"/>
-        <source>&amp;Customise ...</source>
+        <source>&amp;Customize ...</source>
         <translation>Pri&amp;lagodi …</translation>
     </message>
     <message>
@@ -218,32 +218,37 @@
         <translation>Premjesti prema &amp;dolje</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="519"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="518"/>
+        <source>&lt;b&gt;Note:&lt;/b&gt; Middle-click the clock to view the time and date for all configured timezones.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../lxqtworldclockconfiguration.ui" line="529"/>
         <source>&amp;General</source>
         <translation>&amp;Opće</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="525"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="535"/>
         <source>Auto&amp;rotate when the panel is vertical</source>
         <translation>Automatski ok&amp;reni kad ploča stoji okomito</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="535"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="545"/>
         <source>Show &amp;week numbers in popup calendar</source>
         <translation>Prikaži &amp;brojeve tjedana u skočnom kalendaru</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="545"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="555"/>
         <source>S&amp;how tooltip</source>
         <translation>Prikaži savjetni o&amp;blačić</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="107"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="106"/>
         <source>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM yyyy&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</source>
         <translation>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;dddd, d. MMMM yyyy.&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="585"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="584"/>
         <source>Input custom time zone name</source>
         <translation>Upiši prilagođeno ime vremenske zone</translation>
     </message>

@@ -29,7 +29,9 @@
 
 #include "lxqttaskbarconfiguration.h"
 #include "ui_lxqttaskbarconfiguration.h"
-#include <KWindowSystem/KWindowSystem>
+
+#include "../panel/lxqtpanelapplication.h"
+#include "../panel/backends/ilxqtabstractwmiface.h"
 
 LXQtTaskbarConfiguration::LXQtTaskbarConfiguration(PluginSettings *settings, QWidget *parent):
     LXQtPanelPluginConfigDialog(settings, parent),
@@ -39,7 +41,7 @@ LXQtTaskbarConfiguration::LXQtTaskbarConfiguration(PluginSettings *settings, QWi
     setObjectName(QStringLiteral("TaskbarConfigurationWindow"));
     ui->setupUi(this);
 
-    connect(ui->buttons, SIGNAL(clicked(QAbstractButton*)), this, SLOT(dialogButtonsAction(QAbstractButton*)));
+    connect(ui->buttons, &QDialogButtonBox::clicked, this, &LXQtTaskbarConfiguration::dialogButtonsAction);
 
     ui->buttonStyleCB->addItem(tr("Icon and text"), QLatin1String("IconText"));
     ui->buttonStyleCB->addItem(tr("Only icon"), QLatin1String("Icon"));
@@ -52,18 +54,25 @@ LXQtTaskbarConfiguration::LXQtTaskbarConfiguration(PluginSettings *settings, QWi
     ui->wheelEventsActionCB->addItem(tr("Scroll up to move to next desktop, down to previous"), 4);
     ui->wheelEventsActionCB->addItem(tr("Scroll up to move to previous desktop, down to next"), 5);
 
+    LXQtPanelApplication *a = reinterpret_cast<LXQtPanelApplication*>(qApp);
+    auto wmBackend = a->getWMBackend();
+
     ui->showDesktopNumCB->addItem(tr("Current"), 0);
     //Note: in KWindowSystem desktops are numbered from 1..N
-    const int desk_cnt = KWindowSystem::numberOfDesktops();
+    const int desk_cnt = wmBackend->getWorkspacesCount();
     for (int i = 1; desk_cnt >= i; ++i)
-        ui->showDesktopNumCB->addItem(QString(QStringLiteral("%1 - %2")).arg(i).arg(KWindowSystem::desktopName(i)), i);
+        ui->showDesktopNumCB->addItem(QString(QStringLiteral("%1 - %2")).arg(i).arg(wmBackend->getWorkspaceName(i)), i);
 
     loadSettings();
     ui->ungroupedNextToExistingCB->setEnabled(!(ui->groupingGB->isChecked()));
-    /* We use clicked() and activated(int) because these signals aren't emitting after programmaticaly
+    /* We use clicked() and activated(int) because these signals aren't emitting after programmatically
         change of state */
     connect(ui->limitByDesktopCB, &QAbstractButton::clicked, this, &LXQtTaskbarConfiguration::saveSettings);
+#if (QT_VERSION >= QT_VERSION_CHECK(6,7,0))
+    connect(ui->limitByDesktopCB, &QCheckBox::checkStateChanged, ui->showDesktopNumCB, &QWidget::setEnabled);
+#else
     connect(ui->limitByDesktopCB, &QCheckBox::stateChanged, ui->showDesktopNumCB, &QWidget::setEnabled);
+#endif
     connect(ui->showDesktopNumCB, QOverload<int>::of(&QComboBox::activated), this, &LXQtTaskbarConfiguration::saveSettings);
     connect(ui->limitByScreenCB, &QAbstractButton::clicked, this, &LXQtTaskbarConfiguration::saveSettings);
     connect(ui->limitByMinimizedCB, &QAbstractButton::clicked, this, &LXQtTaskbarConfiguration::saveSettings);
@@ -82,6 +91,7 @@ LXQtTaskbarConfiguration::LXQtTaskbarConfiguration(PluginSettings *settings, QWi
     connect(ui->iconByClassCB, &QAbstractButton::clicked, this, &LXQtTaskbarConfiguration::saveSettings);
     connect(ui->wheelEventsActionCB, QOverload<int>::of(&QComboBox::activated), this, &LXQtTaskbarConfiguration::saveSettings);
     connect(ui->wheelDeltaThresholdSB, &QAbstractSpinBox::editingFinished, this, &LXQtTaskbarConfiguration::saveSettings);
+    connect(ui->excludeLE, &QLineEdit::editingFinished, this, &LXQtTaskbarConfiguration::saveSettings);
 }
 
 LXQtTaskbarConfiguration::~LXQtTaskbarConfiguration()
@@ -102,7 +112,7 @@ void LXQtTaskbarConfiguration::loadSettings()
     ui->middleClickCB->setChecked(settings().value(QStringLiteral("closeOnMiddleClick"), true).toBool());
     ui->raiseOnCurrentDesktopCB->setChecked(settings().value(QStringLiteral("raiseOnCurrentDesktop"), false).toBool());
     ui->buttonStyleCB->setCurrentIndex(ui->buttonStyleCB->findData(settings().value(QStringLiteral("buttonStyle"), QLatin1String("IconText"))));
-    ui->buttonWidthSB->setValue(settings().value(QStringLiteral("buttonWidth"), 400).toInt());
+    ui->buttonWidthSB->setValue(settings().value(QStringLiteral("buttonWidth"), 220).toInt());
     ui->buttonHeightSB->setValue(settings().value(QStringLiteral("buttonHeight"), 100).toInt());
     ui->groupingGB->setChecked(settings().value(QStringLiteral("groupingEnabled"),true).toBool());
     ui->showGroupOnHoverCB->setChecked(settings().value(QStringLiteral("showGroupOnHover"),true).toBool());
@@ -110,6 +120,7 @@ void LXQtTaskbarConfiguration::loadSettings()
     ui->iconByClassCB->setChecked(settings().value(QStringLiteral("iconByClass"), false).toBool());
     ui->wheelEventsActionCB->setCurrentIndex(ui->wheelEventsActionCB->findData(settings().value(QStringLiteral("wheelEventsAction"), 0).toInt()));
     ui->wheelDeltaThresholdSB->setValue(settings().value(QStringLiteral("wheelDeltaThreshold"), 300).toInt());
+    ui->excludeLE->setText(settings().value(QStringLiteral("excludedList")).toString());
 }
 
 void LXQtTaskbarConfiguration::saveSettings()
@@ -130,4 +141,5 @@ void LXQtTaskbarConfiguration::saveSettings()
     settings().setValue(QStringLiteral("iconByClass"),ui->iconByClassCB->isChecked());
     settings().setValue(QStringLiteral("wheelEventsAction"),ui->wheelEventsActionCB->itemData(ui->wheelEventsActionCB->currentIndex()));
     settings().setValue(QStringLiteral("wheelDeltaThreshold"),ui->wheelDeltaThresholdSB->value());
+    settings().setValue(QStringLiteral("excludedList"),ui->excludeLE->text());
 }

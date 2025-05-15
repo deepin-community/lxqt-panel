@@ -14,12 +14,12 @@
         <translation>جستجو:</translation>
     </message>
     <message>
-        <location filename="../config/addplugindialog.ui" line="98"/>
+        <location filename="../config/addplugindialog.ui" line="102"/>
         <source>Add Widget</source>
         <translation>افزودن ابزارک</translation>
     </message>
     <message>
-        <location filename="../config/addplugindialog.ui" line="105"/>
+        <location filename="../config/addplugindialog.ui" line="112"/>
         <source>Close</source>
         <translation>بستن</translation>
     </message>
@@ -37,268 +37,210 @@
         <translation>بخش تنظیمات</translation>
     </message>
     <message>
-        <location filename="../config/configpaneldialog.cpp" line="38"/>
-        <source>Panel</source>
-        <translation>پنل</translation>
+        <location filename="../config/configpaneldialog.cpp" line="39"/>
+        <source>Placement</source>
+        <translation>تعیین سطح</translation>
     </message>
     <message>
-        <location filename="../config/configpaneldialog.cpp" line="42"/>
+        <location filename="../config/configpaneldialog.cpp" line="43"/>
+        <source>Styling</source>
+        <translation>طراحی ظاهر</translation>
+    </message>
+    <message>
+        <location filename="../config/configpaneldialog.cpp" line="47"/>
         <source>Widgets</source>
         <translation>ابزارک ها</translation>
     </message>
 </context>
 <context>
-    <name>ConfigPanelWidget</name>
+    <name>ConfigPlacement</name>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="20"/>
-        <source>Configure panel</source>
-        <translation>پنل پیکربندی</translation>
+        <location filename="../config/configplacement.ui" line="20"/>
+        <source>Configure Placement</source>
+        <translation>پیکربندی مکان</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="44"/>
+        <location filename="../config/configplacement.ui" line="44"/>
         <source>Size</source>
         <translation>اندازه</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="68"/>
+        <location filename="../config/configplacement.ui" line="68"/>
         <source>&lt;p&gt;Negative pixel value sets the panel length to that many pixels less than available screen space.&lt;/p&gt;&lt;p/&gt;&lt;p&gt;&lt;i&gt;E.g. &quot;Length&quot; set to -100px, screen size is 1000px, then real panel length will be 900 px.&lt;/i&gt;&lt;/p&gt;</source>
-        <translation></translation>
+        <translation>&lt;p&gt;مقدار منفی برای پیکسل، طول پانل را به تعداد پیکسل‌هایی کمتر از فضای موجود روی صفحه تنظیم می‌کند.&lt;/p&gt;&lt;p/&gt;&lt;p&gt;&lt;i&gt;به عنوان مثال اگر &quot;طول&quot; -100px تنظیم شده باشد، وقتی که اندازه صفحه نمایش 1000 پیکسل باشد، درآنصورت طول پانل واقعی 900 پیکسل خواهد بود.&lt;/i&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="81"/>
+        <location filename="../config/configplacement.ui" line="81"/>
         <source>Size:</source>
         <translation>اندازه:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="88"/>
+        <location filename="../config/configplacement.ui" line="88"/>
         <source>Length:</source>
         <translation>طول:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="96"/>
+        <location filename="../config/configplacement.ui" line="96"/>
         <source>%</source>
-        <translation></translation>
+        <translation>٪</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="101"/>
+        <location filename="../config/configplacement.ui" line="101"/>
         <source>px</source>
-        <translation></translation>
+        <translation>پیکسل</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="109"/>
-        <location filename="../config/configpanelwidget.ui" line="153"/>
+        <location filename="../config/configplacement.ui" line="109"/>
+        <location filename="../config/configplacement.ui" line="153"/>
         <source> px</source>
-        <translation></translation>
+        <translation> px</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="166"/>
+        <location filename="../config/configplacement.ui" line="166"/>
         <source>Icon size:</source>
         <translation>اندازه آیکون:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="202"/>
-        <source>Alignment &amp;&amp; position</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="250"/>
-        <source>A&amp;uto-hide</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="262"/>
-        <location filename="../config/configpanelwidget.ui" line="285"/>
-        <source>Zero means no animation</source>
-        <translation>صفر به معنای عدم اجرای انیمیشن است</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="288"/>
-        <location filename="../config/configpanelwidget.ui" line="314"/>
-        <source> ms</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="301"/>
-        <location filename="../config/configpanelwidget.ui" line="311"/>
-        <source>Zero means no delay</source>
-        <translation>صفر به معنای بدون وقفه می‌باشد</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="304"/>
-        <source>Show with delay:</source>
-        <translation>نمایش با وقفه:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="327"/>
-        <source>Visible thin margin for hidden panel</source>
-        <translation>حاشیه نازک قابل مشاهده برای پنل پنهان</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="337"/>
-        <source>Don&apos;t allow maximized windows go under the panel window</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="340"/>
-        <source>Reserve space on display</source>
-        <translation>رزرو فضا بر روی صفحه نمایش</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="568"/>
-        <source>A partial workaround for widget styles that
-cannot give a separate theme to the panel.
-
-You might also want to disable:
-
-LXQt Appearance Configuration →
-Icons Theme →
-Colorize icons based on widget style (palette)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="578"/>
-        <source>Override icon &amp;theme</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="593"/>
-        <source>Icon theme for panels:</source>
-        <translation>تم آیکون برای پنل‌ها:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="237"/>
-        <source>Position:</source>
-        <translation>موقعیت:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="265"/>
-        <source>Animation duration:</source>
-        <translation>مدت زمان انیمیشن:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="208"/>
-        <source>Alignment:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="173"/>
+        <location filename="../config/configplacement.ui" line="173"/>
         <source>Rows:</source>
         <translation>سطر ها:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="219"/>
-        <location filename="../config/configpanelwidget.cpp" line="211"/>
+        <location filename="../config/configplacement.ui" line="202"/>
+        <source>Alignment &amp;&amp; position</source>
+        <translation>هم ترازی &amp;&amp; موقعیت</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="208"/>
+        <source>Alignment:</source>
+        <translation>هم ترازی:</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="219"/>
+        <location filename="../config/configplacement.cpp" line="188"/>
         <source>Left</source>
         <translation>چپ</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="224"/>
-        <location filename="../config/configpanelwidget.cpp" line="212"/>
-        <location filename="../config/configpanelwidget.cpp" line="218"/>
+        <location filename="../config/configplacement.ui" line="224"/>
+        <location filename="../config/configplacement.cpp" line="189"/>
+        <location filename="../config/configplacement.cpp" line="195"/>
         <source>Center</source>
         <translation>مرکز</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="229"/>
-        <location filename="../config/configpanelwidget.cpp" line="213"/>
+        <location filename="../config/configplacement.ui" line="229"/>
+        <location filename="../config/configplacement.cpp" line="190"/>
         <source>Right</source>
         <translation>راست</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="356"/>
-        <source>Custom styling</source>
-        <translation></translation>
+        <location filename="../config/configplacement.ui" line="237"/>
+        <source>Position:</source>
+        <translation>موقعیت:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="377"/>
-        <source>Font color:</source>
-        <translation>رنگ قلم:</translation>
+        <location filename="../config/configplacement.ui" line="250"/>
+        <source>A&amp;uto-hide</source>
+        <translation>پنهان کردن&amp;خودکار</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="417"/>
-        <source>Background color:</source>
-        <translation>رنگ پس زمینه:</translation>
+        <location filename="../config/configplacement.ui" line="262"/>
+        <location filename="../config/configplacement.ui" line="285"/>
+        <source>Zero means no animation</source>
+        <translation>صفر به معنای عدم اجرای انیمیشن است</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="456"/>
-        <source>Background opacity:</source>
-        <translation>شفافیت پس زمینه:</translation>
+        <location filename="../config/configplacement.ui" line="265"/>
+        <source>Animation duration:</source>
+        <translation>مدت زمان انیمیشن:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="488"/>
-        <source>&lt;small&gt;Compositing is required for panel transparency.&lt;/small&gt;</source>
-        <translation></translation>
+        <location filename="../config/configplacement.ui" line="288"/>
+        <location filename="../config/configplacement.ui" line="314"/>
+        <source> ms</source>
+        <translation> ms</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="516"/>
-        <source>Background image:</source>
-        <translation>تصویر پس زمینه:</translation>
+        <location filename="../config/configplacement.ui" line="301"/>
+        <location filename="../config/configplacement.ui" line="311"/>
+        <source>Zero means no delay</source>
+        <translation>صفر به معنای بدون وقفه می‌باشد</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="177"/>
+        <location filename="../config/configplacement.ui" line="304"/>
+        <source>Show with delay:</source>
+        <translation>نمایش با وقفه:</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="327"/>
+        <source>Visible thin margin for hidden panel</source>
+        <translation>حاشیه نازک قابل مشاهده برای پنل پنهان</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="334"/>
+        <source>Hide only on overlapping a window</source>
+        <translation>فقط در صورت همپوشانی یک پنجره پنهان شود</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="344"/>
+        <source>Don&apos;t allow maximized windows go under the panel window</source>
+        <translation>اجازه ندهید پنجره‌های حداکثری شده زیر پنجره پانل بروند</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="347"/>
+        <source>Reserve space on display</source>
+        <translation>رزرو فضا بر روی صفحه نمایش</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.cpp" line="154"/>
         <source>Top of desktop</source>
         <translation>بالای دسکتاپ</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="178"/>
+        <location filename="../config/configplacement.cpp" line="155"/>
         <source>Left of desktop</source>
         <translation>سمت چپ دسکتاپ</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="179"/>
+        <location filename="../config/configplacement.cpp" line="156"/>
         <source>Right of desktop</source>
         <translation>سمت راست دسکتاپ</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="180"/>
+        <location filename="../config/configplacement.cpp" line="157"/>
         <source>Bottom of desktop</source>
         <translation>پایین دسکتاپ</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="189"/>
+        <location filename="../config/configplacement.cpp" line="166"/>
         <source>Top of desktop %1</source>
         <translation>بالای دسکتاپ %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="190"/>
+        <location filename="../config/configplacement.cpp" line="167"/>
         <source>Left of desktop %1</source>
         <translation>سمت چپ دسکتاپ %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="191"/>
+        <location filename="../config/configplacement.cpp" line="168"/>
         <source>Right of desktop %1</source>
         <translation>سمت راست دسکتاپ %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="192"/>
+        <location filename="../config/configplacement.cpp" line="169"/>
         <source>Bottom of desktop %1</source>
         <translation>پایین دسکتاپ %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="217"/>
+        <location filename="../config/configplacement.cpp" line="194"/>
         <source>Top</source>
         <translation>بالا</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="219"/>
+        <location filename="../config/configplacement.cpp" line="196"/>
         <source>Bottom</source>
         <translation>پایین</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.cpp" line="439"/>
-        <location filename="../config/configpanelwidget.cpp" line="455"/>
-        <source>Pick color</source>
-        <translation>انتخاب رنگ</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.cpp" line="473"/>
-        <source>Pick image</source>
-        <translation>انتخاب تصویر</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.cpp" line="473"/>
-        <source>Images (*.png *.gif *.jpg)</source>
-        <translation>تصاویر (*.png *.gif *.jpg)</translation>
     </message>
 </context>
 <context>
@@ -349,47 +291,130 @@ Colorize icons based on widget style (palette)</source>
     </message>
 </context>
 <context>
+    <name>ConfigStyling</name>
+    <message>
+        <location filename="../config/configstyling.ui" line="20"/>
+        <source>Configure Styling</source>
+        <translation>پیکربندی یک حالت دهنده</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="44"/>
+        <source>Custom styling</source>
+        <translation>حالت دهنده سفارشی</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="65"/>
+        <source>Font color:</source>
+        <translation>رنگ قلم:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="105"/>
+        <source>Background color:</source>
+        <translation>رنگ پس زمینه:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="144"/>
+        <source>Background opacity:</source>
+        <translation>شفافیت پس زمینه:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="176"/>
+        <source>&lt;small&gt;Compositing is required for panel transparency.&lt;/small&gt;</source>
+        <translation>&lt;small&gt;ترکیب برای شفافیت پانل مورد نیاز است.&lt;/small&gt;</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="204"/>
+        <source>Background image:</source>
+        <translation>تصویر پس زمینه:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="256"/>
+        <source>A partial workaround for widget styles that
+cannot give a separate theme to the panel.
+
+You might also want to disable:
+
+LXQt Appearance Configuration →
+Icons Theme →
+Colorize icons based on widget style (palette)</source>
+        <translation>یک راه حل جزئی برای سبک های ویجت که
+نمی توان موضوع جداگانه ای به پنل داد.
+
+همچنین ممکن است بخواهید غیرفعال کنید:
+
+پیکربندی ظاهر LXQt →
+تم نمادها →
+رنگ آمیزی نمادها بر اساس سبک ویجت (پالت)</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="266"/>
+        <source>Override icon &amp;theme</source>
+        <translation>لغو نماد و طرح زمینه</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="281"/>
+        <source>Icon theme for panels:</source>
+        <translation>تم آیکون برای پنل‌ها:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.cpp" line="189"/>
+        <location filename="../config/configstyling.cpp" line="205"/>
+        <source>Pick color</source>
+        <translation>انتخاب رنگ</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.cpp" line="223"/>
+        <source>Pick image</source>
+        <translation>انتخاب تصویر</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.cpp" line="223"/>
+        <source>Images (*.png *.gif *.jpg *.svg)</source>
+        <translation>تصاویر (*.png *.gif *.jpg *.svg)</translation>
+    </message>
+</context>
+<context>
     <name>LXQtPanel</name>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1130"/>
-        <location filename="../lxqtpanel.cpp" line="1156"/>
+        <location filename="../lxqtpanel.cpp" line="1419"/>
+        <location filename="../lxqtpanel.cpp" line="1445"/>
         <source>Panel</source>
         <translation>پنل</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1159"/>
+        <location filename="../lxqtpanel.cpp" line="1448"/>
         <source>Configure Panel</source>
         <translation>پیکربندی پنل</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1164"/>
+        <location filename="../lxqtpanel.cpp" line="1453"/>
         <source>Manage Widgets</source>
         <translation>مدیریت ابزارک ها</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1170"/>
+        <location filename="../lxqtpanel.cpp" line="1459"/>
         <source>Add New Panel</source>
         <translation>افزودن پنل جدید</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1177"/>
+        <location filename="../lxqtpanel.cpp" line="1466"/>
         <source>Remove Panel</source>
         <comment>Menu Item</comment>
         <translation>حذف پنل</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1182"/>
+        <location filename="../lxqtpanel.cpp" line="1471"/>
         <source>Lock This Panel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1338"/>
+        <location filename="../lxqtpanel.cpp" line="1634"/>
         <source>Remove Panel</source>
         <comment>Dialog Title</comment>
         <translation>حذف پنل</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1339"/>
+        <location filename="../lxqtpanel.cpp" line="1635"/>
         <source>Removing a panel can not be undone.
 Do you want to remove this panel?</source>
         <translation></translation>
@@ -398,17 +423,17 @@ Do you want to remove this panel?</source>
 <context>
     <name>Plugin</name>
     <message>
-        <location filename="../plugin.cpp" line="436"/>
+        <location filename="../plugin.cpp" line="445"/>
         <source>Configure &quot;%1&quot;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../plugin.cpp" line="441"/>
+        <location filename="../plugin.cpp" line="450"/>
         <source>Move &quot;%1&quot;</source>
         <translation>انتقال &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../plugin.cpp" line="449"/>
+        <location filename="../plugin.cpp" line="458"/>
         <source>Remove &quot;%1&quot;</source>
         <translation>حذف &quot;%1&quot;</translation>
     </message>
@@ -416,12 +441,12 @@ Do you want to remove this panel?</source>
 <context>
     <name>main</name>
     <message>
-        <location filename="../lxqtpanelapplication.cpp" line="95"/>
+        <location filename="../lxqtpanelapplication.cpp" line="340"/>
         <source>Use alternate configuration file.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../lxqtpanelapplication.cpp" line="96"/>
+        <location filename="../lxqtpanelapplication.cpp" line="341"/>
         <source>Configuration file</source>
         <translation>پرونده پیکربندی</translation>
     </message>

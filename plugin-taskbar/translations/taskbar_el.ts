@@ -4,7 +4,7 @@
 <context>
     <name>LXQtTaskBar</name>
     <message>
-        <location filename="../lxqttaskbar.cpp" line="681"/>
+        <location filename="../lxqttaskbar.cpp" line="649"/>
         <source>Activate task %1</source>
         <translation>Ενεργοποίηση της εργασίας %1</translation>
     </message>
@@ -12,107 +12,107 @@
 <context>
     <name>LXQtTaskButton</name>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="679"/>
+        <location filename="../lxqttaskbutton.cpp" line="546"/>
         <source>Application</source>
         <translation>Εφαρμογή</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="713"/>
+        <location filename="../lxqttaskbutton.cpp" line="580"/>
         <source>To &amp;Desktop</source>
         <translation>Στην επι&amp;φάνεια εργασίας</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="715"/>
+        <location filename="../lxqttaskbutton.cpp" line="583"/>
         <source>&amp;All Desktops</source>
         <translation>Ό&amp;λες οι επιφάνειες εργασίας</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="723"/>
+        <location filename="../lxqttaskbutton.cpp" line="593"/>
         <source>Desktop &amp;%1</source>
         <translation>Επιφάνεια εργασίας &amp;%1</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="730"/>
+        <location filename="../lxqttaskbutton.cpp" line="603"/>
         <source>&amp;To Current Desktop</source>
         <translation>Στ&amp;ην τρέχουσα επιφάνεια εργασίας</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="739"/>
-        <source>Move To &amp;Next Monitor</source>
+        <location filename="../lxqttaskbutton.cpp" line="612"/>
+        <source>Move To N&amp;ext Monitor</source>
         <translation>Μετακίνηση στην &amp;επόμενη οθόνη</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="742"/>
+        <location filename="../lxqttaskbutton.cpp" line="618"/>
         <source>Move To &amp;Previous Monitor</source>
         <translation>Μετακίνηση στην π&amp;ροηγούμενη οθόνη</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="746"/>
+        <location filename="../lxqttaskbutton.cpp" line="624"/>
         <source>&amp;Move</source>
         <translation>&amp;Μετακίνηση</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="749"/>
+        <location filename="../lxqttaskbutton.cpp" line="629"/>
         <source>Resi&amp;ze</source>
         <translation>Αλλαγή &amp;μεγέθους</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="756"/>
+        <location filename="../lxqttaskbutton.cpp" line="638"/>
         <source>Ma&amp;ximize</source>
         <translation>&amp;Μεγιστοποίηση</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="763"/>
+        <location filename="../lxqttaskbutton.cpp" line="647"/>
         <source>Maximize vertically</source>
         <translation>Μεγιστοποίηση κάθετα</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="768"/>
+        <location filename="../lxqttaskbutton.cpp" line="654"/>
         <source>Maximize horizontally</source>
         <translation>Μεγιστοποίηση οριζόντια</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="774"/>
+        <location filename="../lxqttaskbutton.cpp" line="662"/>
         <source>&amp;Restore</source>
         <translation>&amp;Επαναφορά</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="778"/>
+        <location filename="../lxqttaskbutton.cpp" line="670"/>
         <source>Mi&amp;nimize</source>
         <translation>Ελα&amp;χιστοποίηση</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="784"/>
+        <location filename="../lxqttaskbutton.cpp" line="678"/>
         <source>Roll down</source>
         <translation>Κύλιση κάτω</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="790"/>
+        <location filename="../lxqttaskbutton.cpp" line="686"/>
         <source>Roll up</source>
         <translation>Κύλιση επάνω</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="798"/>
+        <location filename="../lxqttaskbutton.cpp" line="695"/>
         <source>&amp;Layer</source>
         <translation>Στ&amp;ρώση</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="800"/>
+        <location filename="../lxqttaskbutton.cpp" line="700"/>
         <source>Always on &amp;top</source>
         <translation>Πάντα ε&amp;πάνω</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="806"/>
+        <location filename="../lxqttaskbutton.cpp" line="705"/>
         <source>&amp;Normal</source>
         <translation>Κα&amp;νονικό</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="812"/>
+        <location filename="../lxqttaskbutton.cpp" line="710"/>
         <source>Always on &amp;bottom</source>
         <translation>Πάντα &amp;κάτω</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="820"/>
+        <location filename="../lxqttaskbutton.cpp" line="717"/>
         <source>&amp;Close</source>
         <translation>Κλεί&amp;σιμο</translation>
     </message>
@@ -120,12 +120,12 @@
 <context>
     <name>LXQtTaskGroup</name>
     <message>
-        <location filename="../lxqttaskgroup.cpp" line="82"/>
+        <location filename="../lxqttaskgroup.cpp" line="84"/>
         <source>Group</source>
         <translation>Ομάδα</translation>
     </message>
     <message>
-        <location filename="../lxqttaskgroup.cpp" line="84"/>
+        <location filename="../lxqttaskgroup.cpp" line="86"/>
         <source>Close group</source>
         <translation>Κλείσιμο της ομάδας</translation>
     </message>
@@ -163,7 +163,18 @@
         <translation>Ανύψωση των ελαχιστοποιημένων παραθύρων στην τρέχουσα επιφάνεια εργασίας</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="49"/>
+        <location filename="../lxqttaskbarconfiguration.ui" line="254"/>
+        <location filename="../lxqttaskbarconfiguration.ui" line="264"/>
+        <source>Comma separated list of window classes</source>
+        <translation>Κατάστιχο κλάσεων παραθύρου διαχωρισμένες με κόμμα</translation>
+    </message>
+    <message>
+        <location filename="../lxqttaskbarconfiguration.ui" line="257"/>
+        <source>Exclude from taskbar</source>
+        <translation>Εξαίρεση από την γραμμή εργασιών</translation>
+    </message>
+    <message>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="51"/>
         <source>Cycle windows on wheel scrolling</source>
         <translation>Εναλλαγή παραθύρων κατά την περιστροφή της ρόδας του ποντικιού</translation>
     </message>
@@ -235,47 +246,47 @@
         <translation>Κλείσιμο με μεσαίο κλικ</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="44"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="46"/>
         <source>Icon and text</source>
         <translation>Εικόνα και κείμενο</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="45"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="47"/>
         <source>Only icon</source>
         <translation>Μόνο εικόνα</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="46"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="48"/>
         <source>Only text</source>
         <translation>Μόνο κείμενο</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="48"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="50"/>
         <source>Disabled</source>
         <translation>Απενεργοποιημένο</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="50"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="52"/>
         <source>Scroll up to raise, down to minimize</source>
         <translation>Κύλιση πάνω για ανύψωση, κάτω για ελαχιστοποίηση</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="51"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="53"/>
         <source>Scroll up to minimize, down to raise</source>
         <translation>Κύλιση πάνω για ελαχιστοποίηση, κάτω για ανύψωση</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="52"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="54"/>
         <source>Scroll up to move to next desktop, down to previous</source>
         <translation>Κύλιση προς τα πάνω για μετάβαση στην επόμενη επιφάνεια εργασίας, προς τα κάτω για την προηγούμενη</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="53"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="55"/>
         <source>Scroll up to move to previous desktop, down to next</source>
         <translation>Κύλιση προς τα πάνω για μετάβαση στην προηγούμενη επιφάνεια εργασίας, προς τα κάτω για την επόμενη</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="55"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="60"/>
         <source>Current</source>
         <translatorcomment>Επιφάνεια εργασίας</translatorcomment>
         <translation>Τρέχουσα</translation>

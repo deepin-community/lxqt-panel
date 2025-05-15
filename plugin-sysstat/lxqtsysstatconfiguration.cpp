@@ -86,7 +86,8 @@ LXQtSysStatConfiguration::LXQtSysStatConfiguration(PluginSettings *settings, QWi
     LXQtPanelPluginConfigDialog(settings, parent),
     ui(new Ui::LXQtSysStatConfiguration),
     mStat(nullptr),
-    mColoursDialog(nullptr)
+    mColoursDialog(nullptr),
+    mLockSettingChanges(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setObjectName(QStringLiteral("SysStatConfigurationWindow"));
@@ -117,6 +118,8 @@ LXQtSysStatConfiguration::~LXQtSysStatConfiguration()
 
 void LXQtSysStatConfiguration::loadSettings()
 {
+    mLockSettingChanges = true;
+
     ui->intervalSB->setValue(settings().value(QStringLiteral("graph/updateInterval"), 1.0).toDouble());
     ui->sizeSB->setValue(settings().value(QStringLiteral("graph/minimalSize"), 30).toInt());
 
@@ -141,10 +144,15 @@ void LXQtSysStatConfiguration::loadSettings()
     ui->useThemeColoursRB->setChecked(useThemeColours);
     ui->useCustomColoursRB->setChecked(!useThemeColours);
     ui->customColoursB->setEnabled(!useThemeColours);
+
+    mLockSettingChanges = false;
 }
 
 void LXQtSysStatConfiguration::saveSettings()
 {
+    if (mLockSettingChanges)
+        return;
+
     settings().setValue(QStringLiteral("graph/useThemeColours"), ui->useThemeColoursRB->isChecked());
     settings().setValue(QStringLiteral("graph/updateInterval"), ui->intervalSB->value());
     settings().setValue(QStringLiteral("graph/minimalSize"), ui->sizeSB->value());
@@ -154,8 +162,8 @@ void LXQtSysStatConfiguration::saveSettings()
     settings().setValue(QStringLiteral("title/label"), ui->titleLE->text());
 
     //Note:
-    // need to make a realy deep copy of the msStatTypes[x] because of SEGFAULTs
-    // occuring in static finalization time (don't know the real reason...maybe ordering of static finalizers/destructors)
+    // need to make a really deep copy of the msStatTypes[x] because of SEGFAULTs
+    // occurring in static finalization time (don't know the real reason...maybe ordering of static finalizers/destructors)
     QString type = QString::fromUtf8(ui->typeCOB->itemData(ui->typeCOB->currentIndex(), Qt::UserRole).toString().toStdString().c_str());
     settings().setValue(QStringLiteral("data/type"), type);
     settings().setValue(QStringLiteral("data/source"), ui->sourceCOB->itemData(ui->sourceCOB->currentIndex(), Qt::UserRole));
@@ -227,7 +235,7 @@ void LXQtSysStatConfiguration::on_customColoursB_clicked()
     if (!mColoursDialog)
     {
         mColoursDialog = new LXQtSysStatColours(this);
-        connect(mColoursDialog, SIGNAL(coloursChanged()), SLOT(coloursChanged()));
+        connect(mColoursDialog, &LXQtSysStatColours::coloursChanged, this, &LXQtSysStatConfiguration::coloursChanged);
     }
 
     LXQtSysStatColours::Colours colours;

@@ -40,12 +40,12 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Layout</source>
         <translation>פריסה</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Variant</source>
         <translation>הגוון</translation>
     </message>
@@ -54,7 +54,7 @@
     <name>KbdStateConfig</name>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="14"/>
-        <source>Keyboard state settings</source>
+        <source>Keyboard State Settings</source>
         <translation>הגדרות מצב מקלדת</translation>
     </message>
     <message>

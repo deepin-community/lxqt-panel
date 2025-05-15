@@ -4,45 +4,46 @@
 <context>
     <name>LXQtMainMenu</name>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="106"/>
+        <location filename="../lxqtmainmenu.cpp" line="117"/>
         <source>Search...</source>
         <translation>Пошук...</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="114"/>
+        <location filename="../lxqtmainmenu.cpp" line="127"/>
         <source>Show/hide main menu</source>
         <translation>Показати/сховати головне меню</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="496"/>
+        <location filename="../lxqtmainmenu.cpp" line="530"/>
         <source>Add to desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Додати стільницю</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="504"/>
+        <location filename="../lxqtmainmenu.cpp" line="538"/>
         <source>Question</source>
-        <translation type="unfinished"></translation>
+        <translation>Питання</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="505"/>
+        <location filename="../lxqtmainmenu.cpp" line="539"/>
         <source>A file with the same name already exists.
 Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл з такою назвою вже існує.
+Хочете перезаписати його?</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="511"/>
+        <location filename="../lxqtmainmenu.cpp" line="545"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Попередження</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="512"/>
+        <location filename="../lxqtmainmenu.cpp" line="546"/>
         <source>The file cannot be overwritten.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл не можна перезаписати.</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="518"/>
+        <location filename="../lxqtmainmenu.cpp" line="552"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Копіювати</translation>
     </message>
 </context>
 <context>
@@ -54,13 +55,13 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="14"/>
-        <source>Main Menu settings</source>
+        <source>Main Menu Settings</source>
         <translation>Налаштування головного меню</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="35"/>
         <source>Icon:</source>
-        <translation>Значок:</translation>
+        <translation>Піктограма:</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="59"/>
@@ -75,7 +76,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="86"/>
         <source> pt</source>
-        <translation> пт</translation>
+        <translation> pt</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="105"/>
@@ -95,7 +96,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="162"/>
         <source>Max. item width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Найбільша довжина елемента:</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="169"/>
@@ -115,7 +116,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="197"/>
         <source> px</source>
-        <translation> пт</translation>
+        <translation> px</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="210"/>
@@ -125,7 +126,7 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="217"/>
         <source>Clear search upon showing menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Очищати пошук перед показом меню</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="127"/>
@@ -138,27 +139,27 @@ Do you want to overwrite it?</source>
         <translation>Натисніть кнопку, щоб змінити клавіатурне скорочення:</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="72"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="76"/>
         <source>Reset</source>
         <translation>Скинути</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="166"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="176"/>
         <source>Choose icon file</source>
-        <translation>Вибрати файл значка</translation>
+        <translation>Вибрати файл піктограми</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="168"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="178"/>
         <source>Images (*.svg *.png)</source>
-        <translation>Малюнки (*.svg *.png) </translation>
+        <translation>Зображення (*.svg *.png)</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="180"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="190"/>
         <source>Choose menu file</source>
         <translation>Оберіть файл меню</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="182"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="192"/>
         <source>Menu files (*.menu)</source>
         <translation>Файли меню (*.menu)</translation>
     </message>

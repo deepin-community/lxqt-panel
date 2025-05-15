@@ -4,45 +4,46 @@
 <context>
     <name>LXQtMainMenu</name>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="106"/>
+        <location filename="../lxqtmainmenu.cpp" line="117"/>
         <source>Search...</source>
         <translation>搜尋...</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="114"/>
+        <location filename="../lxqtmainmenu.cpp" line="127"/>
         <source>Show/hide main menu</source>
         <translation>顯示/隱藏 主選單</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="496"/>
+        <location filename="../lxqtmainmenu.cpp" line="530"/>
         <source>Add to desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>加到桌面</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="504"/>
+        <location filename="../lxqtmainmenu.cpp" line="538"/>
         <source>Question</source>
-        <translation type="unfinished"></translation>
+        <translation>問題</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="505"/>
+        <location filename="../lxqtmainmenu.cpp" line="539"/>
         <source>A file with the same name already exists.
 Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>已經有同樣名稱的檔案。
+您要覆蓋它嗎？</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="511"/>
+        <location filename="../lxqtmainmenu.cpp" line="545"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>警告</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="512"/>
+        <location filename="../lxqtmainmenu.cpp" line="546"/>
         <source>The file cannot be overwritten.</source>
-        <translation type="unfinished"></translation>
+        <translation>這個檔案無法被覆蓋。</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="518"/>
+        <location filename="../lxqtmainmenu.cpp" line="552"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>複製</translation>
     </message>
 </context>
 <context>
@@ -54,7 +55,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="14"/>
-        <source>Main Menu settings</source>
+        <source>Main Menu Settings</source>
         <translation>主選單設定</translation>
     </message>
     <message>
@@ -138,27 +139,27 @@ Do you want to overwrite it?</source>
         <translation>按下按鈕並設定為快捷鍵：</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="72"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="76"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="166"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="176"/>
         <source>Choose icon file</source>
         <translation>選擇圖示檔案</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="168"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="178"/>
         <source>Images (*.svg *.png)</source>
         <translation>圖片 (*.svg *.png)</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="180"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="190"/>
         <source>Choose menu file</source>
         <translation>選擇選單文件</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="182"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="192"/>
         <source>Menu files (*.menu)</source>
         <translation>選單文件 (*.menu)</translation>
     </message>

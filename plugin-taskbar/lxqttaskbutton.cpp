@@ -28,8 +28,9 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "lxqttaskbutton.h"
-#include "lxqttaskgroup.h"
 #include "lxqttaskbar.h"
+
+#include "../panel/ilxqtpanelplugin.h"
 
 #include <LXQt/Settings>
 
@@ -47,17 +48,11 @@
 #include <QDragEnterEvent>
 #include <QStylePainter>
 #include <QStyleOptionToolButton>
-#include <QDesktopWidget>
 #include <QScreen>
 
-#include "lxqttaskbutton.h"
-#include "lxqttaskgroup.h"
-#include "lxqttaskbar.h"
+#include "../panel/backends/ilxqtabstractwmiface.h"
 
-#include <KWindowSystem/KWindowSystem>
-// Necessary for closeApplication()
-#include <KWindowSystem/NETWM>
-#include <QX11Info>
+
 
 bool LXQtTaskButton::sDraggging = false;
 
@@ -82,6 +77,7 @@ void LeftAlignedTextStyle::drawItemText(QPainter * painter, const QRect & rect, 
 ************************************************/
 LXQtTaskButton::LXQtTaskButton(const WId window, LXQtTaskBar * taskbar, QWidget *parent) :
     QToolButton(parent),
+    mBackend(taskbar->getBackend()),
     mWindow(window),
     mUrgencyHint(false),
     mOrigin(Qt::TopLeftCorner),
@@ -107,33 +103,32 @@ LXQtTaskButton::LXQtTaskButton(const WId window, LXQtTaskBar * taskbar, QWidget 
 
     mDNDTimer->setSingleShot(true);
     mDNDTimer->setInterval(700);
-    connect(mDNDTimer, SIGNAL(timeout()), this, SLOT(activateWithDraggable()));
+    connect(mDNDTimer, &QTimer::timeout, this, &LXQtTaskButton::raiseApplication);
 
     mWheelTimer->setSingleShot(true);
     mWheelTimer->setInterval(250);
-    connect(mWheelTimer, &QTimer::timeout, [this] {
+    connect(mWheelTimer, &QTimer::timeout, this, [this] {
         mWheelDelta = 0; // forget previous wheel deltas
     });
 
-    connect(LXQt::Settings::globalSettings(), SIGNAL(iconThemeChanged()), this, SLOT(updateIcon()));
-    connect(mParentTaskBar, &LXQtTaskBar::iconByClassChanged, this, &LXQtTaskButton::updateIcon);
+    setUrgencyHint(mBackend->applicationDemandsAttention(mWindow));
+
+    connect(LXQt::Settings::globalSettings(), &LXQt::GlobalSettings::iconThemeChanged, this, &LXQtTaskButton::updateIcon);
+    connect(mParentTaskBar,                   &LXQtTaskBar::iconByClassChanged,        this, &LXQtTaskButton::updateIcon);
 }
 
 /************************************************
 
 ************************************************/
-LXQtTaskButton::~LXQtTaskButton()
-{
-}
+LXQtTaskButton::~LXQtTaskButton() = default;
 
 /************************************************
 
  ************************************************/
 void LXQtTaskButton::updateText()
 {
-    KWindowInfo info(mWindow, NET::WMVisibleName | NET::WMName);
-    QString title = info.visibleName().isEmpty() ? info.name() : info.visibleName();
-    setText(title.replace(QStringLiteral("&"), QStringLiteral("&&")));
+    QString title = mBackend->getWindowTitle(mWindow);
+    setTextExplicitly(title.replace(QStringLiteral("&"), QStringLiteral("&&")));
     setToolTip(title);
 }
 
@@ -145,47 +140,14 @@ void LXQtTaskButton::updateIcon()
     QIcon ico;
     if (mParentTaskBar->isIconByClass())
     {
-        ico = XdgIcon::fromTheme(QString::fromUtf8(KWindowInfo{mWindow, NET::Properties(), NET::WM2WindowClass}.windowClassClass()).toLower());
+        ico = XdgIcon::fromTheme(mBackend->getWindowClass(mWindow).toLower());
     }
     if (ico.isNull())
     {
-#if QT_VERSION >= 0x050600
         int devicePixels = mIconSize * devicePixelRatioF();
-#else
-        int devicePixels = mIconSize * devicePixelRatio();
-#endif
-        ico = KWindowSystem::icon(mWindow, devicePixels, devicePixels);
+        ico = mBackend->getApplicationIcon(mWindow, devicePixels);
     }
     setIcon(ico.isNull() ? XdgIcon::defaultApplicationIcon() : ico);
-}
-
-/************************************************
-
- ************************************************/
-void LXQtTaskButton::refreshIconGeometry(QRect const & geom)
-{
-    xcb_connection_t* x11conn = QX11Info::connection();
-
-    if (!x11conn) {
-        return;
-    }
-
-    NETWinInfo info(x11conn,
-                    windowId(),
-                    (WId) QX11Info::appRootWindow(),
-                    NET::WMIconGeometry,
-                    NET::Properties2());
-    NETRect const curr = info.iconGeometry();
-    if (curr.pos.x != geom.x() || curr.pos.y != geom.y()
-            || curr.size.width != geom.width() || curr.size.height != geom.height())
-    {
-        NETRect nrect;
-        nrect.pos.x = geom.x();
-        nrect.pos.y = geom.y();
-        nrect.size.height = geom.height();
-        nrect.size.width = geom.width();
-        info.setIconGeometry(nrect);
-    }
 }
 
 /************************************************
@@ -218,7 +180,7 @@ void LXQtTaskButton::dragEnterEvent(QDragEnterEvent *event)
     event->acceptProposedAction();
     if (event->mimeData()->hasFormat(mimeDataFormat()))
     {
-        emit dragging(event->source(), event->pos());
+        emit dragging(event->source(), event->position().toPoint());
         setAttribute(Qt::WA_UnderMouse, false);
     } else
     {
@@ -232,7 +194,7 @@ void LXQtTaskButton::dragMoveEvent(QDragMoveEvent * event)
 {
     if (event->mimeData()->hasFormat(mimeDataFormat()))
     {
-        emit dragging(event->source(), event->pos());
+        emit dragging(event->source(), event->position().toPoint());
         setAttribute(Qt::WA_UnderMouse, false);
     }
 }
@@ -248,7 +210,7 @@ void LXQtTaskButton::dropEvent(QDropEvent *event)
     mDNDTimer->stop();
     if (event->mimeData()->hasFormat(mimeDataFormat()))
     {
-        emit dropped(event->source(), event->pos());
+        emit dropped(event->source(), event->position().toPoint());
         setAttribute(Qt::WA_UnderMouse, false);
     }
     QToolButton::dropEvent(event);
@@ -263,7 +225,7 @@ void LXQtTaskButton::mousePressEvent(QMouseEvent* event)
 
     if (Qt::LeftButton == b)
         mDragStartPosition = event->pos();
-    else if (Qt::MidButton == b && parentTaskBar()->closeOnMiddleClick())
+    else if (Qt::MiddleButton == b && parentTaskBar()->closeOnMiddleClick())
         closeApplication();
 
     QToolButton::mousePressEvent(event);
@@ -352,6 +314,30 @@ QMimeData * LXQtTaskButton::mimeData()
     return mimedata;
 }
 
+/*!
+ * \brief LXQtTaskButton::setTextExplicitly
+ * \param str
+ *
+ * This is needed to workaround flickering caused by KAcceleratorManager
+ * This class is hooked by KDE Integration and adds accelerators to button text
+ * (Adds some '&' characters)
+ * This triggers widget update but soon after text is reset to original value
+ * This triggers a KAcceleratorManager update which again adds accelerator
+ * This happens in loop
+ *
+ * TODO: investigate proper solution
+ */
+void LXQtTaskButton::setTextExplicitly(const QString &str)
+{
+    if(str == mExplicitlySetText)
+    {
+        return;
+    }
+
+    mExplicitlySetText = str;
+    setText(mExplicitlySetText);
+}
+
 /************************************************
 
  ************************************************/
@@ -361,7 +347,7 @@ void LXQtTaskButton::mouseMoveEvent(QMouseEvent* event)
     if (!(event->buttons() & Qt::LeftButton))
         return;
 
-    if ((event->pos() - mDragStartPosition).manhattanLength() < QApplication::startDragDistance())
+    if ((event->position().toPoint() - mDragStartPosition).manhattanLength() < QApplication::startDragDistance())
         return;
 
     QDrag *drag = new QDrag(this);
@@ -390,7 +376,9 @@ void LXQtTaskButton::mouseMoveEvent(QMouseEvent* event)
 
     // release mouse appropriately, by positioning the event outside
     // the button rectangle (otherwise, the button will be toggled)
-    QMouseEvent releasingEvent(QEvent::MouseButtonRelease, QPoint(-1,-1), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    QMouseEvent releasingEvent(QEvent::MouseButtonRelease,
+                               QPoint(-1,-1), mapToGlobal(QPoint(-1, -1)),
+                               Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
     mouseReleaseEvent(&releasingEvent);
 
     sDraggging = false;
@@ -401,8 +389,7 @@ void LXQtTaskButton::mouseMoveEvent(QMouseEvent* event)
  ************************************************/
 bool LXQtTaskButton::isApplicationHidden() const
 {
-    KWindowInfo info(mWindow, NET::WMState);
-    return (info.state() & NET::Hidden);
+    return false; //FIXME: unused
 }
 
 /************************************************
@@ -410,18 +397,7 @@ bool LXQtTaskButton::isApplicationHidden() const
  ************************************************/
 bool LXQtTaskButton::isApplicationActive() const
 {
-    return KWindowSystem::activeWindow() == mWindow;
-}
-
-/************************************************
-
- ************************************************/
-void LXQtTaskButton::activateWithDraggable()
-{
-    // raise app in any time when there is a drag
-    // in progress to allow drop it into an app
-    raiseApplication();
-    KWindowSystem::forceActiveWindow(mWindow);
+    return mBackend->isWindowActive(mWindow);
 }
 
 /************************************************
@@ -429,20 +405,7 @@ void LXQtTaskButton::activateWithDraggable()
  ************************************************/
 void LXQtTaskButton::raiseApplication()
 {
-    KWindowInfo info(mWindow, NET::WMDesktop | NET::WMState | NET::XAWMState);
-    if (parentTaskBar()->raiseOnCurrentDesktop() && info.isMinimized())
-    {
-        KWindowSystem::setOnDesktop(mWindow, KWindowSystem::currentDesktop());
-    }
-    else
-    {
-        int winDesktop = info.desktop();
-        if (KWindowSystem::currentDesktop() != winDesktop)
-            KWindowSystem::setCurrentDesktop(winDesktop);
-    }
-    KWindowSystem::activateWindow(mWindow);
-
-    setUrgencyHint(false);
+    mBackend->raiseWindow(mWindow, parentTaskBar()->raiseOnCurrentDesktop());
 }
 
 /************************************************
@@ -450,7 +413,7 @@ void LXQtTaskButton::raiseApplication()
  ************************************************/
 void LXQtTaskButton::minimizeApplication()
 {
-    KWindowSystem::minimizeWindow(mWindow);
+    mBackend->setWindowState(mWindow, LXQtTaskBarWindowState::Minimized, true);
 }
 
 /************************************************
@@ -463,23 +426,10 @@ void LXQtTaskButton::maximizeApplication()
         return;
 
     int state = act->data().toInt();
-    switch (state)
-    {
-        case NET::MaxHoriz:
-            KWindowSystem::setState(mWindow, NET::MaxHoriz);
-            break;
+    mBackend->setWindowState(mWindow, LXQtTaskBarWindowState(state), true);
 
-        case NET::MaxVert:
-            KWindowSystem::setState(mWindow, NET::MaxVert);
-            break;
-
-        default:
-            KWindowSystem::setState(mWindow, NET::Max);
-            break;
-    }
-
-    if (!isApplicationActive())
-        raiseApplication();
+    if(!mBackend->isWindowActive(mWindow))
+        mBackend->raiseWindow(mWindow, parentTaskBar()->raiseOnCurrentDesktop());
 }
 
 /************************************************
@@ -487,10 +437,10 @@ void LXQtTaskButton::maximizeApplication()
  ************************************************/
 void LXQtTaskButton::deMaximizeApplication()
 {
-    KWindowSystem::clearState(mWindow, NET::Max);
+    mBackend->setWindowState(mWindow, LXQtTaskBarWindowState::Maximized, false);
 
-    if (!isApplicationActive())
-        raiseApplication();
+    if(!mBackend->isWindowActive(mWindow))
+        mBackend->raiseWindow(mWindow, parentTaskBar()->raiseOnCurrentDesktop());
 }
 
 /************************************************
@@ -498,7 +448,7 @@ void LXQtTaskButton::deMaximizeApplication()
  ************************************************/
 void LXQtTaskButton::shadeApplication()
 {
-    KWindowSystem::setState(mWindow, NET::Shaded);
+    mBackend->setWindowState(mWindow, LXQtTaskBarWindowState::RolledUp, true);
 }
 
 /************************************************
@@ -506,7 +456,7 @@ void LXQtTaskButton::shadeApplication()
  ************************************************/
 void LXQtTaskButton::unShadeApplication()
 {
-    KWindowSystem::clearState(mWindow, NET::Shaded);
+    mBackend->setWindowState(mWindow, LXQtTaskBarWindowState::RolledUp, false);
 }
 
 /************************************************
@@ -514,8 +464,7 @@ void LXQtTaskButton::unShadeApplication()
  ************************************************/
 void LXQtTaskButton::closeApplication()
 {
-    // FIXME: Why there is no such thing in KWindowSystem??
-    NETRootInfo(QX11Info::connection(), NET::CloseWindow).closeWindowRequest(mWindow);
+    mBackend->closeWindow(mWindow);
 }
 
 /************************************************
@@ -528,23 +477,7 @@ void LXQtTaskButton::setApplicationLayer()
         return;
 
     int layer = act->data().toInt();
-    switch(layer)
-    {
-        case NET::KeepAbove:
-            KWindowSystem::clearState(mWindow, NET::KeepBelow);
-            KWindowSystem::setState(mWindow, NET::KeepAbove);
-            break;
-
-        case NET::KeepBelow:
-            KWindowSystem::clearState(mWindow, NET::KeepAbove);
-            KWindowSystem::setState(mWindow, NET::KeepBelow);
-            break;
-
-        default:
-            KWindowSystem::clearState(mWindow, NET::KeepBelow);
-            KWindowSystem::clearState(mWindow, NET::KeepAbove);
-            break;
-    }
+    mBackend->setWindowLayer(mWindow, LXQtTaskBarWindowLayer(layer));
 }
 
 /************************************************
@@ -557,12 +490,12 @@ void LXQtTaskButton::moveApplicationToDesktop()
         return;
 
     bool ok;
-    int desk = act->data().toInt(&ok);
+    int idx = act->data().toInt(&ok);
 
     if (!ok)
         return;
 
-    KWindowSystem::setOnDesktop(mWindow, desk);
+    mBackend->setWindowOnWorkspace(mWindow, idx);
 }
 
 /************************************************
@@ -570,17 +503,7 @@ void LXQtTaskButton::moveApplicationToDesktop()
  ************************************************/
 void LXQtTaskButton::moveApplicationToPrevNextDesktop(bool next)
 {
-    int deskNum = KWindowSystem::numberOfDesktops();
-    if (deskNum <= 1)
-        return;
-    int targetDesk = KWindowInfo(mWindow, NET::WMDesktop).desktop() + (next ? 1 : -1);
-    // wrap around
-    if (targetDesk > deskNum)
-        targetDesk = 1;
-    else if (targetDesk < 1)
-        targetDesk = deskNum;
-
-    KWindowSystem::setOnDesktop(mWindow, targetDesk);
+    mBackend->moveApplicationToPrevNextDesktop(mWindow, next);
 }
 
 /************************************************
@@ -588,42 +511,7 @@ void LXQtTaskButton::moveApplicationToPrevNextDesktop(bool next)
  ************************************************/
 void LXQtTaskButton::moveApplicationToPrevNextMonitor(bool next)
 {
-    KWindowInfo info(mWindow, NET::WMDesktop);
-    if (!info.isOnCurrentDesktop())
-        KWindowSystem::setCurrentDesktop(info.desktop());
-    if (isMinimized())
-        KWindowSystem::unminimizeWindow(mWindow);
-    KWindowSystem::forceActiveWindow(mWindow);
-    const QRect& windowGeometry = KWindowInfo(mWindow, NET::WMFrameExtents).frameGeometry();
-    QList<QScreen *> screens = QGuiApplication::screens();
-    if (screens.size() > 1){
-        for (int i = 0; i < screens.size(); ++i)
-        {
-            QRect screenGeometry = screens[i]->geometry();
-            if (screenGeometry.intersects(windowGeometry))
-            {
-                int targetScreen = i + (next ? 1 : -1);
-                if (targetScreen < 0)
-                    targetScreen += screens.size();
-                else if (targetScreen >= screens.size())
-                    targetScreen -= screens.size();
-                QRect targetScreenGeometry = screens[targetScreen]->geometry();
-                int X = windowGeometry.x() - screenGeometry.x() + targetScreenGeometry.x();
-                int Y = windowGeometry.y() - screenGeometry.y() + targetScreenGeometry.y();
-                NET::States state = KWindowInfo(mWindow, NET::WMState).state();                
-                //      NW geometry |     y/x      |  from panel
-                const int flags = 1 | (0b011 << 8) | (0b010 << 12);
-                KWindowSystem::clearState(mWindow, NET::MaxHoriz | NET::MaxVert | NET::Max | NET::FullScreen);
-                NETRootInfo(QX11Info::connection(), 0, NET::WM2MoveResizeWindow).moveResizeWindowRequest(mWindow, flags, X, Y, 0, 0);            
-                QTimer::singleShot(200, this, [this, state]
-                {
-                    KWindowSystem::setState(mWindow, state);
-                    raiseApplication();
-                });
-                break;
-            }
-        }
-    }
+    mBackend->moveApplicationToPrevNextMonitor(mWindow, next, parentTaskBar()->raiseOnCurrentDesktop());
 }
 
 /************************************************
@@ -631,17 +519,7 @@ void LXQtTaskButton::moveApplicationToPrevNextMonitor(bool next)
  ************************************************/
 void LXQtTaskButton::moveApplication()
 {
-    KWindowInfo info(mWindow, NET::WMDesktop);
-    if (!info.isOnCurrentDesktop())
-        KWindowSystem::setCurrentDesktop(info.desktop());
-    if (isMinimized())
-        KWindowSystem::unminimizeWindow(mWindow);
-    KWindowSystem::forceActiveWindow(mWindow);
-    const QRect& g = KWindowInfo(mWindow, NET::WMGeometry).geometry();
-    int X = g.center().x();
-    int Y = g.center().y();
-    QCursor::setPos(X, Y);
-    NETRootInfo(QX11Info::connection(), NET::WMMoveResize).moveResizeRequest(mWindow, X, Y, NET::Move);
+    mBackend->moveApplication(mWindow);
 }
 
 /************************************************
@@ -649,17 +527,7 @@ void LXQtTaskButton::moveApplication()
  ************************************************/
 void LXQtTaskButton::resizeApplication()
 {
-    KWindowInfo info(mWindow, NET::WMDesktop);
-    if (!info.isOnCurrentDesktop())
-        KWindowSystem::setCurrentDesktop(info.desktop());
-    if (isMinimized())
-        KWindowSystem::unminimizeWindow(mWindow);
-    KWindowSystem::forceActiveWindow(mWindow);
-    const QRect& g = KWindowInfo(mWindow, NET::WMGeometry).geometry();
-    int X = g.bottomRight().x();
-    int Y = g.bottomRight().y();
-    QCursor::setPos(X, Y);
-    NETRootInfo(QX11Info::connection(), NET::WMMoveResize).moveResizeRequest(mWindow, X, Y, NET::BottomRight);
+    mBackend->resizeApplication(mWindow);
 }
 
 /************************************************
@@ -673,10 +541,9 @@ void LXQtTaskButton::contextMenuEvent(QContextMenuEvent* event)
         return;
     }
 
-    KWindowInfo info(mWindow, NET::Properties(), NET::WM2AllowedActions);
-    unsigned long state = KWindowInfo(mWindow, NET::WMState).state();
+    const LXQtTaskBarWindowState state = mBackend->getWindowState(mWindow);
 
-    QMenu * menu = new QMenu(tr("Application"));
+    QMenu * menu = new QMenu(tr("Application"), this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
     QAction* a;
 
@@ -706,119 +573,150 @@ void LXQtTaskButton::contextMenuEvent(QContextMenuEvent* event)
     */
 
     /********** Desktop menu **********/
-    int deskNum = KWindowSystem::numberOfDesktops();
+    int deskNum = mBackend->getWorkspacesCount();
     if (deskNum > 1)
     {
-        int winDesk = KWindowInfo(mWindow, NET::WMDesktop).desktop();
+        int winDesk = mBackend->getWindowWorkspace(mWindow);
         QMenu* deskMenu = menu->addMenu(tr("To &Desktop"));
+        deskMenu->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::MoveToDesktop));
 
         a = deskMenu->addAction(tr("&All Desktops"));
-        a->setData(NET::OnAllDesktops);
-        a->setEnabled(winDesk != NET::OnAllDesktops);
-        connect(a, SIGNAL(triggered(bool)), this, SLOT(moveApplicationToDesktop()));
+        a->setData(mBackend->onAllWorkspacesEnum());
+        a->setEnabled(winDesk != mBackend->onAllWorkspacesEnum());
+        connect(a, &QAction::triggered, this, &LXQtTaskButton::moveApplicationToDesktop);
         deskMenu->addSeparator();
 
-        for (int i = 0; i < deskNum; ++i)
+        for (int i = 1; i <= deskNum; ++i)
         {
-            a = deskMenu->addAction(tr("Desktop &%1").arg(i + 1));
-            a->setData(i + 1);
-            a->setEnabled(i + 1 != winDesk);
-            connect(a, SIGNAL(triggered(bool)), this, SLOT(moveApplicationToDesktop()));
+            auto deskName = mBackend->getWorkspaceName(i).trimmed();
+            if (deskName.isEmpty())
+                a = deskMenu->addAction(tr("Desktop &%1").arg(i));
+            else
+                a = deskMenu->addAction(QStringLiteral("&%1: %2").arg(i).arg(deskName));
+
+            a->setData(i);
+            a->setEnabled(i != winDesk);
+            connect(a, &QAction::triggered, this, &LXQtTaskButton::moveApplicationToDesktop);
         }
 
-        int curDesk = KWindowSystem::currentDesktop();
+        int curDesk = mBackend->getCurrentWorkspace();
         a = menu->addAction(tr("&To Current Desktop"));
         a->setData(curDesk);
         a->setEnabled(curDesk != winDesk);
-        connect(a, SIGNAL(triggered(bool)), this, SLOT(moveApplicationToDesktop()));
+        connect(a, &QAction::triggered, this, &LXQtTaskButton::moveApplicationToDesktop);
     }
     /********** Move/Resize **********/
     if (QGuiApplication::screens().size() > 1)
     {
         menu->addSeparator();
-        a = menu->addAction(tr("Move To &Next Monitor"));
+        a = menu->addAction(tr("Move To N&ext Monitor"));
+        a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::MoveToOutput));
         connect(a, &QAction::triggered, this, [this] { moveApplicationToPrevNextMonitor(true); });
-        a->setEnabled(info.actionSupported(NET::ActionMove) && (!(state & NET::FullScreen) || ((state & NET::FullScreen) && info.actionSupported(NET::ActionFullScreen))));
+        a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::Move) &&
+                      (state != LXQtTaskBarWindowState::FullScreen
+                       || ((state == LXQtTaskBarWindowState::FullScreen) && mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::FullScreen))));
         a = menu->addAction(tr("Move To &Previous Monitor"));
+        a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::MoveToOutput));
         connect(a, &QAction::triggered, this, [this] { moveApplicationToPrevNextMonitor(false); });
     }
+
     menu->addSeparator();
     a = menu->addAction(tr("&Move"));
-    a->setEnabled(info.actionSupported(NET::ActionMove) && !(state & NET::Max) && !(state & NET::FullScreen));
+    a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::Move)
+                  && state != LXQtTaskBarWindowState::Maximized
+                  && state != LXQtTaskBarWindowState::FullScreen);
     connect(a, &QAction::triggered, this, &LXQtTaskButton::moveApplication);
     a = menu->addAction(tr("Resi&ze"));
-    a->setEnabled(info.actionSupported(NET::ActionResize) && !(state & NET::Max) && !(state & NET::FullScreen));
+    a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::Resize)
+                  && state != LXQtTaskBarWindowState::Maximized
+                  && state != LXQtTaskBarWindowState::FullScreen);
     connect(a, &QAction::triggered, this, &LXQtTaskButton::resizeApplication);
 
     /********** State menu **********/
     menu->addSeparator();
 
     a = menu->addAction(tr("Ma&ximize"));
-    a->setEnabled(info.actionSupported(NET::ActionMax) && (!(state & NET::Max) || (state & NET::Hidden)));
-    a->setData(NET::Max);
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(maximizeApplication()));
+    a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::Maximize)
+                  && state != LXQtTaskBarWindowState::Maximized
+                  && state != LXQtTaskBarWindowState::Hidden);
+    a->setData(int(LXQtTaskBarWindowState::Maximized));
+    connect(a, &QAction::triggered, this, &LXQtTaskButton::maximizeApplication);
 
     if (event->modifiers() & Qt::ShiftModifier)
     {
         a = menu->addAction(tr("Maximize vertically"));
-        a->setEnabled(info.actionSupported(NET::ActionMaxVert) && !((state & NET::MaxVert) || (state & NET::Hidden)));
-        a->setData(NET::MaxVert);
-        connect(a, SIGNAL(triggered(bool)), this, SLOT(maximizeApplication()));
+        a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::MaximizeVertically)
+                      && state != LXQtTaskBarWindowState::MaximizedVertically
+                      && state != LXQtTaskBarWindowState::Hidden);
+        a->setData(int(LXQtTaskBarWindowState::MaximizedVertically));
+        connect(a, &QAction::triggered, this, &LXQtTaskButton::maximizeApplication);
 
         a = menu->addAction(tr("Maximize horizontally"));
-        a->setEnabled(info.actionSupported(NET::ActionMaxHoriz) && !((state & NET::MaxHoriz) || (state & NET::Hidden)));
-        a->setData(NET::MaxHoriz);
-        connect(a, SIGNAL(triggered(bool)), this, SLOT(maximizeApplication()));
+        a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::MaximizeHorizontally)
+                      && state != LXQtTaskBarWindowState::MaximizedHorizontally
+                      && state != LXQtTaskBarWindowState::Hidden);
+        a->setData(int(LXQtTaskBarWindowState::MaximizedHorizontally));
+        connect(a, &QAction::triggered, this, &LXQtTaskButton::maximizeApplication);
     }
 
     a = menu->addAction(tr("&Restore"));
-    a->setEnabled((state & NET::Hidden) || (state & NET::Max) || (state & NET::MaxHoriz) || (state & NET::MaxVert));
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(deMaximizeApplication()));
+    a->setEnabled(state == LXQtTaskBarWindowState::Hidden
+                  || state == LXQtTaskBarWindowState::Minimized
+                  || state == LXQtTaskBarWindowState::Maximized
+                  || state == LXQtTaskBarWindowState::MaximizedVertically
+                  || state == LXQtTaskBarWindowState::MaximizedHorizontally);
+    connect(a, &QAction::triggered, this, &LXQtTaskButton::deMaximizeApplication);
 
     a = menu->addAction(tr("Mi&nimize"));
-    a->setEnabled(info.actionSupported(NET::ActionMinimize) && !(state & NET::Hidden));
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(minimizeApplication()));
+    a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::Minimize)
+                  && state != LXQtTaskBarWindowState::Hidden
+                  && state != LXQtTaskBarWindowState::Minimized);
+    connect(a, &QAction::triggered, this, &LXQtTaskButton::minimizeApplication);
 
-    if (state & NET::Shaded)
+    if (state == LXQtTaskBarWindowState::RolledUp)
     {
         a = menu->addAction(tr("Roll down"));
-        a->setEnabled(info.actionSupported(NET::ActionShade) && !(state & NET::Hidden));
-        connect(a, SIGNAL(triggered(bool)), this, SLOT(unShadeApplication()));
+        a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::RollUp)
+                      && state != LXQtTaskBarWindowState::Hidden
+                      && state != LXQtTaskBarWindowState::Minimized);
+        connect(a, &QAction::triggered, this, &LXQtTaskButton::unShadeApplication);
     }
     else
     {
         a = menu->addAction(tr("Roll up"));
-        a->setEnabled(info.actionSupported(NET::ActionShade) && !(state & NET::Hidden));
-        connect(a, SIGNAL(triggered(bool)), this, SLOT(shadeApplication()));
+        a->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::RollUp)
+                      && state != LXQtTaskBarWindowState::Hidden);
+        connect(a, &QAction::triggered, this, &LXQtTaskButton::shadeApplication);
     }
 
     /********** Layer menu **********/
     menu->addSeparator();
 
     QMenu* layerMenu = menu->addMenu(tr("&Layer"));
+    layerMenu->setEnabled(mBackend->supportsAction(mWindow, LXQtTaskBarBackendAction::MoveToLayer));
+
+    LXQtTaskBarWindowLayer currentLayer = mBackend->getWindowLayer(mWindow);
 
     a = layerMenu->addAction(tr("Always on &top"));
-    // FIXME: There is no info.actionSupported(NET::ActionKeepAbove)
-    a->setEnabled(!(state & NET::KeepAbove));
-    a->setData(NET::KeepAbove);
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(setApplicationLayer()));
+    a->setEnabled(currentLayer != LXQtTaskBarWindowLayer::KeepAbove);
+    a->setData(int(LXQtTaskBarWindowLayer::KeepAbove));
+    connect(a, &QAction::triggered, this, &LXQtTaskButton::setApplicationLayer);
 
     a = layerMenu->addAction(tr("&Normal"));
-    a->setEnabled((state & NET::KeepAbove) || (state & NET::KeepBelow));
-    // FIXME: There is no NET::KeepNormal, so passing 0
-    a->setData(0);
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(setApplicationLayer()));
+    a->setEnabled(currentLayer != LXQtTaskBarWindowLayer::Normal);
+    a->setData(int(LXQtTaskBarWindowLayer::Normal));
+    connect(a, &QAction::triggered, this, &LXQtTaskButton::setApplicationLayer);
 
     a = layerMenu->addAction(tr("Always on &bottom"));
-    // FIXME: There is no info.actionSupported(NET::ActionKeepBelow)
-    a->setEnabled(!(state & NET::KeepBelow));
-    a->setData(NET::KeepBelow);
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(setApplicationLayer()));
+    a->setEnabled(currentLayer != LXQtTaskBarWindowLayer::KeepBelow);
+    a->setData(int(LXQtTaskBarWindowLayer::KeepBelow));
+    connect(a, &QAction::triggered, this, &LXQtTaskButton::setApplicationLayer);
 
     /********** Kill menu **********/
     menu->addSeparator();
     a = menu->addAction(XdgIcon::fromTheme(QStringLiteral("process-stop")), tr("&Close"));
-    connect(a, SIGNAL(triggered(bool)), this, SLOT(closeApplication()));
+    connect(a, &QAction::triggered, this, &LXQtTaskButton::closeApplication);
+
     menu->setGeometry(mParentTaskBar->panel()->calculatePopupWindowPos(mapToGlobal(event->pos()), menu->sizeHint()));
     mPlugin->willShowWindow(menu);
     menu->show();
@@ -832,9 +730,6 @@ void LXQtTaskButton::setUrgencyHint(bool set)
     if (mUrgencyHint == set)
         return;
 
-    if (!set)
-        KWindowSystem::demandAttention(mWindow, false);
-
     mUrgencyHint = set;
     setProperty("urgent", set);
     style()->unpolish(this);
@@ -847,17 +742,19 @@ void LXQtTaskButton::setUrgencyHint(bool set)
  ************************************************/
 bool LXQtTaskButton::isOnDesktop(int desktop) const
 {
-    return KWindowInfo(mWindow, NET::WMDesktop).isOnDesktop(desktop);
+    int d = mBackend->getWindowWorkspace(mWindow);
+    return d == desktop || d == mBackend->onAllWorkspacesEnum();
 }
 
 bool LXQtTaskButton::isOnCurrentScreen() const
 {
-    return QApplication::desktop()->screenGeometry(parentTaskBar()).intersects(KWindowInfo(mWindow, NET::WMFrameExtents).frameGeometry());
+    QScreen *screen = parentTaskBar()->screen();
+    return mBackend->isWindowOnScreen(screen, mWindow);
 }
 
 bool LXQtTaskButton::isMinimized() const
 {
-    return KWindowInfo(mWindow,NET::WMState | NET::XAWMState).isMinimized();
+    return mBackend->getWindowState(mWindow) == LXQtTaskBarWindowState::Minimized;
 }
 
 Qt::Corner LXQtTaskButton::origin() const

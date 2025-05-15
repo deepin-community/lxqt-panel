@@ -43,7 +43,7 @@ class PluginSettingsPrivate;
 /*!
  * \brief
  * Settings for particular plugin. This object/class can be used similarly as \sa QSettings.
- * Object cannot be constructed direcly (it is the panel's responsibility to construct it for each plugin).
+ * Object cannot be constructed directly (it is the panel's responsibility to construct it for each plugin).
  *
  *
  * \note
@@ -81,6 +81,7 @@ public:
     void endGroup();
 
     void loadFromCache();
+    void storeToCache();
 
 signals:
     void settingsChanged();
@@ -89,7 +90,7 @@ private:
     explicit PluginSettings(LXQt::Settings *settings, const QString &group, QObject *parent = nullptr);
 
 private:
-    QScopedPointer<PluginSettingsPrivate> d_ptr;
+    std::unique_ptr<PluginSettingsPrivate> d_ptr;
     Q_DECLARE_PRIVATE(PluginSettings)
 };
 

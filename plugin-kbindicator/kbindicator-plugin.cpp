@@ -26,9 +26,12 @@
 
 #include <QDebug>
 #include <QObject>
-#include <QX11Info>
+
+#include <QGuiApplication> // For nativeInterface()
+
 #include "src/kbdstate.h"
 #include "../panel/ilxqtpanelplugin.h"
+
 
 class LXQtKbIndicatorPlugin: public QObject, public ILXQtPanelPluginLibrary
 {
@@ -36,16 +39,18 @@ class LXQtKbIndicatorPlugin: public QObject, public ILXQtPanelPluginLibrary
     Q_PLUGIN_METADATA(IID "lxqt.org/Panel/PluginInterface/3.0")
     Q_INTERFACES(ILXQtPanelPluginLibrary)
 public:
-    virtual ~LXQtKbIndicatorPlugin()
-    {}
+    ~LXQtKbIndicatorPlugin() override = default;
 
-    virtual ILXQtPanelPlugin *instance(const ILXQtPanelPluginStartupInfo &startupInfo) const
+    ILXQtPanelPlugin *instance(const ILXQtPanelPluginStartupInfo &startupInfo) const override
     {
-        // Currently only X11 supported
-        if (!QX11Info::connection()) {
+        auto *x11Application = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+        if(!x11Application || !x11Application->connection())
+        {
+            // Currently only X11 supported
             qWarning() << "Currently kbindicator plugin supports X11 only. Skipping.";
             return nullptr;
         }
+
         return new KbdState(startupInfo);
     }
 };

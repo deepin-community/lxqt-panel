@@ -48,7 +48,7 @@
 LXQtQuickLaunch::LXQtQuickLaunch(ILXQtPanelPlugin *plugin, QWidget* parent) :
     QFrame(parent),
     mPlugin(plugin),
-    mPlaceHolder(0)
+    mPlaceHolder(nullptr)
 {
     setAcceptDrops(true);
 
@@ -107,9 +107,7 @@ LXQtQuickLaunch::LXQtQuickLaunch(ILXQtPanelPlugin *plugin, QWidget* parent) :
 }
 
 
-LXQtQuickLaunch::~LXQtQuickLaunch()
-{
-}
+LXQtQuickLaunch::~LXQtQuickLaunch() = default;
 
 
 int LXQtQuickLaunch::indexOfButton(QuickLaunchButton* button) const
@@ -157,14 +155,17 @@ void LXQtQuickLaunch::addButton(QuickLaunchAction* action)
     QuickLaunchButton* btn = new QuickLaunchButton(action, mPlugin, this);
     mLayout->addWidget(btn);
 
-    connect(btn, SIGNAL(switchButtons(QuickLaunchButton*,QuickLaunchButton*)), this, SLOT(switchButtons(QuickLaunchButton*,QuickLaunchButton*)));
-    connect(btn, SIGNAL(buttonDeleted()), this, SLOT(buttonDeleted()));
-    connect(btn, SIGNAL(movedLeft()), this, SLOT(buttonMoveLeft()));
-    connect(btn, SIGNAL(movedRight()), this, SLOT(buttonMoveRight()));
+    connect(btn, &QuickLaunchButton::switchButtons, this, &LXQtQuickLaunch::switchButtons);
+    connect(btn, &QuickLaunchButton::buttonDeleted, this, &LXQtQuickLaunch::buttonDeleted);
+    connect(btn, &QuickLaunchButton::movedLeft,     this, &LXQtQuickLaunch::buttonMoveLeft);
+    connect(btn, &QuickLaunchButton::movedRight,    this, &LXQtQuickLaunch::buttonMoveRight);
 
-    mLayout->removeWidget(mPlaceHolder);
-    delete mPlaceHolder;
-    mPlaceHolder = 0;
+    if (mPlaceHolder)
+    {
+        mLayout->removeWidget(mPlaceHolder);
+        delete mPlaceHolder;
+        mPlaceHolder = nullptr;
+    }
     mLayout->setEnabled(true);
     realign();
 }
@@ -200,13 +201,10 @@ void LXQtQuickLaunch::dropEvent(QDropEvent *e)
         return;
     }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
     const auto & urls = e->mimeData()->urls();
-    for (const QUrl &url : QSet<QUrl>{urls.cbegin(), urls.cend()})
-#else
-    const auto urls = e->mimeData()->urls().toSet();
-    for (const QUrl &url : urls)
-#endif
+    const QSet<QUrl> uniqueUrls{urls.cbegin(), urls.cend()};
+
+    for (const QUrl &url : uniqueUrls)
     {
         QString fileName(url.isLocalFile() ? url.toLocalFile() : url.url());
         QFileInfo fi(fileName);

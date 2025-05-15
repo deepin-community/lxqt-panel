@@ -4,13 +4,13 @@
 <context>
     <name>DesktopSwitch</name>
     <message>
-        <location filename="../desktopswitch.cpp" line="85"/>
+        <location filename="../desktopswitch.cpp" line="95"/>
         <source>Switch to desktop %1</source>
         <translation>Skift til skrivebord %1</translation>
     </message>
     <message>
-        <location filename="../desktopswitch.cpp" line="144"/>
-        <location filename="../desktopswitch.cpp" line="155"/>
+        <location filename="../desktopswitch.cpp" line="170"/>
+        <location filename="../desktopswitch.cpp" line="181"/>
         <source>Desktop %1</source>
         <translation>Skrivebord %1</translation>
     </message>
@@ -19,8 +19,8 @@
     <name>DesktopSwitchConfiguration</name>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="14"/>
-        <source>DesktopSwitch settings</source>
-        <translation>Indstillinger for skift af skrivebord</translation>
+        <source>DesktopSwitch Settings</source>
+        <translation>Indstillinger for Skrivebordsskifter</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="46"/>
@@ -55,7 +55,7 @@
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="72"/>
         <source>If checked, widget will be just an indicator</source>
-        <translation>Hvis den er tilvalgt, så er widgeten blot en indikator</translation>
+        <translation>Hvis den er tilvalgt, så er kontrollen blot en indikator</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="75"/>
@@ -66,6 +66,24 @@
         <location filename="../desktopswitchconfiguration.ui" line="85"/>
         <source>Desktop names</source>
         <translation>Skrivebordsnavne</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitchconfiguration.cpp" line="78"/>
+        <source>Desktop %1:</source>
+        <translation>Skrivebord %1:</translation>
+    </message>
+</context>
+<context>
+    <name>DesktopSwitchUnsupported</name>
+    <message>
+        <location filename="../desktopswitch.cpp" line="342"/>
+        <source>n/a</source>
+        <translation>i/t</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitch.cpp" line="344"/>
+        <source>DesktopSwitch is unsupported on current platform: %1</source>
+        <translation>Skrivebordskifter er ikke understøttet på denne platform: %1</translation>
     </message>
 </context>
 </TS>

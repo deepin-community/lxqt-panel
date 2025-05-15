@@ -40,12 +40,12 @@
         <translation>滚动锁定</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Layout</source>
         <translation>布局</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Variant</source>
         <translation>变种</translation>
     </message>
@@ -54,7 +54,7 @@
     <name>KbdStateConfig</name>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="14"/>
-        <source>Keyboard state settings</source>
+        <source>Keyboard State Settings</source>
         <translation>键盘状态设置</translation>
     </message>
     <message>
@@ -65,7 +65,7 @@
     <message>
         <location filename="../src/kbdstateconfig.ui" line="26"/>
         <source>Show Caps Lock</source>
-        <translation>显示大些锁定</translation>
+        <translation>显示大写锁定</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="33"/>
@@ -90,12 +90,12 @@
     <message>
         <location filename="../src/kbdstateconfig.ui" line="99"/>
         <source>Flags path pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>国旗路径模式：</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="106"/>
         <source>File path pattern for country flags. Must contain &lt;strong&gt;%1&lt;/strong&gt; which is replaced by the two letter ISO country code (lower case).&lt;br&gt;&lt;br&gt;Example: /usr/share/iso-flags-svg/country-squared/%1.svg</source>
-        <translation type="unfinished"></translation>
+        <translation>国旗文件的路径模式。必须包含 &lt;strong&gt;%1&lt;/strong&gt; ，它会被由两个小写字母表示的 ISO 国家码替换。&lt;br&gt;&lt;br&gt;示例： /usr/share/iso-flags-svg/country-squared/%1.svg</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="116"/>

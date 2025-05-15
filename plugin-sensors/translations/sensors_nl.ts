@@ -6,7 +6,7 @@
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="14"/>
         <source>Sensors Settings</source>
-        <translation>Instellingen van Sensoren</translation>
+        <translation>Sensoren-instellingen</translation>
     </message>
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="30"/>
@@ -16,7 +16,7 @@
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="42"/>
         <source>Update interval (seconds)</source>
-        <translation>Tussenpoze voor bijwerken (seconden)</translation>
+        <translation>Bijwerktussenpoos (in seconden)</translation>
     </message>
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="49"/>
@@ -41,7 +41,7 @@
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="132"/>
         <source>Blink status bars when the temperature is too high</source>
-        <translation>Knipper statusbalk als de temperatuur te hoog is</translation>
+        <translation>Statusbalk laten knipperen als de temperatuur te hoog is</translation>
     </message>
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="138"/>
@@ -61,20 +61,20 @@
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="175"/>
         <source>Chip features:</source>
-        <translation>Eigenschappen van chips:</translation>
+        <translation>Chipeigenschappen:</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Enabled</source>
         <translation>Ingeschakeld</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Label</source>
         <translation>Label</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Color</source>
         <translation>Kleur</translation>
     </message>

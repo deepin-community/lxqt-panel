@@ -4,7 +4,7 @@
 <context>
     <name>LXQtCpuLoad</name>
     <message>
-        <location filename="../lxqtcpuload.cpp" line="127"/>
+        <location filename="../lxqtcpuload.cpp" line="126"/>
         <source>CPU load %1%</source>
         <translation type="unfinished">Încărcare procesor</translation>
     </message>
@@ -47,22 +47,22 @@
         <translation type="unfinished">Lățime bară:</translation>
     </message>
     <message>
-        <location filename="../lxqtcpuloadconfiguration.cpp" line="68"/>
+        <location filename="../lxqtcpuloadconfiguration.cpp" line="64"/>
         <source>Bottom up</source>
         <translation>De jos în sus</translation>
     </message>
     <message>
-        <location filename="../lxqtcpuloadconfiguration.cpp" line="69"/>
+        <location filename="../lxqtcpuloadconfiguration.cpp" line="65"/>
         <source>Top down</source>
         <translation>De sus în jos</translation>
     </message>
     <message>
-        <location filename="../lxqtcpuloadconfiguration.cpp" line="70"/>
+        <location filename="../lxqtcpuloadconfiguration.cpp" line="66"/>
         <source>Left to right</source>
         <translation>De la stânga la dreapta</translation>
     </message>
     <message>
-        <location filename="../lxqtcpuloadconfiguration.cpp" line="71"/>
+        <location filename="../lxqtcpuloadconfiguration.cpp" line="67"/>
         <source>Right to left</source>
         <translation>De la dreapta la stânga</translation>
     </message>

@@ -40,12 +40,12 @@
         <translation>Bloq Despl</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Layout</source>
         <translation>Disposició</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Variant</source>
         <translation>Variant</translation>
     </message>
@@ -54,7 +54,7 @@
     <name>KbdStateConfig</name>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="14"/>
-        <source>Keyboard state settings</source>
+        <source>Keyboard State Settings</source>
         <translation>Ajusts de l&apos;estat del teclat</translation>
     </message>
     <message>
@@ -90,12 +90,12 @@
     <message>
         <location filename="../src/kbdstateconfig.ui" line="99"/>
         <source>Flags path pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Patró del camí de les banderes:</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="106"/>
         <source>File path pattern for country flags. Must contain &lt;strong&gt;%1&lt;/strong&gt; which is replaced by the two letter ISO country code (lower case).&lt;br&gt;&lt;br&gt;Example: /usr/share/iso-flags-svg/country-squared/%1.svg</source>
-        <translation type="unfinished"></translation>
+        <translation>Patró del camí del fitxer per a les banderes de països. Ha de contenir &lt;strong&gt;%1&lt;/strong&gt;el qual és substituït pel codi ISO de dues lletres del país (en minúscules).&lt;br&gt;&lt;br&gt;Exemple: /usr/share/iso-flags-svg/country-squared/%1.svg</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="116"/>

@@ -40,17 +40,23 @@
 
 #include <QScreen>
 #include <QWindow>
-#include <QX11Info>
 #include <QDebug>
 #include <QString>
 #include <QMenu>
 #include <QMessageBox>
 #include <QDropEvent>
+#include <QPainter>
 #include <XdgIcon>
 #include <XdgDirs>
 
-#include <KWindowSystem/KWindowSystem>
-#include <KWindowSystem/NETWM>
+#include <KWindowSystem>
+#include <KX11Extras>
+#include <NETWM>
+
+#include "backends/ilxqtabstractwmiface.h"
+
+
+#include <LayerShellQt/Window>
 
 // Turn on this to show the time required to load each plugin during startup
 // #define DEBUG_PLUGIN_LOADTIME
@@ -75,6 +81,7 @@
 #define CFG_KEY_PLUGINS            "plugins"
 #define CFG_KEY_HIDABLE            "hidable"
 #define CFG_KEY_VISIBLE_MARGIN     "visible-margin"
+#define CFG_KEY_HIDE_ON_OVERLAP    "hide-on-overlap"
 #define CFG_KEY_ANIMATION          "animation-duration"
 #define CFG_KEY_SHOW_DELAY         "show-delay"
 #define CFG_KEY_LOCKPANEL          "lockPanel"
@@ -134,19 +141,20 @@ LXQtPanel::LXQtPanel(const QString &configGroup, LXQt::Settings *settings, QWidg
     mActualScreenNum(0),
     mHidable(false),
     mVisibleMargin(true),
+    mHideOnOverlap(false),
     mHidden(false),
     mAnimationTime(0),
     mReserveSpace(true),
     mAnimation(nullptr),
+    mWAnimation(nullptr),
+    mLayerWindow(nullptr),
     mLockPanel(false)
 {
     //You can find information about the flags and widget attributes in your
     //Qt documentation or at https://doc.qt.io/qt-5/qt.html
     //Qt::FramelessWindowHint = Produces a borderless window. The user cannot
     //move or resize a borderless window via the window system. On X11, ...
-    //Qt::WindowStaysOnTopHint = Informs the window system that the window
-    //should stay on top of all other windows. Note that on ...
-    Qt::WindowFlags flags = Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint;
+    Qt::WindowFlags flags = Qt::FramelessWindowHint;
 
     // NOTE: by PCMan:
     // In Qt 4, the window is not activated if it has Qt::WA_X11NetWmWindowTypeDock.
@@ -188,15 +196,15 @@ LXQtPanel::LXQtPanel(const QString &configGroup, LXQt::Settings *settings, QWidg
 
     mDelaySave.setSingleShot(true);
     mDelaySave.setInterval(SETTINGS_SAVE_DELAY);
-    connect(&mDelaySave, SIGNAL(timeout()), this, SLOT(saveSettings()));
+    connect(&mDelaySave, &QTimer::timeout, this, [this] { saveSettings(); } );
 
     mHideTimer.setSingleShot(true);
     mHideTimer.setInterval(PANEL_HIDE_DELAY);
-    connect(&mHideTimer, SIGNAL(timeout()), this, SLOT(hidePanelWork()));
+    connect(&mHideTimer, &QTimer::timeout, this, &LXQtPanel::hidePanelWork);
 
     mShowDelayTimer.setSingleShot(true);
     mShowDelayTimer.setInterval(PANEL_SHOW_DELAY);
-    connect(&mShowDelayTimer, &QTimer::timeout, [this] { showPanel(mAnimationTime > 0); });
+    connect(&mShowDelayTimer, &QTimer::timeout, this, [this] { showPanel(mAnimationTime > 0); });
 
     // screen updates
     connect(qApp, &QApplication::screenAdded, this, [this] (QScreen* newScreen) {
@@ -217,17 +225,58 @@ LXQtPanel::LXQtPanel(const QString &configGroup, LXQt::Settings *settings, QWidg
         connect(screen, &QScreen::geometryChanged, this, &LXQtPanel::ensureVisible);
     }
 
-    connect(LXQt::Settings::globalSettings(), SIGNAL(settingsChanged()), this, SLOT(update()));
-    connect(lxqtApp, SIGNAL(themeChanged()), this, SLOT(realign()));
+    connect(LXQt::Settings::globalSettings(), &LXQt::GlobalSettings::settingsChanged, this, [this] { update(); } );
+    connect(lxqtApp,                          &LXQt::Application::themeChanged,       this, &LXQtPanel::realign);
 
-    connect(mStandaloneWindows.data(), &WindowNotifier::firstShown, [this] { showPanel(true); });
-    connect(mStandaloneWindows.data(), &WindowNotifier::lastHidden, this, &LXQtPanel::hidePanel);
+    connect(mStandaloneWindows.get(), &WindowNotifier::firstShown, this, [this] { showPanel(true); });
+    connect(mStandaloneWindows.get(), &WindowNotifier::lastHidden, this, &LXQtPanel::hidePanel);
 
     readSettings();
 
     ensureVisible();
 
     loadPlugins();
+
+    if(qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>())
+    {
+        // Create backing QWindow for LayerShellQt integration
+        create();
+
+        if(!windowHandle())
+        {
+            qWarning() << "LXQtPanel: could not create QWindow for LayerShellQt integration.";
+        }
+        else
+        {
+            // Init Layer Shell (Must be done before showing widget)
+            mLayerWindow = LayerShellQt::Window::get(windowHandle());
+            mLayerWindow->setLayer(LayerShellQt::Window::LayerTop);
+
+            mLayerWindow->setScope(QStringLiteral("dock"));
+
+            LayerShellQt::Window::Anchors anchors;
+            anchors.setFlag(LayerShellQt::Window::AnchorLeft);
+            anchors.setFlag(LayerShellQt::Window::AnchorBottom);
+            anchors.setFlag(LayerShellQt::Window::AnchorRight);
+            mLayerWindow->setAnchors(anchors);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+            // WARNING: Only the following desktops are known to give the focus to child popups
+            // when the panel does not accept focus.
+            const QRegularExpression desktops(QStringLiteral("(?i)(kde|kwin|wayfire|hyprland)"));
+
+            if (desktops.match(qEnvironmentVariable("XDG_CURRENT_DESKTOP")).hasMatch())
+                mLayerWindow->setKeyboardInteractivity(LayerShellQt::Window::KeyboardInteractivityNone);
+            else
+#endif
+                mLayerWindow->setKeyboardInteractivity(LayerShellQt::Window::KeyboardInteractivityOnDemand);
+
+            mLayerWindow->setCloseOnDismissed(false);
+
+            mLayerWindow->setExclusiveEdge(LayerShellQt::Window::AnchorBottom);
+            mLayerWindow->setExclusiveZone(height());
+        }
+    }
 
     // NOTE: Some (X11) WMs may need the geometry to be set before QWidget::show().
     setPanelGeometry();
@@ -240,6 +289,56 @@ LXQtPanel::LXQtPanel(const QString &configGroup, LXQt::Settings *settings, QWidg
         showPanel(false);
         QTimer::singleShot(PANEL_HIDE_FIRST_TIME, this, SLOT(hidePanel()));
     }
+
+    LXQtPanelApplication *a = reinterpret_cast<LXQtPanelApplication*>(qApp);
+    auto wmBackend = a->getWMBackend();
+
+    connect(wmBackend, &ILXQtAbstractWMInterface::windowAdded, this, [this] {
+        if (mHidable && mHideOnOverlap && !mHidden)
+        {
+            mShowDelayTimer.stop();
+            hidePanel();
+        }
+    });
+    connect(wmBackend, &ILXQtAbstractWMInterface::windowRemoved, this, [this] {
+        if (mHidable && mHideOnOverlap && mHidden && !isPanelOverlapped())
+            mShowDelayTimer.start();
+    });
+    connect(wmBackend, &ILXQtAbstractWMInterface::currentWorkspaceChanged, this, [this] {
+       if (mHidable && mHideOnOverlap)
+       {
+            if (!mHidden)
+            {
+                mShowDelayTimer.stop();
+                hidePanel();
+            }
+            else if (!isPanelOverlapped())
+                mShowDelayTimer.start();
+            else
+                mShowDelayTimer.stop(); // workspace may be changed and restored quickly
+       }
+    });
+    connect(wmBackend, &ILXQtAbstractWMInterface::windowPropertyChanged,
+            this, [this] (WId /* id */, int prop)
+    {
+        if (mHidable && mHideOnOverlap
+            // when a window is moved, resized, shaded, or minimized
+            && (prop == int(LXQtTaskBarWindowProperty::Geometry)
+                || prop == int(LXQtTaskBarWindowProperty::State)
+                // on Wayland, workspace change is not seen as geometry change
+                || (mLayerWindow && prop == int(LXQtTaskBarWindowProperty::Workspace))))
+        {
+            if (!mHidden)
+            {
+                mShowDelayTimer.stop();
+                hidePanel();
+            }
+            else if (!isPanelOverlapped())
+                mShowDelayTimer.start();
+            else
+                mShowDelayTimer.stop(); // geometry or state may be changed and restored quickly
+        }
+    });
 }
 
 /************************************************
@@ -256,6 +355,8 @@ void LXQtPanel::readSettings()
     mHidden = mHidable;
 
     mVisibleMargin = mSettings->value(QStringLiteral(CFG_KEY_VISIBLE_MARGIN), mVisibleMargin).toBool();
+
+    mHideOnOverlap = mSettings->value(QStringLiteral(CFG_KEY_HIDE_ON_OVERLAP), mHideOnOverlap).toBool();
 
     mAnimationTime = mSettings->value(QStringLiteral(CFG_KEY_ANIMATION), mAnimationTime).toInt();
     mShowDelayTimer.setInterval(mSettings->value(QStringLiteral(CFG_KEY_SHOW_DELAY), mShowDelayTimer.interval()).toInt());
@@ -333,6 +434,7 @@ void LXQtPanel::saveSettings(bool later)
 
     mSettings->setValue(QStringLiteral(CFG_KEY_HIDABLE), mHidable);
     mSettings->setValue(QStringLiteral(CFG_KEY_VISIBLE_MARGIN), mVisibleMargin);
+    mSettings->setValue(QStringLiteral(CFG_KEY_HIDE_ON_OVERLAP), mHideOnOverlap);
     mSettings->setValue(QStringLiteral(CFG_KEY_ANIMATION), mAnimationTime);
     mSettings->setValue(QStringLiteral(CFG_KEY_SHOW_DELAY), mShowDelayTimer.interval());
 
@@ -364,6 +466,7 @@ LXQtPanel::~LXQtPanel()
 {
     mLayout->setEnabled(false);
     delete mAnimation;
+    delete mWAnimation;
     delete mConfigDialog.data();
     // do not save settings because of "user deleted panel" functionality saveSettings();
 }
@@ -375,7 +478,8 @@ LXQtPanel::~LXQtPanel()
 void LXQtPanel::show()
 {
     QWidget::show();
-    KWindowSystem::setOnDesktop(effectiveWinId(), NET::OnAllDesktops);
+    if(qGuiApp->nativeInterface<QNativeInterface::QX11Application>()) //TODO: cache in bool isPlatformX11
+        KX11Extras::setOnDesktop(effectiveWinId(), NET::OnAllDesktops);
 }
 
 
@@ -385,7 +489,7 @@ void LXQtPanel::show()
 QStringList pluginDesktopDirs()
 {
     QStringList dirs;
-    dirs << QString::fromLocal8Bit(qgetenv("LXQT_PANEL_PLUGINS_DIR")).split(QLatin1Char(':'), QString::SkipEmptyParts);
+    dirs << QString::fromLocal8Bit(qgetenv("LXQT_PANEL_PLUGINS_DIR")).split(QLatin1Char(':'), Qt::SkipEmptyParts);
     dirs << QStringLiteral("%1/%2").arg(XdgDirs::dataHome(), QStringLiteral("/lxqt/lxqt-panel"));
     dirs << QStringLiteral(PLUGIN_DESKTOPS_DIR);
     return dirs;
@@ -402,17 +506,20 @@ void LXQtPanel::loadPlugins()
     names_key += QLatin1String(CFG_KEY_PLUGINS);
     mPlugins.reset(new PanelPluginsModel(this, names_key, pluginDesktopDirs()));
 
-    connect(mPlugins.data(), &PanelPluginsModel::pluginAdded, mLayout, &LXQtPanelLayout::addPlugin);
-    connect(mPlugins.data(), &PanelPluginsModel::pluginMovedUp, mLayout, &LXQtPanelLayout::moveUpPlugin);
+    connect(mPlugins.get(), &PanelPluginsModel::pluginAdded, mLayout, &LXQtPanelLayout::addPlugin);
+    connect(mPlugins.get(), &PanelPluginsModel::pluginMovedUp, mLayout, &LXQtPanelLayout::moveUpPlugin);
     //reemit signals
-    connect(mPlugins.data(), &PanelPluginsModel::pluginAdded, this, &LXQtPanel::pluginAdded);
-    connect(mPlugins.data(), &PanelPluginsModel::pluginRemoved, this, &LXQtPanel::pluginRemoved);
+    connect(mPlugins.get(), &PanelPluginsModel::pluginAdded, this, &LXQtPanel::pluginAdded);
+    connect(mPlugins.get(), &PanelPluginsModel::pluginRemoved, this, &LXQtPanel::pluginRemoved);
 
     const auto plugins = mPlugins->plugins();
     for (auto const & plugin : plugins)
     {
         mLayout->addPlugin(plugin);
-        connect(plugin, &Plugin::dragLeft, [this] { mShowDelayTimer.stop(); hidePanel(); });
+        connect(plugin, &Plugin::dragLeft, this, [this] {
+            mShowDelayTimer.stop();
+            hidePanel();
+        });
     }
 }
 
@@ -424,6 +531,29 @@ int LXQtPanel::getReserveDimension()
     return mHidable ? PANEL_HIDE_SIZE : qMax(PANEL_MINIMUM_SIZE, mPanelSize);
 }
 
+QMargins LXQtPanel::layerWindowMargins()
+{
+    QMargins margins;
+    if (!mHidden)
+        return margins;
+    int offset = PANEL_HIDE_SIZE - qMax(PANEL_MINIMUM_SIZE, mPanelSize); // negative
+    if (isHorizontal())
+    {
+        if (mPosition == ILXQtPanel::PositionTop)
+            margins = QMargins(0, offset, 0, 0);
+        else
+            margins = QMargins(0, 0, 0, offset);
+    }
+    else
+    {
+        if (mPosition == ILXQtPanel::PositionLeft)
+            margins = QMargins(offset, 0, 0, 0);
+        else
+            margins = QMargins(0, 0, offset, 0);
+    }
+    return margins;
+}
+
 void LXQtPanel::setPanelGeometry(bool animate)
 {
     const auto screens = QApplication::screens();
@@ -432,6 +562,7 @@ void LXQtPanel::setPanelGeometry(bool animate)
     const QRect currentScreen = screens.at(mActualScreenNum)->geometry();
 
     QRect rect;
+    LayerShellQt::Window::Anchors anchors;
 
     if (isHorizontal())
     {
@@ -453,6 +584,7 @@ void LXQtPanel::setPanelGeometry(bool animate)
         switch (mAlignment)
         {
         case LXQtPanel::AlignmentLeft:
+            anchors.setFlag(LayerShellQt::Window::AnchorLeft);
             rect.moveLeft(currentScreen.left());
             break;
 
@@ -461,13 +593,23 @@ void LXQtPanel::setPanelGeometry(bool animate)
             break;
 
         case LXQtPanel::AlignmentRight:
+            anchors.setFlag(LayerShellQt::Window::AnchorRight);
             rect.moveRight(currentScreen.right());
             break;
+        }
+
+        if(lengthInPercents() && mLength == 100)
+        {
+            //Fill all available width
+            anchors.setFlag(LayerShellQt::Window::AnchorLeft);
+            anchors.setFlag(LayerShellQt::Window::AnchorRight);
         }
 
         // Vert .......................
         if (mPosition == ILXQtPanel::PositionTop)
         {
+            anchors.setFlag(LayerShellQt::Window::AnchorTop);
+
             if (mHidden)
                 rect.moveBottom(currentScreen.top() + PANEL_HIDE_SIZE - 1);
             else
@@ -475,6 +617,8 @@ void LXQtPanel::setPanelGeometry(bool animate)
         }
         else
         {
+            anchors.setFlag(LayerShellQt::Window::AnchorBottom);
+
             if (mHidden)
                 rect.moveTop(currentScreen.bottom() - PANEL_HIDE_SIZE + 1);
             else
@@ -501,6 +645,7 @@ void LXQtPanel::setPanelGeometry(bool animate)
         switch (mAlignment)
         {
         case LXQtPanel::AlignmentLeft:
+            anchors.setFlag(LayerShellQt::Window::AnchorTop);
             rect.moveTop(currentScreen.top());
             break;
 
@@ -509,13 +654,23 @@ void LXQtPanel::setPanelGeometry(bool animate)
             break;
 
         case LXQtPanel::AlignmentRight:
+            anchors.setFlag(LayerShellQt::Window::AnchorBottom);
             rect.moveBottom(currentScreen.bottom());
             break;
+        }
+
+        if(lengthInPercents() && mLength == 100)
+        {
+            //Fill all available width
+            anchors.setFlag(LayerShellQt::Window::AnchorTop);
+            anchors.setFlag(LayerShellQt::Window::AnchorBottom);
         }
 
         // Horiz ......................
         if (mPosition == ILXQtPanel::PositionLeft)
         {
+            anchors.setFlag(LayerShellQt::Window::AnchorLeft);
+
             if (mHidden)
                 rect.moveRight(currentScreen.left() + PANEL_HIDE_SIZE - 1);
             else
@@ -523,13 +678,78 @@ void LXQtPanel::setPanelGeometry(bool animate)
         }
         else
         {
+            anchors.setFlag(LayerShellQt::Window::AnchorRight);
+
             if (mHidden)
                 rect.moveLeft(currentScreen.right() - PANEL_HIDE_SIZE + 1);
             else
                 rect.moveRight(currentScreen.right());
         }
     }
-    if (rect != geometry())
+
+    if (!mHidden || !mGeometry.isValid()) mGeometry = rect;
+    if (mLayerWindow)
+    {
+        // NOTE: On Wayland, QVariantAnimation is used to set appropriate negative margins.
+        auto screen = screens.at(mActualScreenNum);
+        if (screen != windowHandle()->screen())
+        {
+            // WARNING: An already visible window is not shown on a new screen under Wayland.
+            if (isVisible())
+            {
+                hide();
+                QTimer::singleShot(0, this, &QWidget::show);
+            }
+            windowHandle()->setScreen(screen);
+        }
+        mLayerWindow->setAnchors(anchors);
+        setFixedSize(rect.size());
+        if (animate)
+        {
+            if (mWAnimation == nullptr)
+            {
+                mWAnimation = new QVariantAnimation(this);
+                mWAnimation->setEasingCurve(QEasingCurve::Linear);
+                mWAnimation->setStartValue(static_cast<qreal>(0));
+                mWAnimation->setEndValue(static_cast<qreal>(1));
+                connect(mWAnimation, &QVariantAnimation::finished, this, [this] {
+                    if (mHidden)
+                    {
+                        setMargins();
+                        // "setWindowOpacity()" does not work on Wayland
+                        if (!mVisibleMargin)
+                            LXQtPanelWidget->setVisible(false);
+                    }
+                });
+                connect(mWAnimation, &QVariantAnimation::valueChanged, this,
+                        [this] (const QVariant &value) {
+                    QMargins margins = layerWindowMargins();
+                    QMarginsF m((mWAnimation->endValue().toReal() - value.toReal())
+                                * mLayerWindow->margins().toMarginsF()
+                                + value.toReal() * margins.toMarginsF());
+                    mLayerWindow->setMargins(m.toMargins());
+                    windowHandle()->requestUpdate();
+                });
+            }
+            mWAnimation->setDuration(mAnimationTime);
+            if (!mHidden)
+            {
+                setMargins();
+                if (!mVisibleMargin)
+                    LXQtPanelWidget->setVisible(true);
+            }
+            mWAnimation->start();
+        }
+        else
+        {
+            if (!mVisibleMargin)
+                LXQtPanelWidget->setVisible(!mHidden);
+            setMargins();
+            mLayerWindow->setMargins(layerWindowMargins());
+            windowHandle()->requestUpdate();
+        }
+    }
+    else if (rect != geometry())
     {
         setFixedSize(rect.size());
         if (animate)
@@ -539,7 +759,7 @@ void LXQtPanel::setPanelGeometry(bool animate)
                 mAnimation = new QPropertyAnimation(this, "geometry");
                 mAnimation->setEasingCurve(QEasingCurve::Linear);
                 //Note: for hiding, the margins are set after animation is finished
-                connect(mAnimation, &QAbstractAnimation::finished, [this] { if (mHidden) setMargins(); });
+                connect(mAnimation, &QAbstractAnimation::finished, this, [this] { if (mHidden) setMargins(); });
             }
             mAnimation->setDuration(mAnimationTime);
             mAnimation->setStartValue(geometry());
@@ -616,62 +836,105 @@ void LXQtPanel::updateWmStrut()
     if(wid == 0 || !isVisible())
         return;
 
-    if (mReserveSpace && QApplication::primaryScreen())
+    if(qGuiApp->nativeInterface<QNativeInterface::QX11Application>())
     {
-        const QRect wholeScreen = QApplication::primaryScreen()->virtualGeometry();
-        const QRect rect = geometry();
-        // NOTE: https://standards.freedesktop.org/wm-spec/wm-spec-latest.html
-        // Quote from the EWMH spec: " Note that the strut is relative to the screen edge, and not the edge of the xinerama monitor."
-        // So, we use the geometry of the whole screen to calculate the strut rather than using the geometry of individual monitors.
-        // Though the spec only mention Xinerama and did not mention XRandR, the rule should still be applied.
-        // At least openbox is implemented like this.
-        switch (mPosition)
+        if (mReserveSpace && QApplication::primaryScreen())
         {
-        case LXQtPanel::PositionTop:
-            KWindowSystem::setExtendedStrut(wid,
-                                            /* Left   */  0, 0, 0,
-                                            /* Right  */  0, 0, 0,
-                                            /* Top    */  rect.top() + getReserveDimension(), rect.left(), rect.right(),
-                                            /* Bottom */  0, 0, 0
-                                           );
-            break;
+            const QRect wholeScreen = QApplication::primaryScreen()->virtualGeometry();
+            const QRect rect = geometry();
+            // NOTE: https://standards.freedesktop.org/wm-spec/wm-spec-latest.html
+            // Quote from the EWMH spec: " Note that the strut is relative to the screen edge, and not the edge of the xinerama monitor."
+            // So, we use the geometry of the whole screen to calculate the strut rather than using the geometry of individual monitors.
+            // Though the spec only mention Xinerama and did not mention XRandR, the rule should still be applied.
+            // At least openbox is implemented like this.
+            switch (mPosition)
+            {
+            case LXQtPanel::PositionTop:
+                KX11Extras::setExtendedStrut(wid,
+                                             /* Left   */  0, 0, 0,
+                                             /* Right  */  0, 0, 0,
+                                             /* Top    */  rect.top() + getReserveDimension(), rect.left(), rect.right(),
+                                             /* Bottom */  0, 0, 0
+                                             );
+                break;
 
-        case LXQtPanel::PositionBottom:
-            KWindowSystem::setExtendedStrut(wid,
-                                            /* Left   */  0, 0, 0,
-                                            /* Right  */  0, 0, 0,
-                                            /* Top    */  0, 0, 0,
-                                            /* Bottom */  wholeScreen.bottom() - rect.bottom() + getReserveDimension(), rect.left(), rect.right()
-                                           );
-            break;
+            case LXQtPanel::PositionBottom:
+                KX11Extras::setExtendedStrut(wid,
+                                             /* Left   */  0, 0, 0,
+                                             /* Right  */  0, 0, 0,
+                                             /* Top    */  0, 0, 0,
+                                             /* Bottom */  wholeScreen.bottom() - rect.bottom() + getReserveDimension(), rect.left(), rect.right()
+                                             );
+                break;
 
-        case LXQtPanel::PositionLeft:
-            KWindowSystem::setExtendedStrut(wid,
-                                            /* Left   */  rect.left() + getReserveDimension(), rect.top(), rect.bottom(),
-                                            /* Right  */  0, 0, 0,
-                                            /* Top    */  0, 0, 0,
-                                            /* Bottom */  0, 0, 0
-                                           );
+            case LXQtPanel::PositionLeft:
+                KX11Extras::setExtendedStrut(wid,
+                                             /* Left   */  rect.left() + getReserveDimension(), rect.top(), rect.bottom(),
+                                             /* Right  */  0, 0, 0,
+                                             /* Top    */  0, 0, 0,
+                                             /* Bottom */  0, 0, 0
+                                             );
 
-            break;
+                break;
 
-        case LXQtPanel::PositionRight:
-            KWindowSystem::setExtendedStrut(wid,
-                                            /* Left   */  0, 0, 0,
-                                            /* Right  */  wholeScreen.right() - rect.right() + getReserveDimension(), rect.top(), rect.bottom(),
-                                            /* Top    */  0, 0, 0,
-                                            /* Bottom */  0, 0, 0
-                                           );
-            break;
+            case LXQtPanel::PositionRight:
+                KX11Extras::setExtendedStrut(wid,
+                                             /* Left   */  0, 0, 0,
+                                             /* Right  */  wholeScreen.right() - rect.right() + getReserveDimension(), rect.top(), rect.bottom(),
+                                             /* Top    */  0, 0, 0,
+                                             /* Bottom */  0, 0, 0
+                                             );
+                break;
+            }
+        } else
+        {
+            KX11Extras::setExtendedStrut(wid,
+                                         /* Left   */  0, 0, 0,
+                                         /* Right  */  0, 0, 0,
+                                         /* Top    */  0, 0, 0,
+                                         /* Bottom */  0, 0, 0
+                                         );
+        }
     }
-    } else
+    else if(mLayerWindow && qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>())
     {
-        KWindowSystem::setExtendedStrut(wid,
-                                        /* Left   */  0, 0, 0,
-                                        /* Right  */  0, 0, 0,
-                                        /* Top    */  0, 0, 0,
-                                        /* Bottom */  0, 0, 0
-                                       );
+        if (mReserveSpace
+            // NOTE: For some reason, no space is reserved with a negative layer margin.
+            // However, there is no reason to reserve space for a hiding panel on Wayland.
+            && !mHidable)
+        {
+            LayerShellQt::Window::Anchor edge = LayerShellQt::Window::AnchorBottom;
+
+            switch (mPosition)
+            {
+            case LXQtPanel::PositionTop:
+                edge = LayerShellQt::Window::AnchorTop;
+                break;
+
+            case LXQtPanel::PositionBottom:
+                edge = LayerShellQt::Window::AnchorBottom;
+                break;
+
+            case LXQtPanel::PositionLeft:
+                edge = LayerShellQt::Window::AnchorLeft;
+                break;
+
+            case LXQtPanel::PositionRight:
+                edge = LayerShellQt::Window::AnchorRight;
+                break;
+            }
+
+            mLayerWindow->setExclusiveEdge(edge);
+            mLayerWindow->setExclusiveZone(getReserveDimension());
+        }
+        else
+        {
+            mLayerWindow->setExclusiveEdge(LayerShellQt::Window::AnchorNone);
+            mLayerWindow->setExclusiveZone(0);
+        }
+
+        // Make LayerShellQt apply changes immediatly
+        windowHandle()->requestUpdate();
     }
 }
 
@@ -771,15 +1034,15 @@ void LXQtPanel::showConfigDialog()
     if (mConfigDialog.isNull())
         mConfigDialog = new ConfigPanelDialog(this, nullptr /*make it top level window*/);
 
-    mConfigDialog->showConfigPanelPage();
+    mConfigDialog->showConfigPlacementPage();
     mStandaloneWindows->observeWindow(mConfigDialog.data());
     mConfigDialog->show();
     mConfigDialog->raise();
     mConfigDialog->activateWindow();
     WId wid = mConfigDialog->windowHandle()->winId();
 
-    KWindowSystem::activateWindow(wid);
-    KWindowSystem::setOnDesktop(wid, KWindowSystem::currentDesktop());
+    KX11Extras::activateWindow(wid);
+    KX11Extras::setOnDesktop(wid, KX11Extras::currentDesktop());
 }
 
 
@@ -798,8 +1061,8 @@ void LXQtPanel::showAddPluginDialog()
     mConfigDialog->activateWindow();
     WId wid = mConfigDialog->windowHandle()->winId();
 
-    KWindowSystem::activateWindow(wid);
-    KWindowSystem::setOnDesktop(wid, KWindowSystem::currentDesktop());
+    KX11Extras::activateWindow(wid);
+    KX11Extras::setOnDesktop(wid, KX11Extras::currentDesktop());
 }
 
 
@@ -819,8 +1082,6 @@ void LXQtPanel::updateStyleSheet()
 
     if (mFontColor.isValid())
         sheet << QString(QStringLiteral("Plugin * { color: ") + mFontColor.name() + QStringLiteral("; }"));
-
-    QString object = LXQtPanelWidget->objectName();
 
     if (mBackgroundColor.isValid())
     {
@@ -953,6 +1214,15 @@ void LXQtPanel::setPosition(int screen, ILXQtPanel::Position position, bool save
         // this corner case triggers #40681.)
         // When using other kind of multihead settings, such as Xinerama, this might be different and
         // unless Qt developers can fix their bug, we have no way to workaround that.
+        if (mLayerWindow)
+        {
+            // WARNING: An already visible window is not shown on a new screen under Wayland.
+            if (isVisible())
+            {
+                hide();
+                QTimer::singleShot(0, this, &QWidget::show);
+            }
+        }
         windowHandle()->setScreen(qApp->screens().at(screen));
     }
 
@@ -1060,7 +1330,7 @@ bool LXQtPanel::event(QEvent *event)
     switch (event->type())
     {
     case QEvent::ContextMenu:
-        showPopupMenu();
+        showPopupMenu(static_cast<QContextMenuEvent *>(event)->globalPos());
         break;
 
     case QEvent::LayoutRequest:
@@ -1069,22 +1339,25 @@ bool LXQtPanel::event(QEvent *event)
 
     case QEvent::WinIdChange:
     {
-        // qDebug() << "WinIdChange" << hex << effectiveWinId();
-        if(effectiveWinId() == 0)
-            break;
+        if(qGuiApp->nativeInterface<QNativeInterface::QX11Application>())
+        {
+            // qDebug() << "WinIdChange" << hex << effectiveWinId();
+            if(effectiveWinId() == 0)
+                break;
 
-        // Sometimes Qt needs to re-create the underlying window of the widget and
-        // the winId() may be changed at runtime. So we need to reset all X11 properties
-        // when this happens.
-        qDebug() << "WinIdChange" << hex << effectiveWinId() << "handle" << windowHandle() << windowHandle()->screen();
+            // Sometimes Qt needs to re-create the underlying window of the widget and
+            // the winId() may be changed at runtime. So we need to reset all X11 properties
+            // when this happens.
+            qDebug() << "WinIdChange" << Qt::hex << effectiveWinId() << "handle" << windowHandle() << windowHandle()->screen();
 
-        // Qt::WA_X11NetWmWindowTypeDock becomes ineffective in Qt 5
-        // See QTBUG-39887: https://bugreports.qt-project.org/browse/QTBUG-39887
-        // Let's use KWindowSystem for that
-        KWindowSystem::setType(effectiveWinId(), NET::Dock);
+            // Qt::WA_X11NetWmWindowTypeDock becomes ineffective in Qt 5
+            // See QTBUG-39887: https://bugreports.qt-project.org/browse/QTBUG-39887
+            // Let's use KWindowSystem for that
+            KX11Extras::setType(effectiveWinId(), NET::Dock);
 
-        updateWmStrut(); // reserve screen space for the panel
-        KWindowSystem::setOnAllDesktops(effectiveWinId(), true);
+            updateWmStrut(); // reserve screen space for the panel
+            KX11Extras::setOnAllDesktops(effectiveWinId(), true);
+        }
         break;
     }
     case QEvent::DragEnter:
@@ -1103,6 +1376,22 @@ bool LXQtPanel::event(QEvent *event)
         mShowDelayTimer.stop();
         hidePanel();
         break;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+    case QEvent::Paint:
+    // NOTE: Starting from Qt 6.8.0, random artifacts are possible in
+    // translucent windows under Wayland. This a workaround.
+    if (QGuiApplication::platformName() == QStringLiteral("wayland"))
+    {
+        QPainter p(this);
+        p.setClipRegion(static_cast<QPaintEvent*>(event)->region());
+        auto origMode = p.compositionMode();
+        p.setCompositionMode(QPainter::CompositionMode_Clear);
+        p.fillRect(rect(), Qt::transparent);
+        p.setCompositionMode(origMode);
+    }
+    break;
+#endif
 
     default:
         break;
@@ -1125,7 +1414,7 @@ void LXQtPanel::showEvent(QShowEvent *event)
 /************************************************
 
  ************************************************/
-void LXQtPanel::showPopupMenu(Plugin *plugin)
+void LXQtPanel::showPopupMenu(const QPoint& cursorPos, Plugin *plugin)
 {
     PopupMenu * menu = new PopupMenu(tr("Panel"), this);
     menu->setAttribute(Qt::WA_DeleteOnClose);
@@ -1157,43 +1446,43 @@ void LXQtPanel::showPopupMenu(Plugin *plugin)
 
     menu->addAction(XdgIcon::fromTheme(QLatin1String("configure")),
                    tr("Configure Panel"),
-                   this, SLOT(showConfigDialog())
+                   this, &LXQtPanel::showConfigDialog
                   )->setDisabled(mLockPanel);
 
     menu->addAction(XdgIcon::fromTheme(QStringLiteral("preferences-plugin")),
                    tr("Manage Widgets"),
-                   this, SLOT(showAddPluginDialog())
+                   this, &LXQtPanel::showAddPluginDialog
                   )->setDisabled(mLockPanel);
 
     LXQtPanelApplication *a = reinterpret_cast<LXQtPanelApplication*>(qApp);
     menu->addAction(XdgIcon::fromTheme(QLatin1String("list-add")),
                    tr("Add New Panel"),
-                   a, SLOT(addNewPanel())
+                   a, &LXQtPanelApplication::addNewPanel
                   );
 
     if (a->count() > 1)
     {
         menu->addAction(XdgIcon::fromTheme(QLatin1String("list-remove")),
                        tr("Remove Panel", "Menu Item"),
-                       this, SLOT(userRequestForDeletion())
+                       this, &LXQtPanel::userRequestForDeletion
                       )->setDisabled(mLockPanel);
     }
 
     QAction * act_lock = menu->addAction(tr("Lock This Panel"));
     act_lock->setCheckable(true);
     act_lock->setChecked(mLockPanel);
-    connect(act_lock, &QAction::triggered, [this] { mLockPanel = !mLockPanel; saveSettings(false); });
+    connect(act_lock, &QAction::triggered, this, [this] { mLockPanel = !mLockPanel; saveSettings(false); });
 
 #ifdef DEBUG
     menu->addSeparator();
-    menu->addAction("Exit (debug only)", qApp, SLOT(quit()));
+    menu->addAction("Exit (debug only)", qApp, &QApplication::quit);
 #endif
 
     /* Note: in multihead & multipanel setup the QMenu::popup/exec places the window
      * sometimes wrongly (it seems that this bug is somehow connected to misinterpretation
      * of QDesktopWidget::availableGeometry)
      */
-    menu->setGeometry(calculatePopupWindowPos(QCursor::pos(), menu->sizeHint()));
+    menu->setGeometry(calculatePopupWindowPos(cursorPos, menu->sizeHint()));
     willShowWindow(menu);
     menu->show();
 }
@@ -1212,28 +1501,35 @@ Plugin* LXQtPanel::findPlugin(const ILXQtPanelPlugin* iPlugin) const
  ************************************************/
 QRect LXQtPanel::calculatePopupWindowPos(QPoint const & absolutePos, QSize const & windowSize) const
 {
-    int x = absolutePos.x(), y = absolutePos.y();
+    // Using of anchors makes coordinates be absolute under some Wayland compositors.
+    // Therefore, to cover both X11 and Wayland, we first use the local coordinates
+    // and then map them to the global coordinates.
+    QPoint localPos = mapFromGlobal(absolutePos);
+    int x = localPos.x(), y = localPos.y();
 
     switch (position())
     {
     case ILXQtPanel::PositionTop:
-        y = globalGeometry().bottom();
+        y = mGeometry.height();
         break;
 
     case ILXQtPanel::PositionBottom:
-        y = globalGeometry().top() - windowSize.height();
+        y = -windowSize.height();
         break;
 
     case ILXQtPanel::PositionLeft:
-        x = globalGeometry().right();
+        x = mGeometry.width();
         break;
 
     case ILXQtPanel::PositionRight:
-        x = globalGeometry().left() - windowSize.width();
+        x = -windowSize.width();
         break;
     }
 
-    QRect res(QPoint(x, y), windowSize);
+    QRect res(mapToGlobal(QPoint(x, y)), windowSize);
+
+    if (qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>())
+        return res;
 
     QRect panelScreen;
     const auto screens = QApplication::screens();
@@ -1275,7 +1571,7 @@ QRect LXQtPanel::calculatePopupWindowPos(const ILXQtPanelPlugin *plugin, const Q
     }
 
     // Note: assuming there are not contentMargins around the "BackgroundWidget" (LXQtPanelWidget)
-    return calculatePopupWindowPos(globalGeometry().topLeft() + panel_plugin->geometry().topLeft(), windowSize);
+    return calculatePopupWindowPos(mapToGlobal(panel_plugin->geometry().topLeft()), windowSize);
 }
 
 
@@ -1356,6 +1652,15 @@ void LXQtPanel::userRequestForDeletion()
     emit deletedByUser(this);
 }
 
+bool LXQtPanel::isPanelOverlapped() const
+{
+    LXQtPanelApplication *a = reinterpret_cast<LXQtPanelApplication*>(qApp);
+
+    //TODO: calculate geometry on wayland
+    QRect area = mGeometry;
+    return a->getWMBackend()->isAreaOverlapped(area);
+}
+
 void LXQtPanel::showPanel(bool animate)
 {
     if (mHidable)
@@ -1372,9 +1677,10 @@ void LXQtPanel::showPanel(bool animate)
 void LXQtPanel::hidePanel()
 {
     if (mHidable && !mHidden
-            && !mStandaloneWindows->isAnyWindowShown()
-       )
+        && !mStandaloneWindows->isAnyWindowShown())
+    {
         mHideTimer.start();
+    }
 }
 
 void LXQtPanel::hidePanelWork()
@@ -1383,9 +1689,13 @@ void LXQtPanel::hidePanelWork()
     {
         if (!mStandaloneWindows->isAnyWindowShown())
         {
-            mHidden = true;
-            setPanelGeometry(mAnimationTime > 0);
-        } else
+            if (!mHideOnOverlap || isPanelOverlapped())
+            {
+                mHidden = true;
+                setPanelGeometry(mAnimationTime > 0);
+            }
+        }
+        else
         {
             mHideTimer.start();
         }
@@ -1411,6 +1721,19 @@ void LXQtPanel::setVisibleMargin(bool visibleMargin, bool save)
         return;
 
     mVisibleMargin = visibleMargin;
+
+    if (save)
+        saveSettings(true);
+
+    realign();
+}
+
+void LXQtPanel::setHideOnOverlap(bool hideOnOverlap, bool save)
+{
+    if (mHideOnOverlap == hideOnOverlap)
+        return;
+
+    mHideOnOverlap = hideOnOverlap;
 
     if (save)
         saveSettings(true);
@@ -1462,7 +1785,7 @@ void LXQtPanel::updateConfigDialog() const
     }
 }
 
-bool LXQtPanel::isPluginSingletonAndRunnig(QString const & pluginId) const
+bool LXQtPanel::isPluginSingletonAndRunning(QString const & pluginId) const
 {
     Plugin const * plugin = mPlugins->pluginByID(pluginId);
     if (nullptr == plugin)

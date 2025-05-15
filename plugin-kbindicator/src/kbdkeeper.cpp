@@ -25,9 +25,11 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include <QDebug>
-#include <KWindowSystem/KWindowSystem>
-#include <KWindowSystem/KWindowInfo>
-#include <KWindowSystem/netwm_def.h>
+
+#include <KX11Extras>
+#include <KWindowInfo>
+#include <netwm_def.h>
+
 #include "kbdkeeper.h"
 
 //--------------------------------------------------------------------------------------------------
@@ -39,15 +41,13 @@ KbdKeeper::KbdKeeper(const KbdLayout & layout, KeeperType type):
     m_layout.readKbdInfo(m_info);
 }
 
-KbdKeeper::~KbdKeeper()
-{}
+KbdKeeper::~KbdKeeper() = default;
 
 bool KbdKeeper::setup()
 {
-    connect(&m_layout, SIGNAL(keyboardChanged()), SLOT(keyboardChanged()));
-    connect(&m_layout, SIGNAL(layoutChanged(uint)), SLOT(layoutChanged(uint)));
-    connect(&m_layout, SIGNAL(checkState()), SLOT(checkState()));
-
+    connect(&m_layout, &KbdLayout::keyboardChanged, this, &KbdKeeper::keyboardChanged);
+    connect(&m_layout, &KbdLayout::layoutChanged,   this, &KbdKeeper::layoutChanged);
+    connect(&m_layout, &KbdLayout::checkState,      this, &KbdKeeper::checkState);
     return true;
 }
 
@@ -89,12 +89,11 @@ WinKbdKeeper::WinKbdKeeper(const KbdLayout & layout):
     KbdKeeper(layout, KeeperType::Window)
 {}
 
-WinKbdKeeper::~WinKbdKeeper()
-{}
+WinKbdKeeper::~WinKbdKeeper() = default;
 
 void WinKbdKeeper::layoutChanged(uint group)
 {
-    WId win = KWindowSystem::activeWindow();
+    WId win = KX11Extras::activeWindow();
 
     if (m_active == win){
         m_mapping[win] = group;
@@ -111,7 +110,7 @@ void WinKbdKeeper::layoutChanged(uint group)
 
 void WinKbdKeeper::checkState()
 {
-    WId win = KWindowSystem::activeWindow();
+    WId win = KX11Extras::activeWindow();
 
     if (!m_mapping.contains(win))
         m_mapping.insert(win, 0);
@@ -123,7 +122,7 @@ void WinKbdKeeper::checkState()
 
 void WinKbdKeeper::switchToGroup(uint group)
 {
-    WId win = KWindowSystem::activeWindow();
+    WId win = KX11Extras::activeWindow();
     m_mapping[win] = group;
     m_layout.lockGroup(group);
     m_info.setCurrentGroup(group);
@@ -137,12 +136,11 @@ AppKbdKeeper::AppKbdKeeper(const KbdLayout & layout):
     KbdKeeper(layout, KeeperType::Window)
 {}
 
-AppKbdKeeper::~AppKbdKeeper()
-{}
+AppKbdKeeper::~AppKbdKeeper() = default;
 
 void AppKbdKeeper::layoutChanged(uint group)
 {
-    KWindowInfo info = KWindowInfo(KWindowSystem::activeWindow(), NET::Properties(), NET::WM2WindowClass);
+    KWindowInfo info = KWindowInfo(KX11Extras::activeWindow(), NET::Properties(), NET::WM2WindowClass);
     QString app = QString::fromUtf8(info.windowClassName());
 
     if (m_active == app){
@@ -161,7 +159,7 @@ void AppKbdKeeper::layoutChanged(uint group)
 
 void AppKbdKeeper::checkState()
 {
-    KWindowInfo info = KWindowInfo(KWindowSystem::activeWindow(), NET::Properties(), NET::WM2WindowClass);
+    KWindowInfo info = KWindowInfo(KX11Extras::activeWindow(), NET::Properties(), NET::WM2WindowClass);
     QString app = QString::fromUtf8(info.windowClassName());
 
     if (!m_mapping.contains(app))
@@ -176,7 +174,7 @@ void AppKbdKeeper::checkState()
 
 void AppKbdKeeper::switchToGroup(uint group)
 {
-    KWindowInfo info = KWindowInfo(KWindowSystem::activeWindow(), NET::Properties(), NET::WM2WindowClass);
+    KWindowInfo info = KWindowInfo(KX11Extras::activeWindow(), NET::Properties(), NET::WM2WindowClass);
     QString app = QString::fromUtf8(info.windowClassName());
 
     m_mapping[app] = group;

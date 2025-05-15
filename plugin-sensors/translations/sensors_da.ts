@@ -16,7 +16,7 @@
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="42"/>
         <source>Update interval (seconds)</source>
-        <translation>Opdateringsinterval (sekunder)</translation>
+        <translation>Genopfriskningsinterval (sekunder)</translation>
     </message>
     <message>
         <location filename="../lxqtsensorsconfiguration.ui" line="49"/>
@@ -64,17 +64,17 @@
         <translation>Chip-funktioner:</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Enabled</source>
         <translation>Aktiveret</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Label</source>
         <translation>Etiket</translation>
     </message>
     <message>
-        <location filename="../lxqtsensorsconfiguration.cpp" line="195"/>
+        <location filename="../lxqtsensorsconfiguration.cpp" line="203"/>
         <source>Color</source>
         <translation>Farve</translation>
     </message>

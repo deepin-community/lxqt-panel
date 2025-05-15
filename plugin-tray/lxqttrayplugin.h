@@ -1,10 +1,11 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
- * (c)LGPL2+
+ * (c)LGPL2.1+
  *
  * LXQt - a lightweight, Qt based, desktop toolset
  * https://lxqt.org
  *
  * Copyright: 2013 Razor team
+ *            2022 LXQt team
  * Authors:
  *   Alexander Sokoloff <sokoloff.a@gmail.com>
  *
@@ -25,16 +26,15 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
-#ifndef LXQTTRAYPLUGIN_H
-#define LXQTTRAYPLUGIN_H
+#pragma once
 
 #include "../panel/ilxqtpanelplugin.h"
-#include <QDebug>
-#include <QObject>
-#include <QX11Info>
 
-class LXQtTray;
+#include <QObject>
+
+#include <QDebug>
+
+class FdoSelectionManager;
 class LXQtTrayPlugin : public QObject, public ILXQtPanelPlugin
 {
     Q_OBJECT
@@ -44,17 +44,12 @@ public:
 
     virtual QWidget *widget();
     virtual QString themeId() const { return QStringLiteral("Tray"); }
-    virtual Flags flags() const { return HaveConfigDialog | PreferRightAlignment | SingleInstance | NeedsHandle; }
-
-    QDialog *configureDialog();
-
-    void realign();
-    void settingsChanged();
+    virtual Flags flags() const { return PreferRightAlignment | SingleInstance | NeedsHandle; }
 
     bool isSeparate() const { return true; }
 
 private:
-    LXQtTray *mWidget;
+    std::unique_ptr<FdoSelectionManager> mManager;
 
 };
 
@@ -64,15 +59,5 @@ class LXQtTrayPluginLibrary: public QObject, public ILXQtPanelPluginLibrary
     // Q_PLUGIN_METADATA(IID "lxqt.org/Panel/PluginInterface/3.0")
     Q_INTERFACES(ILXQtPanelPluginLibrary)
 public:
-    ILXQtPanelPlugin *instance(const ILXQtPanelPluginStartupInfo &startupInfo) const
-    {
-        // Currently only X11 supported
-        if (!QX11Info::connection()) {
-            qWarning() << "Currently tray plugin supports X11 only. Skipping.";
-            return nullptr;
-        }
-        return new LXQtTrayPlugin(startupInfo);
-    }
+    ILXQtPanelPlugin *instance(const ILXQtPanelPluginStartupInfo &startupInfo) const;
 };
-
-#endif // LXQTTRAYPLUGIN_H

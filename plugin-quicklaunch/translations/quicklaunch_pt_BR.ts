@@ -4,17 +4,17 @@
 <context>
     <name>LXQtQuickLaunch</name>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="226"/>
+        <location filename="../lxqtquicklaunch.cpp" line="229"/>
         <source>Drop Error</source>
         <translation>Erro na colocação</translation>
     </message>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="227"/>
+        <location filename="../lxqtquicklaunch.cpp" line="230"/>
         <source>File/URL &apos;%1&apos; cannot be embedded into QuickLaunch for now</source>
         <translation>O arquivo/URL &apos;%1&apos; não pôde ser incorporado ao lançador rápido por enquanto</translation>
     </message>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="333"/>
+        <location filename="../lxqtquicklaunch.cpp" line="336"/>
         <source>Drop application
 icons here</source>
         <translation>Arraste ícones de
@@ -39,9 +39,14 @@ aplicativos para cá</translation>
         <translation>Mover para a direita</translation>
     </message>
     <message>
-        <location filename="../quicklaunchbutton.cpp" line="64"/>
+        <location filename="../quicklaunchbutton.cpp" line="63"/>
         <source>Remove from quicklaunch</source>
         <translation>Remover do lançador rápido</translation>
+    </message>
+    <message>
+        <location filename="../quicklaunchbutton.cpp" line="72"/>
+        <source>Refresh</source>
+        <translation>Atualizar</translation>
     </message>
 </context>
 </TS>

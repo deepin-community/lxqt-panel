@@ -26,14 +26,14 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include <QAction>
-#include <QX11Info>
 #include <lxqt-globalkeys.h>
 #include <XdgIcon>
 #include <LXQt/Notification>
-#include <KWindowSystem/KWindowSystem>
-#include <KWindowSystem/NETWM>
 #include "showdesktop.h"
 #include "../panel/pluginsettings.h"
+
+#include "../panel/lxqtpanelapplication.h"
+#include "../panel/backends/ilxqtabstractwmiface.h"
 
 #define DEFAULT_SHORTCUT "Control+Alt+D"
 
@@ -45,11 +45,11 @@ ShowDesktop::ShowDesktop(const ILXQtPanelPluginStartupInfo &startupInfo) :
     if (m_key)
     {
         connect(m_key, &GlobalKeyShortcut::Action::registrationFinished, this, &ShowDesktop::shortcutRegistered);
-        connect(m_key, SIGNAL(activated()), this, SLOT(toggleShowingDesktop()));
+        connect(m_key, &GlobalKeyShortcut::Action::activated,            this, &ShowDesktop::toggleShowingDesktop);
     }
 
     QAction * act = new QAction(XdgIcon::fromTheme(QStringLiteral("user-desktop")), tr("Show Desktop"), this);
-    connect(act, SIGNAL(triggered()), this, SLOT(toggleShowingDesktop()));
+    connect(act, &QAction::triggered, this, &ShowDesktop::toggleShowingDesktop);
 
     mButton.setDefaultAction(act);
     mButton.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -70,7 +70,9 @@ void ShowDesktop::shortcutRegistered()
 
 void ShowDesktop::toggleShowingDesktop()
 {
-    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
+    LXQtPanelApplication *a = reinterpret_cast<LXQtPanelApplication*>(qApp);
+    auto wmBackend = a->getWMBackend();
+    wmBackend->showDesktop(!wmBackend->isShowingDesktop());
 }
 
 #undef DEFAULT_SHORTCUT

@@ -4,7 +4,7 @@
 <context>
     <name>LXQtTaskBar</name>
     <message>
-        <location filename="../lxqttaskbar.cpp" line="681"/>
+        <location filename="../lxqttaskbar.cpp" line="649"/>
         <source>Activate task %1</source>
         <translation>הפעלת משימה %1</translation>
     </message>
@@ -12,107 +12,107 @@
 <context>
     <name>LXQtTaskButton</name>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="679"/>
+        <location filename="../lxqttaskbutton.cpp" line="546"/>
         <source>Application</source>
         <translation>יישום</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="713"/>
+        <location filename="../lxqttaskbutton.cpp" line="580"/>
         <source>To &amp;Desktop</source>
         <translation>ל&amp;שולחן העבודה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="715"/>
+        <location filename="../lxqttaskbutton.cpp" line="583"/>
         <source>&amp;All Desktops</source>
         <translation>&amp;כל שולחנות העבודה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="723"/>
+        <location filename="../lxqttaskbutton.cpp" line="593"/>
         <source>Desktop &amp;%1</source>
         <translation>שולחן עבודה &amp;%1</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="730"/>
+        <location filename="../lxqttaskbutton.cpp" line="603"/>
         <source>&amp;To Current Desktop</source>
         <translation>לשולחן העבודה ה&amp;נוכחי</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="739"/>
-        <source>Move To &amp;Next Monitor</source>
-        <translation>העברה לצג ה&amp;בא</translation>
+        <location filename="../lxqttaskbutton.cpp" line="612"/>
+        <source>Move To N&amp;ext Monitor</source>
+        <translation>העברה למסך ה&amp;בא</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="742"/>
+        <location filename="../lxqttaskbutton.cpp" line="618"/>
         <source>Move To &amp;Previous Monitor</source>
         <translation>העברה לצד ה&amp;קודם</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="746"/>
+        <location filename="../lxqttaskbutton.cpp" line="624"/>
         <source>&amp;Move</source>
         <translation>ה&amp;עברה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="749"/>
+        <location filename="../lxqttaskbutton.cpp" line="629"/>
         <source>Resi&amp;ze</source>
         <translation>&amp;שינוי גודל</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="756"/>
+        <location filename="../lxqttaskbutton.cpp" line="638"/>
         <source>Ma&amp;ximize</source>
         <translation>ה&amp;גדלה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="763"/>
+        <location filename="../lxqttaskbutton.cpp" line="647"/>
         <source>Maximize vertically</source>
         <translation>הגדלה אנכית</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="768"/>
+        <location filename="../lxqttaskbutton.cpp" line="654"/>
         <source>Maximize horizontally</source>
         <translation>הגדלה אופקית</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="774"/>
+        <location filename="../lxqttaskbutton.cpp" line="662"/>
         <source>&amp;Restore</source>
         <translation>שח&amp;זור</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="778"/>
+        <location filename="../lxqttaskbutton.cpp" line="670"/>
         <source>Mi&amp;nimize</source>
         <translation>ה&amp;קטנה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="784"/>
+        <location filename="../lxqttaskbutton.cpp" line="678"/>
         <source>Roll down</source>
         <translation>גלגול מטה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="790"/>
+        <location filename="../lxqttaskbutton.cpp" line="686"/>
         <source>Roll up</source>
         <translation>גלגול מעלה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="798"/>
+        <location filename="../lxqttaskbutton.cpp" line="695"/>
         <source>&amp;Layer</source>
         <translation>&amp;שכבה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="800"/>
+        <location filename="../lxqttaskbutton.cpp" line="700"/>
         <source>Always on &amp;top</source>
         <translation>תמיד &amp;עליון</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="806"/>
+        <location filename="../lxqttaskbutton.cpp" line="705"/>
         <source>&amp;Normal</source>
         <translation>&amp;רגיל</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="812"/>
+        <location filename="../lxqttaskbutton.cpp" line="710"/>
         <source>Always on &amp;bottom</source>
         <translation>תמיד ת&amp;חתון</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbutton.cpp" line="820"/>
+        <location filename="../lxqttaskbutton.cpp" line="717"/>
         <source>&amp;Close</source>
         <translation>&amp;סגירה</translation>
     </message>
@@ -120,12 +120,12 @@
 <context>
     <name>LXQtTaskGroup</name>
     <message>
-        <location filename="../lxqttaskgroup.cpp" line="82"/>
+        <location filename="../lxqttaskgroup.cpp" line="84"/>
         <source>Group</source>
         <translation>קבוצה</translation>
     </message>
     <message>
-        <location filename="../lxqttaskgroup.cpp" line="84"/>
+        <location filename="../lxqttaskgroup.cpp" line="86"/>
         <source>Close group</source>
         <translation>סגירת קבוצה</translation>
     </message>
@@ -168,7 +168,18 @@
         <translation>סגירה עם כפתור אמצעי</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="49"/>
+        <location filename="../lxqttaskbarconfiguration.ui" line="254"/>
+        <location filename="../lxqttaskbarconfiguration.ui" line="264"/>
+        <source>Comma separated list of window classes</source>
+        <translation>רשימה של מחלקות חלונות מופרדות בפסיקים</translation>
+    </message>
+    <message>
+        <location filename="../lxqttaskbarconfiguration.ui" line="257"/>
+        <source>Exclude from taskbar</source>
+        <translation>החרגה משורת המשימות</translation>
+    </message>
+    <message>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="51"/>
         <source>Cycle windows on wheel scrolling</source>
         <translation>דפדוף בין חלונות עם גלילת העכבר</translation>
     </message>
@@ -235,47 +246,47 @@
         <translation>שימוש בסמלים לפי WindowClass, אם ניתן</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="44"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="46"/>
         <source>Icon and text</source>
         <translation>סמל וטקסט</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="45"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="47"/>
         <source>Only icon</source>
         <translation>סמל בלבד</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="46"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="48"/>
         <source>Only text</source>
         <translation>טקסט בלבד</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="48"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="50"/>
         <source>Disabled</source>
         <translation>מושבת</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="50"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="52"/>
         <source>Scroll up to raise, down to minimize</source>
         <translation>גלילה למעלה כדי להרים, למטה כדי למזער</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="51"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="53"/>
         <source>Scroll up to minimize, down to raise</source>
         <translation>גלילה למעלה כדי למזער, למטה כדי להרים</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="52"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="54"/>
         <source>Scroll up to move to next desktop, down to previous</source>
         <translation>גלילה למעלה על מנת לעבור לשולחן העבודה הבא, ולמטה לקודם</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="53"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="55"/>
         <source>Scroll up to move to previous desktop, down to next</source>
         <translation>גלילה למעלה על מנת לעבור לשולחן העבודה הקודם, ולמטה להבא</translation>
     </message>
     <message>
-        <location filename="../lxqttaskbarconfiguration.cpp" line="55"/>
+        <location filename="../lxqttaskbarconfiguration.cpp" line="60"/>
         <source>Current</source>
         <translation>נוכחי</translation>
     </message>

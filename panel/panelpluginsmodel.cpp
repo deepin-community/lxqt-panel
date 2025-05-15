@@ -129,7 +129,7 @@ Plugin const * PanelPluginsModel::pluginByID(QString id) const
 
 void PanelPluginsModel::addPlugin(const LXQt::PluginInfo &desktopFile)
 {
-    if (dynamic_cast<LXQtPanelApplication const *>(qApp)->isPluginSingletonAndRunnig(desktopFile.id()))
+    if (dynamic_cast<LXQtPanelApplication const *>(qApp)->isPluginSingletonAndRunning(desktopFile.id()))
         return;
 
     QString name = findNewPluginSettingsGroup(desktopFile.id());
@@ -224,7 +224,7 @@ void PanelPluginsModel::loadPlugins(QStringList const & desktopDirs)
     timer.start();
     qint64 lastTime = 0;
 #endif
-    for (auto const & name : qAsConst(plugin_names))
+    for (auto const & name : std::as_const(plugin_names))
     {
         pluginslist_t::iterator i = mPlugins.insert(mPlugins.end(), {name, nullptr});
         QString type = mPanel->settings()->value(name + QStringLiteral("/type")).toString();
@@ -319,11 +319,7 @@ void PanelPluginsModel::onMovePluginUp(QModelIndex const & index)
         return; //can't move up
 
     beginMoveRows(QModelIndex(), row, row, QModelIndex(), row - 1);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,13,0))
     mPlugins.swapItemsAt(row - 1, row);
-#else
-    mPlugins.swap(row - 1, row);
-#endif
     endMoveRows();
     pluginslist_t::const_reference moved_plugin = mPlugins[row - 1];
     pluginslist_t::const_reference prev_plugin = mPlugins[row];
@@ -346,11 +342,7 @@ void PanelPluginsModel::onMovePluginDown(QModelIndex const & index)
         return; //can't move down
 
     beginMoveRows(QModelIndex(), row, row, QModelIndex(), row + 2);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,13,0))
     mPlugins.swapItemsAt(row, row + 1);
-#else
-    mPlugins.swap(row, row + 1);
-#endif
     endMoveRows();
     pluginslist_t::const_reference moved_plugin = mPlugins[row + 1];
     pluginslist_t::const_reference next_plugin = mPlugins[row];

@@ -4,45 +4,46 @@
 <context>
     <name>LXQtMainMenu</name>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="106"/>
+        <location filename="../lxqtmainmenu.cpp" line="117"/>
         <source>Search...</source>
-        <translation>Recherche...</translation>
+        <translation>Rechercher...</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="114"/>
+        <location filename="../lxqtmainmenu.cpp" line="127"/>
         <source>Show/hide main menu</source>
         <translation>Afficher/Cacher le menu principal</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="496"/>
+        <location filename="../lxqtmainmenu.cpp" line="530"/>
         <source>Add to desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter au bureau</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="504"/>
+        <location filename="../lxqtmainmenu.cpp" line="538"/>
         <source>Question</source>
-        <translation type="unfinished"></translation>
+        <translation>Question</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="505"/>
+        <location filename="../lxqtmainmenu.cpp" line="539"/>
         <source>A file with the same name already exists.
 Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Un fichier du même nom existe déjà.
+Voulez-vous l&apos;écraser&#x202f;?</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="511"/>
+        <location filename="../lxqtmainmenu.cpp" line="545"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Attention</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="512"/>
+        <location filename="../lxqtmainmenu.cpp" line="546"/>
         <source>The file cannot be overwritten.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier ne peut pas être écrasé.</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenu.cpp" line="518"/>
+        <location filename="../lxqtmainmenu.cpp" line="552"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier</translation>
     </message>
 </context>
 <context>
@@ -54,8 +55,8 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="14"/>
-        <source>Main Menu settings</source>
-        <translation>Paramétrage du menu principal</translation>
+        <source>Main Menu Settings</source>
+        <translation>Paramétres du menu principal</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="35"/>
@@ -80,12 +81,12 @@ Do you want to overwrite it?</source>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="105"/>
         <source>Menu file</source>
-        <translation>Fichier de menu</translation>
+        <translation>Fichier du menu</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="111"/>
         <source>Menu file:</source>
-        <translation>Fichier de menu :</translation>
+        <translation>Fichier du menu :</translation>
     </message>
     <message>
         <location filename="../lxqtmainmenuconfiguration.ui" line="156"/>
@@ -138,27 +139,27 @@ Do you want to overwrite it?</source>
         <translation>Cliquer sur le bouton pour enregistrer le raccourci :</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="72"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="76"/>
         <source>Reset</source>
         <translation>Réinitialiser</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="166"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="176"/>
         <source>Choose icon file</source>
         <translation>Choisir un fichier d&apos;icône</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="168"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="178"/>
         <source>Images (*.svg *.png)</source>
         <translation>Images (*.svg *.png)</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="180"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="190"/>
         <source>Choose menu file</source>
         <translation>Choisir un fichier de menu</translation>
     </message>
     <message>
-        <location filename="../lxqtmainmenuconfiguration.cpp" line="182"/>
+        <location filename="../lxqtmainmenuconfiguration.cpp" line="192"/>
         <source>Menu files (*.menu)</source>
         <translation>Fichiers de menu (*.menu)</translation>
     </message>

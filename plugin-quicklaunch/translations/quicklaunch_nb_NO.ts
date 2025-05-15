@@ -4,21 +4,21 @@
 <context>
     <name>LXQtQuickLaunch</name>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="226"/>
+        <location filename="../lxqtquicklaunch.cpp" line="229"/>
         <source>Drop Error</source>
         <translation>Slippfeil</translation>
     </message>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="227"/>
+        <location filename="../lxqtquicklaunch.cpp" line="230"/>
         <source>File/URL &apos;%1&apos; cannot be embedded into QuickLaunch for now</source>
         <translation>Filen/URLen &apos;%1&apos; kan ikke bli lagt til hurtigstarteren nå</translation>
     </message>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="333"/>
+        <location filename="../lxqtquicklaunch.cpp" line="336"/>
         <source>Drop application
 icons here</source>
         <translation>Slipp program-
-symboler her</translation>
+ikoner her</translation>
     </message>
 </context>
 <context>
@@ -26,7 +26,7 @@ symboler her</translation>
     <message>
         <location filename="../quicklaunchbutton.cpp" line="55"/>
         <source>(Ctrl + DND)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Ctrl + DND)</translation>
     </message>
     <message>
         <location filename="../quicklaunchbutton.cpp" line="57"/>
@@ -39,9 +39,14 @@ symboler her</translation>
         <translation>Flytt til høyre</translation>
     </message>
     <message>
-        <location filename="../quicklaunchbutton.cpp" line="64"/>
+        <location filename="../quicklaunchbutton.cpp" line="63"/>
         <source>Remove from quicklaunch</source>
         <translation>Fjern fra hurtigstarteren</translation>
+    </message>
+    <message>
+        <location filename="../quicklaunchbutton.cpp" line="72"/>
+        <source>Refresh</source>
+        <translation>Gjenoppfrisk</translation>
     </message>
 </context>
 </TS>

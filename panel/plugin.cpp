@@ -31,7 +31,7 @@
 #include "pluginsettings_p.h"
 #include "lxqtpanel.h"
 
-#include <KWindowSystem>
+#include <KX11Extras>
 
 #include <QDebug>
 #include <QProcessEnvironment>
@@ -56,6 +56,10 @@
 #if defined(WITH_DESKTOPSWITCH_PLUGIN)
 #include "../plugin-desktopswitch/desktopswitch.h" // desktopswitch
 extern void * loadPluginTranslation_desktopswitch_helper;
+#endif
+#if defined(WITH_FANCYMENU_PLUGIN)
+#include "../plugin-fancymenu/lxqtfancymenu.h" // fancymenu
+extern void * loadPluginTranslation_fancymenu_helper;
 #endif
 #if defined(WITH_MAINMENU_PLUGIN)
 #include "../plugin-mainmenu/lxqtmainmenu.h" // mainmenu
@@ -98,9 +102,9 @@ QColor Plugin::mMoveMarkerColor= QColor(255, 0, 0, 255);
 Plugin::Plugin(const LXQt::PluginInfo &desktopFile, LXQt::Settings *settings, const QString &settingsGroup, LXQtPanel *panel) :
     QFrame(panel),
     mDesktopFile(desktopFile),
-    mPluginLoader(0),
-    mPlugin(0),
-    mPluginWidget(0),
+    mPluginLoader(nullptr),
+    mPlugin(nullptr),
+    mPluginWidget(nullptr),
     mAlignment(AlignLeft),
     mPanel(panel)
 {
@@ -123,7 +127,7 @@ Plugin::Plugin(const LXQt::PluginInfo &desktopFile, LXQt::Settings *settings, co
     else {
         // this plugin is a dynamically loadable module
         QString baseName = QStringLiteral("lib%1.so").arg(desktopFile.id());
-        for(const QString &dirName : qAsConst(dirs))
+        for(const QString &dirName : std::as_const(dirs))
         {
             QFileInfo fi(QDir(dirName), baseName);
             if (fi.exists())
@@ -150,7 +154,7 @@ Plugin::Plugin(const LXQt::PluginInfo &desktopFile, LXQt::Settings *settings, co
 
     QString s = mSettings->value(QStringLiteral("alignment")).toString();
 
-    // Retrun default value
+    // Return default value
     if (s.isEmpty())
     {
         mAlignment = (mPlugin->flags().testFlag(ILXQtPanelPlugin::PreferRightAlignment)) ?
@@ -188,6 +192,8 @@ Plugin::Plugin(const LXQt::PluginInfo &desktopFile, LXQt::Settings *settings, co
  ************************************************/
 Plugin::~Plugin()
 {
+    if (mConfigDialog)
+        delete mConfigDialog.data();
     delete mPlugin;
     delete mPluginLoader;
     delete mSettings;
@@ -215,6 +221,9 @@ namespace
     static plugin_tuple_t const static_plugins[] = {
 #if defined(WITH_DESKTOPSWITCH_PLUGIN)
         std::make_tuple(QLatin1String("desktopswitch"), plugin_ptr_t{new DesktopSwitchPluginLibrary}, loadPluginTranslation_desktopswitch_helper),// desktopswitch
+#endif
+#if defined(WITH_FANCYMENU_PLUGIN)
+        std::make_tuple(QLatin1String("fancymenu"), plugin_ptr_t{new LXQtFancyMenuPluginLibrary}, loadPluginTranslation_fancymenu_helper),// fancymenu
 #endif
 #if defined(WITH_MAINMENU_PLUGIN)
         std::make_tuple(QLatin1String("mainmenu"), plugin_ptr_t{new LXQtMainMenuPluginLibrary}, loadPluginTranslation_mainmenu_helper),// mainmenu
@@ -371,9 +380,9 @@ void Plugin::saveSettings()
 /************************************************
 
  ************************************************/
-void Plugin::contextMenuEvent(QContextMenuEvent * /*event*/)
+void Plugin::contextMenuEvent(QContextMenuEvent * event)
 {
-    mPanel->showPopupMenu(this);
+    mPanel->showPopupMenu(event->globalPos(), this);
 }
 
 
@@ -388,7 +397,7 @@ void Plugin::mousePressEvent(QMouseEvent *event)
         mPlugin->activated(ILXQtPanelPlugin::Trigger);
         break;
 
-    case Qt::MidButton:
+    case Qt::MiddleButton:
         mPlugin->activated(ILXQtPanelPlugin::MiddleClick);
         break;
 
@@ -435,12 +444,12 @@ QMenu *Plugin::popupMenu() const
             XdgIcon::fromTheme(QLatin1String("preferences-other")),
             tr("Configure \"%1\"").arg(name), menu);
         menu->addAction(configAction);
-        connect(configAction, SIGNAL(triggered()), this, SLOT(showConfigureDialog()));
+        connect(configAction, &QAction::triggered, this, &Plugin::showConfigureDialog);
     }
 
     QAction* moveAction = new QAction(XdgIcon::fromTheme(QStringLiteral("transform-move")), tr("Move \"%1\"").arg(name), menu);
     menu->addAction(moveAction);
-    connect(moveAction, SIGNAL(triggered()), this, SIGNAL(startMove()));
+    connect(moveAction, &QAction::triggered, this, &Plugin::startMove);
 
     menu->addSeparator();
 
@@ -448,7 +457,7 @@ QMenu *Plugin::popupMenu() const
         XdgIcon::fromTheme(QLatin1String("list-remove")),
         tr("Remove \"%1\"").arg(name), menu);
     menu->addAction(removeAction);
-    connect(removeAction, SIGNAL(triggered()), this, SLOT(requestRemove()));
+    connect(removeAction, &QAction::triggered, this, &Plugin::requestRemove);
 
     return menu;
 }
@@ -515,15 +524,14 @@ void Plugin::showConfigureDialog()
     if (!mConfigDialog)
         return;
 
-    connect(this, &Plugin::destroyed, mConfigDialog.data(), &QWidget::close);
     mPanel->willShowWindow(mConfigDialog);
     mConfigDialog->show();
     mConfigDialog->raise();
     mConfigDialog->activateWindow();
 
     WId wid = mConfigDialog->windowHandle()->winId();
-    KWindowSystem::activateWindow(wid);
-    KWindowSystem::setOnDesktop(wid, KWindowSystem::currentDesktop());
+    KX11Extras::activateWindow(wid);
+    KX11Extras::setOnDesktop(wid, KX11Extras::currentDesktop());
 }
 
 

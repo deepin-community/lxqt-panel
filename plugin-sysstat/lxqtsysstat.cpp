@@ -55,7 +55,7 @@ LXQtSysStat::LXQtSysStat(const ILXQtPanelPluginStartupInfo &startupInfo):
     mContent->setMinimumSize(2, 2);
 
     // qproperty of font type doesn't work with qss, so fake QLabel is used instead
-    connect(mFakeTitle, SIGNAL(fontChanged(QFont)), mContent, SLOT(setTitleFont(QFont)));
+    connect(mFakeTitle, &LXQtSysStatTitle::fontChanged, mContent, &LXQtSysStatContent::setTitleFont);
 
     // has to be postponed to update the size first
     QTimer::singleShot(0, this, SLOT(lateInit()));
@@ -99,10 +99,7 @@ LXQtSysStatTitle::LXQtSysStatTitle(QWidget *parent):
 
 }
 
-LXQtSysStatTitle::~LXQtSysStatTitle()
-{
-
-}
+LXQtSysStatTitle::~LXQtSysStatTitle() = default;
 
 bool LXQtSysStatTitle::event(QEvent *e)
 {
@@ -118,16 +115,21 @@ LXQtSysStatContent::LXQtSysStatContent(ILXQtPanelPlugin *plugin, QWidget *parent
     mStat(nullptr),
     mUpdateInterval(0),
     mMinimalSize(0),
+    mGridLines(0),
     mTitleFontPixelHeight(0),
+    mUseFrequency(true),
+    mNetMaximumSpeed(0),
+    mNetRealMaximumSpeed(0),
+    mLogarithmicScale(true),
+    mLogScaleSteps(0),
+    mLogScaleMax(0),
     mUseThemeColours(true),
     mHistoryOffset(0)
 {
     setObjectName(QStringLiteral("SysStat_Graph"));
 }
 
-LXQtSysStatContent::~LXQtSysStatContent()
-{
-}
+LXQtSysStatContent::~LXQtSysStatContent() = default;
 
 
 // I don't like macros very much, but writing dozen similar functions is much much worse.
@@ -320,27 +322,30 @@ void LXQtSysStatContent::updateSettings(const PluginSettings *settings)
         {
             if (mDataType == QLatin1String("CPU"))
             {
+                SysStat::CpuStat* cpustat = qobject_cast<SysStat::CpuStat*>(mStat);
                 if (mUseFrequency)
                 {
-                    qobject_cast<SysStat::CpuStat*>(mStat)->setMonitoring(SysStat::CpuStat::LoadAndFrequency);
-                    connect(qobject_cast<SysStat::CpuStat*>(mStat), SIGNAL(update(float, float, float, float, float, uint)), this, SLOT(cpuUpdate(float, float, float, float, float, uint)));
+                    cpustat->setMonitoring(SysStat::CpuStat::LoadAndFrequency);
+                    connect(cpustat, QOverload<float, float, float, float, float, uint>::of(&SysStat::CpuStat::update), this, &LXQtSysStatContent::cpuLoadFrequencyUpdate);
                 }
                 else
                 {
-                    qobject_cast<SysStat::CpuStat*>(mStat)->setMonitoring(SysStat::CpuStat::LoadOnly);
-                    connect(qobject_cast<SysStat::CpuStat*>(mStat), SIGNAL(update(float, float, float, float)), this, SLOT(cpuUpdate(float, float, float, float)));
+                    cpustat->setMonitoring(SysStat::CpuStat::LoadOnly);
+                    connect(cpustat, QOverload<float, float, float, float>::of(&SysStat::CpuStat::update), this, &LXQtSysStatContent::cpuLoadUpdate);
                 }
             }
             else if (mDataType == QLatin1String("Memory"))
             {
+                SysStat::MemStat* memstat = qobject_cast<SysStat::MemStat*>(mStat);
                 if (mDataSource == QLatin1String("memory"))
-                    connect(qobject_cast<SysStat::MemStat*>(mStat), SIGNAL(memoryUpdate(float, float, float)), this, SLOT(memoryUpdate(float, float, float)));
+                    connect(memstat, &SysStat::MemStat::memoryUpdate, this, &LXQtSysStatContent::memoryUpdate);
                 else
-                    connect(qobject_cast<SysStat::MemStat*>(mStat), SIGNAL(swapUpdate(float)), this, SLOT(swapUpdate(float)));
+                    connect(memstat, &SysStat::MemStat::swapUpdate,   this, &LXQtSysStatContent::swapUpdate);
             }
             else if (mDataType == QLatin1String("Network"))
             {
-                connect(qobject_cast<SysStat::NetStat*>(mStat), SIGNAL(update(unsigned, unsigned)), this, SLOT(networkUpdate(unsigned, unsigned)));
+                SysStat::NetStat* netstat = qobject_cast<SysStat::NetStat*>(mStat);
+                connect(netstat, &SysStat::NetStat::update, this, &LXQtSysStatContent::networkUpdate);
             }
 
             mStat->setMonitoredSource(mDataSource);
@@ -366,10 +371,15 @@ void LXQtSysStatContent::reset()
     setMinimumSize(mPlugin->panel()->isHorizontal() ? mMinimalSize : 2,
                    mPlugin->panel()->isHorizontal() ? 2 : mMinimalSize);
 
-    mHistoryOffset = 0;
-    mHistoryImage = QImage(width(), 100, QImage::Format_ARGB32);
-    mHistoryImage.fill(Qt::transparent);
-    update();
+    if (width() > mHistoryImage.width())
+    {
+        QImage newImage{width(), 100, QImage::Format_ARGB32};
+        newImage.fill(Qt::transparent);
+        QPainter p{&newImage};
+        p.drawImage(mHistoryImage.rect(), mHistoryImage, mHistoryImage.rect());
+        mHistoryImage = newImage;
+        update();
+    }
 }
 
 template <typename T>
@@ -386,7 +396,7 @@ void LXQtSysStatContent::clearLine()
         reinterpret_cast<QRgb*>(mHistoryImage.scanLine(i))[mHistoryOffset] = bg;
 }
 
-void LXQtSysStatContent::cpuUpdate(float user, float nice, float system, float other, float frequencyRate, uint)
+void LXQtSysStatContent::cpuLoadFrequencyUpdate(float user, float nice, float system, float other, float frequencyRate, uint)
 {
     int y_system = static_cast<int>(system * 100.0 * frequencyRate);
     int y_user   = static_cast<int>(user   * 100.0 * frequencyRate);
@@ -431,12 +441,12 @@ void LXQtSysStatContent::cpuUpdate(float user, float nice, float system, float o
         painter.drawLine(mHistoryOffset, y_freq, mHistoryOffset, y_other);
     }
 
-    mHistoryOffset = (mHistoryOffset + 1) % width();
+    mHistoryOffset = (mHistoryOffset + 1) % mHistoryImage.width();
 
     update(0, mTitleFontPixelHeight, width(), height() - mTitleFontPixelHeight);
 }
 
-void LXQtSysStatContent::cpuUpdate(float user, float nice, float system, float other)
+void LXQtSysStatContent::cpuLoadUpdate(float user, float nice, float system, float other)
 {
     int y_system = static_cast<int>(system * 100.0);
     int y_user   = static_cast<int>(user   * 100.0);
@@ -474,7 +484,7 @@ void LXQtSysStatContent::cpuUpdate(float user, float nice, float system, float o
         painter.drawLine(mHistoryOffset, y_other, mHistoryOffset, y_nice);
     }
 
-    mHistoryOffset = (mHistoryOffset + 1) % width();
+    mHistoryOffset = (mHistoryOffset + 1) % mHistoryImage.width();
 
     update(0, mTitleFontPixelHeight, width(), height() - mTitleFontPixelHeight);
 }
@@ -510,7 +520,7 @@ void LXQtSysStatContent::memoryUpdate(float apps, float buffers, float cached)
         painter.drawLine(mHistoryOffset, y_cached, mHistoryOffset, y_buffers);
     }
 
-    mHistoryOffset = (mHistoryOffset + 1) % width();
+    mHistoryOffset = (mHistoryOffset + 1) % mHistoryImage.width();
 
     update(0, mTitleFontPixelHeight, width(), height() - mTitleFontPixelHeight);
 }
@@ -531,7 +541,7 @@ void LXQtSysStatContent::swapUpdate(float used)
         painter.drawLine(mHistoryOffset, y_used, mHistoryOffset, 0);
     }
 
-    mHistoryOffset = (mHistoryOffset + 1) % width();
+    mHistoryOffset = (mHistoryOffset + 1) % mHistoryImage.width();
 
     update(0, mTitleFontPixelHeight, width(), height() - mTitleFontPixelHeight);
 }
@@ -567,7 +577,7 @@ void LXQtSysStatContent::networkUpdate(unsigned received, unsigned transmitted)
         painter.drawLine(mHistoryOffset, y_max_value, mHistoryOffset, y_min_value);
     }
 
-    mHistoryOffset = (mHistoryOffset + 1) % width();
+    mHistoryOffset = (mHistoryOffset + 1) % mHistoryImage.width();
 
     update(0, mTitleFontPixelHeight, width(), height() - mTitleFontPixelHeight);
 }

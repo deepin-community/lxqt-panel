@@ -6,7 +6,7 @@
     <message>
         <location filename="../spacerconfiguration.ui" line="14"/>
         <source>Spacer Settings</source>
-        <translation>Ajusts de l&apos;espaiador</translation>
+        <translation>Configuració de l&apos;espaiador</translation>
     </message>
     <message>
         <location filename="../spacerconfiguration.ui" line="20"/>
@@ -31,7 +31,7 @@
     <message>
         <location filename="../spacerconfiguration.cpp" line="34"/>
         <source>lined</source>
-        <translation>folrat</translation>
+        <translation>línia</translation>
     </message>
     <message>
         <location filename="../spacerconfiguration.cpp" line="35"/>

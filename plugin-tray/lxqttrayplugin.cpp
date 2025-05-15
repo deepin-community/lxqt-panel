@@ -1,10 +1,11 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
- * (c)LGPL2+
+ * (c)LGPL2.1+
  *
  * LXQt - a lightweight, Qt based, desktop toolset
  * https://lxqt.org
  *
  * Copyright: 2013 Razor team
+ *            2022 LXQt team
  * Authors:
  *   Alexander Sokoloff <sokoloff.a@gmail.com>
  *
@@ -25,40 +26,36 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "lxqttrayplugin.h"
-#include "lxqttrayconfiguration.h"
-#include "lxqttray.h"
+#include "fdoselectionmanager.h"
 
-LXQtTrayPlugin::LXQtTrayPlugin(const ILXQtPanelPluginStartupInfo &startupInfo) :
-    QObject(),
-    ILXQtPanelPlugin(startupInfo),
-    mWidget(new LXQtTray(this))
+#include <QGuiApplication> // For nativeInterface()
+
+LXQtTrayPlugin::LXQtTrayPlugin(const ILXQtPanelPluginStartupInfo &startupInfo)
+    : QObject()
+    , ILXQtPanelPlugin(startupInfo)
+    , mManager{new FdoSelectionManager}
 {
 }
 
 LXQtTrayPlugin::~LXQtTrayPlugin()
 {
-    delete mWidget;
 }
 
 QWidget *LXQtTrayPlugin::widget()
 {
-    return mWidget;
+    return nullptr;
 }
 
-QDialog *LXQtTrayPlugin::configureDialog()
+ILXQtPanelPlugin *LXQtTrayPluginLibrary::instance(const ILXQtPanelPluginStartupInfo &startupInfo) const
 {
-    return new LXQtTrayConfiguration(settings());
-}
+    auto *x11Application = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+    if(!x11Application || !x11Application->connection())
+    {
+        // Currently only X11 supported
+        qWarning() << "Currently tray plugin supports X11 only. Skipping.";
+        return nullptr;
+    }
 
-void LXQtTrayPlugin::realign()
-{
-    mWidget->realign();
+    return new LXQtTrayPlugin(startupInfo);
 }
-
-void LXQtTrayPlugin::settingsChanged()
-{
-    mWidget->settingsChanged();
-}
-

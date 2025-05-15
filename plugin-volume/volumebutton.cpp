@@ -42,8 +42,6 @@
 VolumeButton::VolumeButton(ILXQtPanelPlugin *plugin, QWidget* parent):
         QToolButton(parent),
         mPlugin(plugin),
-        m_panel(plugin->panel()),
-        m_showOnClick(true),
         m_muteOnMiddleClick(true)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -56,27 +54,17 @@ VolumeButton::VolumeButton(ILXQtPanelPlugin *plugin, QWidget* parent):
     m_volumePopup = new VolumePopup(this);
 
     m_popupHideTimer.setInterval(1000);
-    connect(this, SIGNAL(clicked()), this, SLOT(toggleVolumeSlider()));
-    connect(&m_popupHideTimer, SIGNAL(timeout()), this, SLOT(hideVolumeSlider()));
+    connect(this,              &VolumeButton::clicked, this, &VolumeButton::toggleVolumeSlider);
+    connect(&m_popupHideTimer, &QTimer::timeout,       this, &VolumeButton::hideVolumeSlider);
 
-    connect(m_volumePopup, SIGNAL(mouseEntered()), &m_popupHideTimer, SLOT(stop()));
-    connect(m_volumePopup, SIGNAL(mouseLeft()), &m_popupHideTimer, SLOT(start()));
+    connect(m_volumePopup, &VolumePopup::mouseEntered, &m_popupHideTimer, &QTimer::stop);
+    connect(m_volumePopup, &VolumePopup::mouseLeft,    this, [this] { m_popupHideTimer.start(); } );
 
-    connect(m_volumePopup, SIGNAL(launchMixer()), this, SLOT(handleMixerLaunch()));
-    connect(m_volumePopup, SIGNAL(stockIconChanged(QString)), this, SLOT(handleStockIconChanged(QString)));
+    connect(m_volumePopup, &VolumePopup::launchMixer,      this, &VolumeButton::handleMixerLaunch);
+    connect(m_volumePopup, &VolumePopup::stockIconChanged, this, &VolumeButton::handleStockIconChanged);
 }
 
-VolumeButton::~VolumeButton()
-{
-}
-
-void VolumeButton::setShowOnClicked(bool state)
-{
-    if (m_showOnClick == state)
-        return;
-
-    m_showOnClick = state;
-}
+VolumeButton::~VolumeButton() = default;
 
 void VolumeButton::setMuteOnMiddleClick(bool state)
 {
@@ -85,34 +73,22 @@ void VolumeButton::setMuteOnMiddleClick(bool state)
 
 void VolumeButton::setMixerCommand(const QString &command)
 {
-    m_mixerCommand = command;
+    m_mixerParams = QProcess::splitCommand(command);
+    m_mixerCommand = m_mixerParams.empty() ? QString{} : m_mixerParams.takeFirst();
 }
 
-void VolumeButton::enterEvent(QEvent * /*event*/)
+void VolumeButton::enterEvent(QEnterEvent *event)
 {
-    if (!m_showOnClick)
-        showVolumeSlider();
-
-    m_popupHideTimer.stop();
+    // show tooltip immediately on entering widget
+    QToolTip::showText(event->globalPosition().toPoint(), toolTip(), this);
 }
 
 void VolumeButton::mouseMoveEvent(QMouseEvent *event)
 {
-    // moving the tooltip must be achieved by chaging the text
-    // (hide/show - won't work because of the internal hide delay)
-    QString tooltip = toolTip();
-    if (!tooltip.isEmpty())
-    {
-        *(tooltip.rbegin()) = QLatin1Char('X');
-        QToolTip::showText(event->globalPos(), tooltip);
-        QToolTip::showText(event->globalPos(), toolTip());
-    }
     QToolButton::mouseMoveEvent(event);
-}
-
-void VolumeButton::leaveEvent(QEvent * /*event*/)
-{
-    m_popupHideTimer.start();
+    // show tooltip immediately on moving the mouse
+    if (!QToolTip::isVisible()) // prevent sliding of tooltip
+        QToolTip::showText(event->globalPosition().toPoint(), toolTip(), this);
 }
 
 void VolumeButton::wheelEvent(QWheelEvent *event)
@@ -122,7 +98,7 @@ void VolumeButton::wheelEvent(QWheelEvent *event)
 
 void VolumeButton::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::MidButton && m_muteOnMiddleClick) {
+    if (event->button() == Qt::MiddleButton && m_muteOnMiddleClick) {
         if (m_volumePopup->device()) {
             m_volumePopup->device()->toggleMute();
             return;
@@ -165,7 +141,7 @@ void VolumeButton::hideVolumeSlider()
 
 void VolumeButton::handleMixerLaunch()
 {
-    QProcess::startDetached(m_mixerCommand);
+    QProcess::startDetached(m_mixerCommand, m_mixerParams);
 }
 
 void VolumeButton::handleStockIconChanged(const QString &iconName)

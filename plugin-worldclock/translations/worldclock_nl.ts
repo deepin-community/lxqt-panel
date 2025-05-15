@@ -4,9 +4,9 @@
 <context>
     <name>LXQtWorldClock</name>
     <message>
-        <location filename="../lxqtworldclock.cpp" line="246"/>
+        <location filename="../lxqtworldclock.cpp" line="245"/>
         <source>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM yyyy&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</source>
-        <translation>&apos;&lt;b&gt;&apos;UU:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM jjjj&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</translation>
+        <translation>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd d MMM jjjj&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</translation>
     </message>
 </context>
 <context>
@@ -14,12 +14,12 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="14"/>
         <source>World Clock Settings</source>
-        <translation>Instellingen van Klok</translation>
+        <translation>Klok-instellingen</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="24"/>
         <source>Display &amp;format</source>
-        <translation>Opmaak van &amp;weergave</translation>
+        <translation>Weerga&amp;ve</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="30"/>
@@ -54,17 +54,17 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="89"/>
         <source>Sho&amp;w seconds</source>
-        <translation>T&amp;oon seconden</translation>
+        <translation>Sec&amp;onden tonen</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="96"/>
         <source>Pad &amp;hour with zero</source>
-        <translation>Voorzie &amp;uren van voorafgaande nul</translation>
+        <translation>&amp;Uren voorzien van voorloopnul</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="103"/>
         <source>&amp;Use 12-hour format</source>
-        <translation>&amp;Gebruik 12-uurs-opmaak</translation>
+        <translation>12-uursklok gebr&amp;uiken</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="116"/>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="186"/>
         <source>Offset from UTC</source>
-        <translation>Afwijking van UTC</translation>
+        <translation>UTC-afwijking</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="191"/>
@@ -123,7 +123,7 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="201"/>
         <location filename="../lxqtworldclockconfiguration.ui" line="436"/>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="586"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="585"/>
         <source>Custom name</source>
         <translation>Aangepaste naam</translation>
     </message>
@@ -135,7 +135,7 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="227"/>
         <source>Po&amp;sition:</source>
-        <translation>&amp;Positie:</translation>
+        <translation>Po&amp;sitie:</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="261"/>
@@ -150,17 +150,17 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="316"/>
         <source>Show &amp;year</source>
-        <translation>Toon &amp;jaar</translation>
+        <translation>&amp;Jaar tonen</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="323"/>
         <source>Show day of wee&amp;k</source>
-        <translation>Toon &amp;weekdag</translation>
+        <translation>Wee&amp;kdag tonen</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="330"/>
         <source>Pad d&amp;ay with zero</source>
-        <translation>Voorzie d&amp;ag van voorafgaande nul</translation>
+        <translation>D&amp;agen voorzien van voorloopnul</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="337"/>
@@ -170,82 +170,87 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="350"/>
         <source>Ad&amp;vanced manual format</source>
-        <translation>&amp;Geavanceerde handmatige opmaak</translation>
+        <translation>Gea&amp;vanceerde, handmatige opmaak</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="377"/>
-        <source>&amp;Customise ...</source>
-        <translation>&amp;Aanpassen...</translation>
+        <source>&amp;Customize ...</source>
+        <translation>&amp;Aanpassen…</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="403"/>
         <source>Time &amp;zones</source>
-        <translation>&amp;Tijdzones</translation>
+        <translation>Tijd&amp;zones</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="431"/>
         <source>IANA id</source>
-        <translation>IANA-ID</translation>
+        <translation>IANA-id</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="446"/>
         <source>&amp;Add ...</source>
-        <translation>&amp;Toevoegen ...</translation>
+        <translation>&amp;Toevoegen…</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="456"/>
         <source>&amp;Remove</source>
-        <translation>&amp;Verwijderen</translation>
+        <translation>Ve&amp;rwijderen</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="466"/>
         <source>Set as &amp;default</source>
-        <translation>Stel in als &amp;standaard</translation>
+        <translation>Instellen als standaar&amp;d</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="476"/>
         <source>&amp;Edit custom name ...</source>
-        <translation>&amp;Bewerk aangepaste naam ...</translation>
+        <translation>Aangepaste naam b&amp;ewerken…</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="486"/>
         <source>Move &amp;up</source>
-        <translation>Naar &amp;boven</translation>
+        <translation>Omhoog &amp;verplaatsen</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="496"/>
         <source>Move do&amp;wn</source>
-        <translation>Naar be&amp;neden</translation>
+        <translation>O&amp;mlaag verplaatsen</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="519"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="518"/>
+        <source>&lt;b&gt;Note:&lt;/b&gt; Middle-click the clock to view the time and date for all configured timezones.</source>
+        <translation>&lt;b&gt;Opmerking:&lt;/b&gt; klik met de middelste muisknop op de klok om de datum en tijd van alle ingestelde tijdzones te bekijken.</translation>
+    </message>
+    <message>
+        <location filename="../lxqtworldclockconfiguration.ui" line="529"/>
         <source>&amp;General</source>
         <translation>Al&amp;gemeen</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="525"/>
-        <source>Auto&amp;rotate when the panel is vertical</source>
-        <translation>&amp;Draai automatisch wanneer de balk verticaal is</translation>
-    </message>
-    <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="535"/>
-        <source>Show &amp;week numbers in popup calendar</source>
-        <translation>Toon &amp;weeknummers in popupkalender</translation>
+        <source>Auto&amp;rotate when the panel is vertical</source>
+        <translation>Automatisch d&amp;raaien als het paneel verticaal is</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="545"/>
+        <source>Show &amp;week numbers in popup calendar</source>
+        <translation>&amp;Weeknummers tonen op kalender</translation>
+    </message>
+    <message>
+        <location filename="../lxqtworldclockconfiguration.ui" line="555"/>
         <source>S&amp;how tooltip</source>
-        <translation>Toon &amp;tooltip</translation>
+        <translation>&amp;Hulpballon tonen</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="107"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="106"/>
         <source>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM yyyy&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</source>
-        <translation>&apos;&lt;b&gt;&apos;UU:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM jjjj&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</translation>
+        <translation>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd d MMM jjjj&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="585"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="584"/>
         <source>Input custom time zone name</source>
-        <translation>Geef aangepaste naam in voor tijdzone</translation>
+        <translation>Voer een aangepaste tijdzonenaam in</translation>
     </message>
 </context>
 <context>
@@ -253,7 +258,7 @@
     <message>
         <location filename="../lxqtworldclockconfigurationmanualformat.ui" line="14"/>
         <source>World Clock Manual Format Configuration</source>
-        <translation>Handmatig instellen klokweergave</translation>
+        <translation>Handmatige klokweergave-opmaak</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfigurationmanualformat.ui" line="83"/>
@@ -292,7 +297,41 @@
 &lt;tr&gt;&lt;td&gt;TTTTTT&lt;/td&gt;&lt;td&gt;the timezone custom name. You can change it the &apos;Time zones&apos; tab of the configuration window&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;br /&gt;&lt;b&gt;Notes:&lt;/b&gt; &lt;ul&gt;&lt;li&gt;Any characters in the pattern that are not in the ranges of [&apos;a&apos;..&apos;z&apos;] and [&apos;A&apos;..&apos;Z&apos;] will be treated as quoted text. For instance, characters like &apos;:&apos;, &apos;.&apos;, &apos; &apos;, &apos;#&apos; and &apos;@&apos; will appear in the resulting time text even they are not enclosed within single quotes. The single quote is used to &apos;escape&apos; letters. Two single quotes in a row, whether inside or outside a quoted sequence, represent a &apos;real&apos; single quote.&lt;/li&gt;&lt;li&gt;Minimal update interval is 1 second. If z or zzz is configured time is shown with the milliseconds fraction, but not updated on millisecond basis (avoiding big performance hit).&lt;/li&gt;&lt;ul&gt;
 </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h1&gt;Eigen datum-/tijdopmaak&lt;/h1&gt;
+&lt;p&gt;Een eigen datumpatroon bestaat uit tekens, waar specifieke tekens vervangen worden door de datum en tijd uit een agenda/kalender of tijdens het verwerken.&lt;/p&gt;
+&lt;p&gt;Onderstaande tabel bevat tekens die gebruikt kunnen worden in de patronen, zoals ‘yyyy’ om een jaartal te tonen. Tekens kunnen meermaals gebruikt worden. Voorbeeld: als ‘y’ gebruikt wordt om het jaar te tonen, dan toont ‘yy’ ‘99’ en ‘yyyy’ ‘1999’. In de meeste numerieke velden bepaalt het aantal tekens de breedte van de velden. Voorbeeld: als ‘h’ gebruikt wordt om het uur te tonen, dan toont ‘h’ ‘5’ en ‘hh’ ‘05’. Bij sommige getallen geeft het aantal aan of een verkorte of volledige versie dient te worden gebruikt, maar er zijn ook variaties mogelijk.&lt;/p&gt;
+&lt;p&gt;Twee losse aanhalingstekens zijn gelijk aan één dubbel aanhalingsteken. Tekst binnen enkele aanhalingstekens wordt niet ingelezen (behalve als er twee achter elkaar staan). Verder worden alle ascii-letters van a tot z en A tot Z gebruikt als syntaxistekens en dienen binnen twee losse aanhalingstekens te staan als ze letterlijk als letter dienen te worden gebruikt. Ook kan bepaalde ascii-punctuatie worden gebruikt, bijvoorbeeld ‘:’ om uren en minuten te scheiden en ‘/’ om dagen, maandnamen en jaren te scheiden.&lt;br /&gt;&lt;/p&gt;
+&lt;table border=&quot;1&quot; width=&quot;100%&quot; cellpadding=&quot;4&quot; cellspacing=&quot;0&quot;&gt;
+&lt;tr&gt;&lt;th width=&quot;20%&quot;&gt;Code&lt;/th&gt;&lt;th&gt;Betekenis&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;d&lt;/td&gt;&lt;td&gt;dag zonder voorloopnul (1 tot 31)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;dd&lt;/td&gt;&lt;td&gt;dag met voorloopnul (01 tot 31)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;ddd&lt;/td&gt;&lt;td&gt;verkorte naam van de dag in de eigen taal (bijv. ,‘Ma’ tot ‘Zo’).&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;dddd&lt;/td&gt;&lt;td&gt;volledige naam van de dag in de eigen taal (bijv. ‘Maandag’ tot ‘Zondag’).&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;M&lt;/td&gt;&lt;td&gt;nummer van de maand zonder voorloopnul (1-12)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;MM&lt;/td&gt;&lt;td&gt;nummer van de maand met voorloopnul (01-12)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;MMM&lt;/td&gt;&lt;td&gt;verkorte naam van de maand in de eigen taal (bijv. ‘Jan’ tot ‘Dec’).&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;MMMM&lt;/td&gt;&lt;td&gt;volledige naam van de maand in de eigen taal (bijv. ‘Januari’ tot ‘December’).&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;yy&lt;/td&gt;&lt;td&gt;jaar bestaande uit twee getallen (00-99)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;yyyy&lt;/td&gt;&lt;td&gt;jaar bestaande uit vier getallen (2000-2099)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;h&lt;/td&gt;&lt;td&gt;uur zonder voorloopnul (0 tot 23, of 1 tot 12 indien am/pm)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;hh&lt;/td&gt;&lt;td&gt;uur met voorloopnul (00 tot 23, of 01 tot 12 indien am/pm)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;H&lt;/td&gt;&lt;td&gt;uur zonder voorloopnul (0 tot 23, zelfs bij gebruik van am/pm)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;HH&lt;/td&gt;&lt;td&gt;uur met voorloopnul (00 tot 23, zelfs bij gebruik van am/pm)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;m&lt;/td&gt;&lt;td&gt;minuut zonder voorloopnul (0 tot 59)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;mm&lt;/td&gt;&lt;td&gt;minuut met voorloopnul (00 tot 59)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;s&lt;/td&gt;&lt;td&gt;seconde zonder voorloopnul (0 tot 59)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;ss&lt;/td&gt;&lt;td&gt;segonde met voorloopnul (00 tot 59)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;AP &lt;i&gt;of&lt;/i&gt; A&lt;/td&gt;&lt;td&gt;AM/PM tonen&lt;b&gt;A/AP&lt;/b&gt; wordt vervangen door ‘AM’ of ‘PM’.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;ap &lt;i&gt;of&lt;/i&gt; a&lt;/td&gt;&lt;td&gt;am/pm tonen &lt;b&gt;a/ap&lt;/b&gt; wordt vervangen door ‘am’ of ‘pm’.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;t&lt;/td&gt;&lt;td&gt;tijdzone (bijv. ‘CEST’)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;T&lt;/td&gt;&lt;td&gt;verschil ten opzichte van UTC&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;TT&lt;/td&gt;&lt;td&gt;tijdzone met IANA-id&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;TTT&lt;/td&gt;&lt;td&gt;verkorte naam van tijdzone&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;TTTT&lt;/td&gt;&lt;td&gt;verkorte naam van tijdzone&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;TTTTT&lt;/td&gt;&lt;td&gt;volledige naam van tijdzone&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;TTTTTT&lt;/td&gt;&lt;td&gt;eigen tijdzonenaam, op basis van de op het tabblad ‘Tijdzones’ ingestelde naam&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;br /&gt;&lt;b&gt;Let op:&lt;/b&gt; &lt;ul&gt;&lt;li&gt;tekens buiten de reeksen [‘a’…‘z’] en [‘A’…‘Z’] worden gebruikt om tekst te tonen. Voorbeeld: ‘:’, ‘.’, ‘ ’, ‘#’ en ‘@’ worden als tekst naast de tijd getoond, tenzij ze worden omsloten door enkele aanhalingstekens.&lt;/li&gt;&lt;li&gt;De minimale bijwerktussenpoos is 1 seconde. Als z of zzz is ingesteld, dan wordt de tijd aangeduid met behulp van milliseconden, maar niet op basis daarvan bijgewerkt in verband met prestatieredenen.&lt;/li&gt;&lt;ul&gt;
+</translation>
     </message>
 </context>
 <context>
@@ -300,7 +339,7 @@
     <message>
         <location filename="../lxqtworldclockconfigurationtimezones.ui" line="14"/>
         <source>World Clock Time Zones</source>
-        <translation>Tijdzones van Klok</translation>
+        <translation>Klok-tijdzones</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfigurationtimezones.ui" line="36"/>
@@ -315,7 +354,7 @@
     <message>
         <location filename="../lxqtworldclockconfigurationtimezones.ui" line="46"/>
         <source>Comment</source>
-        <translation>Commentaar</translation>
+        <translation>Opmerking</translation>
     </message>
     <message>
         <location filename="../lxqtworldclockconfigurationtimezones.ui" line="51"/>

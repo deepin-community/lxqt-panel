@@ -71,8 +71,7 @@ Content::Content(bool layoutEnabled):
     box->addWidget(m_layout, 0, Qt::AlignCenter);
 }
 
-Content::~Content()
-{}
+Content::~Content() = default;
 
 bool Content::setup()
 {
@@ -125,7 +124,7 @@ QWidget* Content::widget(Controls cnt) const
     case Scroll: return m_scrollLock;
     case Layout: return m_layout;
     }
-    return 0;
+    return nullptr;
 }
 
 bool Content::eventFilter(QObject *object, QEvent *event)

@@ -26,7 +26,11 @@
 
 #include "desktopswitchconfiguration.h"
 #include "ui_desktopswitchconfiguration.h"
-#include <KWindowSystem>
+
+#include "../panel/lxqtpanelapplication.h"
+#include "../panel/backends/ilxqtabstractwmiface.h"
+
+#include <KX11Extras>
 #include <QTimer>
 
 DesktopSwitchConfiguration::DesktopSwitchConfiguration(PluginSettings *settings, QWidget *parent) :
@@ -37,13 +41,15 @@ DesktopSwitchConfiguration::DesktopSwitchConfiguration(PluginSettings *settings,
     setObjectName(QStringLiteral("DesktopSwitchConfigurationWindow"));
     ui->setupUi(this);
 
-    connect(ui->buttons, SIGNAL(clicked(QAbstractButton*)), this, SLOT(dialogButtonsAction(QAbstractButton*)));
+    connect(ui->buttons, &QDialogButtonBox::clicked, this, &DesktopSwitchConfiguration::dialogButtonsAction);
 
     loadSettings();
 
-    connect(ui->rowsSB, SIGNAL(valueChanged(int)), this, SLOT(rowsChanged(int)));
-    connect(ui->labelTypeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(labelTypeChanged(int)));
-    connect(ui->showOnlyActiveCB, &QAbstractButton::toggled, [this] (bool checked) { this->settings().setValue(QStringLiteral("showOnlyActive"), checked); });
+    connect(ui->rowsSB,           QOverload<int>::of(&QSpinBox::valueChanged),         this, &DesktopSwitchConfiguration::rowsChanged);
+    connect(ui->labelTypeCB,      QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DesktopSwitchConfiguration::labelTypeChanged);
+    connect(ui->showOnlyActiveCB, &QAbstractButton::toggled,                           this, [this] (bool checked) {
+        this->settings().setValue(QStringLiteral("showOnlyActive"), checked);
+    });
 
     loadDesktopsNames();
 }
@@ -62,18 +68,30 @@ void DesktopSwitchConfiguration::loadSettings()
 
 void DesktopSwitchConfiguration::loadDesktopsNames()
 {
-    int n = KWindowSystem::numberOfDesktops();
+    LXQtPanelApplication *a = reinterpret_cast<LXQtPanelApplication*>(qApp);
+    auto wmBackend = a->getWMBackend();
+
+    int n = wmBackend->getWorkspacesCount();
     for (int i = 1; i <= n; i++)
     {
-        QLineEdit *edit = new QLineEdit(KWindowSystem::desktopName(i), this);
-        ((QFormLayout *) ui->namesGroupBox->layout())->addRow(QStringLiteral("Desktop %1:").arg(i), edit);
+        QLineEdit *edit = new QLineEdit(wmBackend->getWorkspaceName(i), this);
+        ((QFormLayout *) ui->namesGroupBox->layout())->addRow(tr("Desktop %1:").arg(i), edit);
 
-        // C++11 rocks!
-        QTimer *timer = new QTimer(this);
-        timer->setInterval(400);
-        timer->setSingleShot(true);
-        connect(timer, &QTimer::timeout, [=] { KWindowSystem::setDesktopName(i, edit->text()); });
-        connect(edit, &QLineEdit::textEdited, [=] { timer->start(); });
+        //TODO: on Wayland we cannot set desktop names in a standart way
+        // On KWin we could use DBus org.kde.KWin as done by kcm_kwin_virtualdesktops
+        if(qGuiApp->nativeInterface<QNativeInterface::QX11Application>())
+        {
+            // C++11 rocks!
+            QTimer *timer = new QTimer(this);
+            timer->setInterval(400);
+            timer->setSingleShot(true);
+            connect(timer, &QTimer::timeout,       this, [=] { KX11Extras::setDesktopName(i, edit->text()); });
+            connect(edit,  &QLineEdit::textEdited, this, [=] { timer->start(); });
+        }
+        else
+        {
+            edit->setReadOnly(true);
+        }
     }
 }
 
