@@ -29,6 +29,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "lxqtgrouppopup.h"
+#include "lxqttaskgroup.h"
+
 #include <QEnterEvent>
 #include <QDrag>
 #include <QMimeData>
@@ -55,16 +57,14 @@ LXQtGroupPopup::LXQtGroupPopup(LXQtTaskGroup *group):
 
     setLayout(new QVBoxLayout);
     layout()->setSpacing(3);
-    layout()->setMargin(3);
+    layout()->setContentsMargins(3, 3, 3, 3);
 
     connect(&mCloseTimer, &QTimer::timeout, this, &LXQtGroupPopup::closeTimerSlot);
     mCloseTimer.setSingleShot(true);
     mCloseTimer.setInterval(400);
 }
 
-LXQtGroupPopup::~LXQtGroupPopup()
-{
-}
+LXQtGroupPopup::~LXQtGroupPopup() = default;
 
 void LXQtGroupPopup::dropEvent(QDropEvent *event)
 {
@@ -95,14 +95,14 @@ void LXQtGroupPopup::dropEvent(QDropEvent *event)
     for (int i = 0; i < oldIndex && newIndex == -1; i++)
     {
         QWidget *w = layout()->itemAt(i)->widget();
-        if (w && w->pos().y() + w->height() / 2 > event->pos().y())
+        if (w && w->pos().y() + w->height() / 2 > event->position().y())
             newIndex = i;
     }
     const int size = layout()->count();
     for (int i = size - 1; i > oldIndex && newIndex == -1; i--)
     {
         QWidget *w = layout()->itemAt(i)->widget();
-        if (w && w->pos().y() + w->height() / 2 < event->pos().y())
+        if (w && w->pos().y() + w->height() / 2 < event->position().y())
             newIndex = i;
     }
 
@@ -139,7 +139,7 @@ void LXQtGroupPopup::leaveEvent(QEvent * /*event*/)
 /************************************************
  *
  ************************************************/
-void LXQtGroupPopup::enterEvent(QEvent * /*event*/)
+void LXQtGroupPopup::enterEvent(QEnterEvent * /*event*/)
 {
     mCloseTimer.stop();
 }
@@ -166,6 +166,16 @@ void LXQtGroupPopup::show()
     QFrame::show();
 }
 
+int LXQtGroupPopup::indexOf(LXQtTaskButton *button)
+{
+    return layout()->indexOf(button);
+}
+
+void LXQtGroupPopup::addButton(LXQtTaskButton *button)
+{
+    layout()->addWidget(button);
+}
+
 void LXQtGroupPopup::closeTimerSlot()
 {
     bool button_has_dnd_hover = false;
@@ -173,7 +183,7 @@ void LXQtGroupPopup::closeTimerSlot()
     for (int i = 0; l->count() > i; ++i)
     {
         LXQtTaskButton const * const button = dynamic_cast<LXQtTaskButton const *>(l->itemAt(i)->widget());
-        if (0 != button && button->hasDragAndDropHover())
+        if (nullptr != button && button->hasDragAndDropHover())
         {
             button_has_dnd_hover = true;
             break;

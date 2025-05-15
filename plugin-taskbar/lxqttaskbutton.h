@@ -33,13 +33,15 @@
 
 #include <QToolButton>
 #include <QProxyStyle>
+
 #include "../panel/ilxqtpanel.h"
 
 class QPainter;
 class QPalette;
 class QMimeData;
-class LXQtTaskGroup;
 class LXQtTaskBar;
+
+class ILXQtAbstractWMInterface;
 
 class LeftAlignedTextStyle : public QProxyStyle
 {
@@ -79,9 +81,8 @@ public:
 
     LXQtTaskBar * parentTaskBar() const {return mParentTaskBar;}
 
-    void refreshIconGeometry(QRect const & geom);
     static QString mimeDataFormat() { return QLatin1String("lxqt/lxqttaskbutton"); }
-    /*! \return true if this buttom received DragEnter event (and no DragLeave event yet)
+    /*! \return true if this button received DragEnter event (and no DragLeave event yet)
      * */
     bool hasDragAndDropHover() const;
 
@@ -93,7 +94,7 @@ public slots:
     void shadeApplication();
     void unShadeApplication();
     void closeApplication();
-    void moveApplicationToDesktop();    
+    void moveApplicationToDesktop();
     void moveApplication();
     void resizeApplication();
     void setApplicationLayer();
@@ -121,6 +122,12 @@ protected:
 
     inline ILXQtPanelPlugin * plugin() const { return mPlugin; }
 
+    void setTextExplicitly(const QString& str);
+
+protected:
+    //TODO: public getter instead?
+    ILXQtAbstractWMInterface *mBackend;
+
 private:
     void moveApplicationToPrevNextDesktop(bool next);
     void moveApplicationToPrevNextMonitor(bool next);
@@ -133,15 +140,14 @@ private:
     int mIconSize;
     int mWheelDelta;
 
+    QString mExplicitlySetText;
+
     // Timer for when draggind something into a button (the button's window
     // must be activated so that the use can continue dragging to the window
     QTimer * mDNDTimer;
 
     // Timer for distinguishing between separate mouse wheel rotations
     QTimer * mWheelTimer;
-
-private slots:
-    void activateWithDraggable();
 
 signals:
     void dropped(QObject * dragSource, QPoint const & pos);

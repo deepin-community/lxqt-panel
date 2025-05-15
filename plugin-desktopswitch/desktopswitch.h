@@ -31,17 +31,17 @@
 
 #include "../panel/ilxqtpanelplugin.h"
 #include <QFrame>
-#include <QScopedPointer>
-#include <KWindowSystem/NETWM>
 
 #include "desktopswitchbutton.h"
 
+class QLabel;
 class QSignalMapper;
 class QButtonGroup;
-class NETRootInfo;
 namespace LXQt {
 class GridLayout;
 }
+
+class ILXQtAbstractWMInterface;
 
 class DesktopSwitchWidget: public QFrame
 {
@@ -83,21 +83,35 @@ private:
     LXQt::GridLayout *mLayout;
     int mRows;
     bool mShowOnlyActive;
-    QScopedPointer<NETRootInfo> mDesktops;
+    ILXQtAbstractWMInterface *mBackend;
     DesktopSwitchButton::LabelType mLabelType;
 
     void refresh();
-    bool isWindowHighlightable(WId window);
 
 private slots:
     void setDesktop(int desktop);
-    void onNumberOfDesktopsChanged(int);
+    void onNumberOfDesktopsChanged();
     void onCurrentDesktopChanged(int);
     void onDesktopNamesChanged();
     virtual void settingsChanged();
     void registerShortcuts();
     void shortcutRegistered();
-    void onWindowChanged(WId id, NET::Properties properties, NET::Properties2 properties2);
+    void onWindowChanged(WId id, int prop);
+    void onWindowRemoved(WId id);
+};
+
+class DesktopSwitchUnsupported : public QObject, public ILXQtPanelPlugin
+{
+    Q_OBJECT
+public:
+    DesktopSwitchUnsupported(const ILXQtPanelPluginStartupInfo &startupInfo);
+    ~DesktopSwitchUnsupported();
+
+    QString themeId() const { return QStringLiteral("DesktopSwitchUnsupported"); }
+    QWidget *widget();
+    bool isSeparate() const { return true; }
+private:
+    QLabel *mLabel;
 };
 
 class DesktopSwitchPluginLibrary: public QObject, public ILXQtPanelPluginLibrary
@@ -106,7 +120,7 @@ class DesktopSwitchPluginLibrary: public QObject, public ILXQtPanelPluginLibrary
     // Q_PLUGIN_METADATA(IID "lxqt.org/Panel/PluginInterface/3.0")
     Q_INTERFACES(ILXQtPanelPluginLibrary)
 public:
-    ILXQtPanelPlugin *instance(const ILXQtPanelPluginStartupInfo &startupInfo) const { return new DesktopSwitch(startupInfo);}
+    ILXQtPanelPlugin *instance(const ILXQtPanelPluginStartupInfo &startupInfo) const;
 };
 
 #endif

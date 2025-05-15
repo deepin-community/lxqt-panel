@@ -13,7 +13,7 @@
         <location filename="../src/content.cpp" line="49"/>
         <source>CapsLock</source>
         <comment>Tooltip for CapsLock indicator</comment>
-        <translation>Didž (CapsLock)</translation>
+        <translation>CapsLock</translation>
     </message>
     <message>
         <location filename="../src/content.cpp" line="53"/>
@@ -25,7 +25,7 @@
         <location filename="../src/content.cpp" line="55"/>
         <source>NumLock</source>
         <comment>Tooltip for NumLock indicator</comment>
-        <translation>Skaitm (NumLock)</translation>
+        <translation>NumLock</translation>
     </message>
     <message>
         <location filename="../src/content.cpp" line="60"/>
@@ -37,15 +37,15 @@
         <location filename="../src/content.cpp" line="62"/>
         <source>ScrollLock</source>
         <comment>Tooltip for ScrollLock indicator</comment>
-        <translation>Slinkti (ScrollLock)</translation>
+        <translation>ScrollLock</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Layout</source>
         <translation>Išdėstymas</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Variant</source>
         <translation>Variantas</translation>
     </message>
@@ -54,7 +54,7 @@
     <name>KbdStateConfig</name>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="14"/>
-        <source>Keyboard state settings</source>
+        <source>Keyboard State Settings</source>
         <translation>Klaviatūros būsenos nustatymai</translation>
     </message>
     <message>
@@ -90,12 +90,12 @@
     <message>
         <location filename="../src/kbdstateconfig.ui" line="99"/>
         <source>Flags path pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vėliavų kelio šablonas:</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="106"/>
         <source>File path pattern for country flags. Must contain &lt;strong&gt;%1&lt;/strong&gt; which is replaced by the two letter ISO country code (lower case).&lt;br&gt;&lt;br&gt;Example: /usr/share/iso-flags-svg/country-squared/%1.svg</source>
-        <translation type="unfinished"></translation>
+        <translation>Šalių vėliavų failų šablonas. Jame privalo būti &lt;strong&gt;%1&lt;/strong&gt;, kas savo ruožtu bus pakeista dviem ISO šalies kodo raidėmis (mažosiomis).&lt;br&gt;&lt;br&gt;Pavyzdys: /usr/share/iso-flags-svg/country-squared/%1.svg</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="116"/>

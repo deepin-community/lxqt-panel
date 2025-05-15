@@ -46,9 +46,7 @@ LXQtPanelPluginConfigDialog::LXQtPanelPluginConfigDialog(PluginSettings &setting
 /************************************************
 
  ************************************************/
-LXQtPanelPluginConfigDialog::~LXQtPanelPluginConfigDialog()
-{
-}
+LXQtPanelPluginConfigDialog::~LXQtPanelPluginConfigDialog() = default;
 
 
 /************************************************
@@ -59,6 +57,15 @@ PluginSettings& LXQtPanelPluginConfigDialog::settings() const
     return mSettings;
 }
 
+
+/************************************************
+
+ ************************************************/
+void LXQtPanelPluginConfigDialog::closeEvent(QCloseEvent *event)
+{
+    mSettings.storeToCache();
+    return QDialog::closeEvent(event);
+}
 
 
 /************************************************

@@ -46,6 +46,7 @@ StatusNotifierConfiguration::StatusNotifierConfiguration(PluginSettings *setting
 
     loadSettings();
 
+    connect(ui->orderCB, &QCheckBox::toggled, this, &StatusNotifierConfiguration::saveSettings);
     connect(ui->attentionSB, &QAbstractSpinBox::editingFinished, this, &StatusNotifierConfiguration::saveSettings);
 }
 
@@ -56,6 +57,7 @@ StatusNotifierConfiguration::~StatusNotifierConfiguration()
 
 void StatusNotifierConfiguration::loadSettings()
 {
+    ui->orderCB->setChecked(settings().value(QStringLiteral("reverseOrder"), false).toBool());
     ui->attentionSB->setValue(settings().value(QStringLiteral("attentionPeriod"), 5).toInt());
     mAutoHideList = settings().value(QStringLiteral("autoHideList")).toStringList();
     mHideList = settings().value(QStringLiteral("hideList")).toStringList();
@@ -63,6 +65,7 @@ void StatusNotifierConfiguration::loadSettings()
 
 void StatusNotifierConfiguration::saveSettings()
 {
+    settings().setValue(QStringLiteral("reverseOrder"), ui->orderCB->isChecked());
     settings().setValue(QStringLiteral("attentionPeriod"), ui->attentionSB->value());
     settings().setValue(QStringLiteral("autoHideList"), mAutoHideList);
     settings().setValue(QStringLiteral("hideList"), mHideList);
@@ -112,4 +115,31 @@ void StatusNotifierConfiguration::addItems(const QStringList &items)
     ui->tableWidget->setSortingEnabled(true);
     ui->tableWidget->horizontalHeader()->setSortIndicatorShown(false);
     ui->tableWidget->setCurrentCell(0, 1);
+}
+
+void StatusNotifierConfiguration::dialogButtonsAction(QAbstractButton *btn)
+{
+    LXQtPanelPluginConfigDialog::dialogButtonsAction(btn);
+    // also, apply the changes to the visibilities list if the Reset button is clicked
+    QDialogButtonBox *box = qobject_cast<QDialogButtonBox*>(btn->parent());
+    if (box && box->buttonRole(btn) == QDialogButtonBox::ResetRole)
+    {
+        for (int i = 0; i < ui->tableWidget->rowCount(); ++i)
+        {
+            if (auto cb = qobject_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1)))
+            {
+                if (QTableWidgetItem *widgetItem = ui->tableWidget->item(i, 0))
+                {
+                    cb->blockSignals(true); // we neither change visibility lists nor save settings here
+                    if (mAutoHideList.contains(widgetItem->text()))
+                        cb->setCurrentIndex(1);
+                    else if (mHideList.contains(widgetItem->text()))
+                        cb->setCurrentIndex(2);
+                    else
+                        cb->setCurrentIndex(0);
+                    cb->blockSignals(false);
+                }
+            }
+        }
+    }
 }

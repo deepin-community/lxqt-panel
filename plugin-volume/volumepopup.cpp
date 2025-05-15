@@ -36,7 +36,6 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QToolTip>
 #include "audioengine.h"
 #include <QDebug>
@@ -47,8 +46,12 @@ VolumePopup::VolumePopup(QWidget* parent):
     QDialog(parent, Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint | Qt::Popup | Qt::X11BypassWindowManagerHint),
     m_pos(0,0),
     m_anchor(Qt::TopLeftCorner),
-    m_device(0)
+    m_device(nullptr)
 {
+    // Under some Wayland compositors, setting window flags in the c-tor of the base class
+    // may not be enough for a correct positioning of the popup.
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint | Qt::Popup | Qt::X11BypassWindowManagerHint);
+
     m_mixerButton = new QPushButton(this);
     m_mixerButton->setObjectName(QStringLiteral("MixerLink"));
     m_mixerButton->setMinimumWidth(1);
@@ -71,15 +74,15 @@ VolumePopup::VolumePopup(QWidget* parent):
 
     QVBoxLayout *l = new QVBoxLayout(this);
     l->setSpacing(0);
-    l->setMargin(0);
+    l->setContentsMargins(QMargins());
 
     l->addWidget(m_mixerButton, 0, Qt::AlignHCenter);
     l->addWidget(m_volumeSlider, 0, Qt::AlignHCenter);
     l->addWidget(m_muteToggleButton, 0, Qt::AlignHCenter);
 
-    connect(m_mixerButton, SIGNAL(released()), this, SIGNAL(launchMixer()));
-    connect(m_volumeSlider, SIGNAL(valueChanged(int)), this, SLOT(handleSliderValueChanged(int)));
-    connect(m_muteToggleButton, SIGNAL(clicked()), this, SLOT(handleMuteToggleClicked()));
+    connect(m_mixerButton,      &QPushButton::released, this, &VolumePopup::launchMixer);
+    connect(m_volumeSlider,     &QSlider::valueChanged, this, &VolumePopup::handleSliderValueChanged);
+    connect(m_muteToggleButton, &QPushButton::clicked,  this, &VolumePopup::handleMuteToggleClicked);
 }
 
 bool VolumePopup::event(QEvent *event)
@@ -106,7 +109,7 @@ bool VolumePopup::eventFilter(QObject * watched, QEvent * event)
     return QDialog::eventFilter(watched, event);
 }
 
-void VolumePopup::enterEvent(QEvent * /*event*/)
+void VolumePopup::enterEvent(QEnterEvent * /*event*/)
 {
     emit mouseEntered();
 }
@@ -123,7 +126,7 @@ void VolumePopup::handleSliderValueChanged(int value)
         return;
     // qDebug("VolumePopup::handleSliderValueChanged: %d\n", value);
     m_device->setVolume(value);
-    QTimer::singleShot(0, this, [this] { QToolTip::showText(QCursor::pos(), m_volumeSlider->toolTip()); });
+    QTimer::singleShot(0, this, [this] { QToolTip::showText(QCursor::pos(), m_volumeSlider->toolTip(), this); });
 }
 
 void VolumePopup::handleMuteToggleClicked()
@@ -211,8 +214,8 @@ void VolumePopup::setDevice(AudioDevice *device)
     if (m_device) {
         m_muteToggleButton->setChecked(m_device->mute());
         handleDeviceVolumeChanged(m_device->volume());
-        connect(m_device, SIGNAL(volumeChanged(int)), this, SLOT(handleDeviceVolumeChanged(int)));
-        connect(m_device, SIGNAL(muteChanged(bool)), this, SLOT(handleDeviceMuteChanged(bool)));
+        connect(m_device, &AudioDevice::volumeChanged, this, &VolumePopup::handleDeviceVolumeChanged);
+        connect(m_device, &AudioDevice::muteChanged,   this, &VolumePopup::handleDeviceMuteChanged);
     }
     else
         updateStockIcon();
@@ -249,16 +252,16 @@ void VolumePopup::realign()
 
     }
 
-		if (QScreen const * const screen = QGuiApplication::screenAt(m_pos))
-		{
-			auto const & geometry = screen->availableGeometry();
+    if (QScreen const * const screen = QGuiApplication::screenAt(m_pos))
+    {
+        auto const & geometry = screen->availableGeometry();
 
-			if (rect.right() > geometry.right())
-				rect.moveRight(geometry.right());
+        if (rect.right() > geometry.right())
+            rect.moveRight(geometry.right());
 
-			if (rect.bottom() > geometry.bottom())
-				rect.moveBottom(geometry.bottom());
-		}
+        if (rect.bottom() > geometry.bottom())
+            rect.moveBottom(geometry.bottom());
+    }
 
     move(rect.topLeft());
 }

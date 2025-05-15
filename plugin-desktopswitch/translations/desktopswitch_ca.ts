@@ -4,13 +4,13 @@
 <context>
     <name>DesktopSwitch</name>
     <message>
-        <location filename="../desktopswitch.cpp" line="85"/>
+        <location filename="../desktopswitch.cpp" line="95"/>
         <source>Switch to desktop %1</source>
         <translation>Canvia a l&apos;escriptori %1</translation>
     </message>
     <message>
-        <location filename="../desktopswitch.cpp" line="144"/>
-        <location filename="../desktopswitch.cpp" line="155"/>
+        <location filename="../desktopswitch.cpp" line="170"/>
+        <location filename="../desktopswitch.cpp" line="181"/>
         <source>Desktop %1</source>
         <translation>Escriptori %1</translation>
     </message>
@@ -19,7 +19,7 @@
     <name>DesktopSwitchConfiguration</name>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="14"/>
-        <source>DesktopSwitch settings</source>
+        <source>DesktopSwitch Settings</source>
         <translation>Ajusts de canvi d&apos;escriptori</translation>
     </message>
     <message>
@@ -55,17 +55,35 @@
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="72"/>
         <source>If checked, widget will be just an indicator</source>
-        <translation type="unfinished"></translation>
+        <translation>Si està marcat, l&apos; estri serà només un indicador</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="75"/>
         <source>Show only active desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra només l&apos;escriptori actiu</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="85"/>
         <source>Desktop names</source>
         <translation>Noms dels escriptoris</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitchconfiguration.cpp" line="78"/>
+        <source>Desktop %1:</source>
+        <translation>Escriptori %1:</translation>
+    </message>
+</context>
+<context>
+    <name>DesktopSwitchUnsupported</name>
+    <message>
+        <location filename="../desktopswitch.cpp" line="342"/>
+        <source>n/a</source>
+        <translation>n / a</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitch.cpp" line="344"/>
+        <source>DesktopSwitch is unsupported on current platform: %1</source>
+        <translation>DesktopSwitch no és compatible a la plataforma actual: %1</translation>
     </message>
 </context>
 </TS>

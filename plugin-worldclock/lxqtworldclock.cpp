@@ -32,7 +32,6 @@
 
 #include <QCalendarWidget>
 #include <QDate>
-#include <QDesktopWidget>
 #include <QDialog>
 #include <QEvent>
 #include <QHBoxLayout>
@@ -59,8 +58,6 @@ LXQtWorldClock::LXQtWorldClock(const ILXQtPanelPluginStartupInfo &startupInfo):
     mContent = new ActiveLabel();
     mRotatedWidget = new LXQt::RotatedWidget(*mContent, mMainWidget);
 
-    mRotatedWidget->setTransferWheelEvent(true);
-
     QVBoxLayout *borderLayout = new QVBoxLayout(mMainWidget);
     borderLayout->setContentsMargins(0, 0, 0, 0);
     borderLayout->setSpacing(0);
@@ -73,9 +70,9 @@ LXQtWorldClock::LXQtWorldClock(const ILXQtPanelPluginStartupInfo &startupInfo):
     settingsChanged();
 
     mTimer->setTimerType(Qt::PreciseTimer);
-    connect(mTimer, SIGNAL(timeout()), SLOT(timeout()));
+    connect(mTimer, &QTimer::timeout, this, &LXQtWorldClock::timeout);
 
-    connect(mContent, SIGNAL(wheelScrolled(int)), SLOT(wheelScrolled(int)));
+    connect(mContent, &ActiveLabel::wheelScrolled, this, &LXQtWorldClock::wheelScrolled);
 }
 
 LXQtWorldClock::~LXQtWorldClock()
@@ -85,7 +82,7 @@ LXQtWorldClock::~LXQtWorldClock()
 
 void LXQtWorldClock::timeout()
 {
-    if (QDateTime{}.time().msec() > 500)
+    if (QTime::currentTime().msec() > 500)
         restartTimer();
     updateTimeText();
 }
@@ -104,7 +101,7 @@ void LXQtWorldClock::updateTimeText()
     {
         isUpToDate = false;
         if (mUpdateInterval < 60000)
-            mShownTime = tzNow.addSecs(-tzNow.time().msec()); // s
+            mShownTime = tzNow.addMSecs(-tzNow.time().msec()); // s
         else if (mUpdateInterval < 3600000)
             mShownTime = tzNow.addSecs(-tzNow.time().second()); // m
         else
@@ -118,7 +115,7 @@ void LXQtWorldClock::updateTimeText()
             if (diff < 0 || diff >= 1)
             {
                 isUpToDate = false;
-                mShownTime = tzNow.addSecs(-tzNow.time().msec());
+                mShownTime = tzNow.addMSecs(-tzNow.time().msec());
             }
         }
         else if (mUpdateInterval < 3600000)
@@ -138,7 +135,7 @@ void LXQtWorldClock::updateTimeText()
     if (!isUpToDate)
     {
         const QSize old_size = mContent->sizeHint();
-        mContent->setText(tzNow.toString(preformat(mFormat, timeZone, tzNow)));
+        mContent->setText(QLocale::system().toString(tzNow, preformat(mFormat, timeZone, tzNow)));
         if (old_size != mContent->sizeHint())
             mRotatedWidget->adjustContentSize();
         mRotatedWidget->update();
@@ -167,6 +164,8 @@ void LXQtWorldClock::restartTimer()
 
 void LXQtWorldClock::settingsChanged()
 {
+    static const QRegularExpression regexp(QLatin1String("'[^']*'"));
+
     PluginSettings *_settings = settings();
 
     QString oldFormat = mFormat;
@@ -249,12 +248,10 @@ void LXQtWorldClock::settingsChanged()
         mFormat = customFormat;
     else
     {
-        QLocale locale = QLocale(QLocale::AnyLanguage, QLocale().country());
-
         if (formatType == QLatin1String("short-timeonly"))
-            mFormat = locale.timeFormat(QLocale::ShortFormat);
+            mFormat = QLocale{}.timeFormat(QLocale::ShortFormat);
         else if (formatType == QLatin1String("long-timeonly"))
-            mFormat = locale.timeFormat(QLocale::LongFormat);
+            mFormat = QLocale{}.timeFormat(QLocale::LongFormat);
         else // if (formatType == QLatin1String("custom-timeonly"))
             mFormat = QString(QLatin1String("%1:mm%2%3")).arg(timePadHour ? QLatin1String("hh") : QLatin1String("h")).arg(timeShowSeconds ? QLatin1String(":ss") : QLatin1String("")).arg(timeAMPM ? QLatin1String(" A") : QLatin1String(""));
 
@@ -288,15 +285,15 @@ void LXQtWorldClock::settingsChanged()
         {
             QString datePortion;
             if (dateFormatType == QLatin1String("short"))
-                datePortion = locale.dateFormat(QLocale::ShortFormat);
+                datePortion = QLocale{}.dateFormat(QLocale::ShortFormat);
             else if (dateFormatType == QLatin1String("long"))
-                datePortion = locale.dateFormat(QLocale::LongFormat);
+                datePortion = QLocale{}.dateFormat(QLocale::LongFormat);
             else if (dateFormatType == QLatin1String("iso"))
                 datePortion = QLatin1String("yyyy-MM-dd");
             else // if (dateFormatType == QLatin1String("custom"))
             {
                 QString datePortionOrder;
-                QString dateLocale = locale.dateFormat(QLocale::ShortFormat).toLower();
+                QString dateLocale = QLocale{}.dateFormat(QLocale::ShortFormat).toLower();
                 int yearIndex = dateLocale.indexOf(QLatin1String("y"));
                 int monthIndex = dateLocale.indexOf(QLatin1String("m"));
                 int dayIndex = dateLocale.indexOf(QLatin1String("d"));
@@ -328,8 +325,8 @@ void LXQtWorldClock::settingsChanged()
     {
         int update_interval;
         QString format = mFormat;
-        format.replace(QRegExp(QLatin1String("'[^']*'")), QString());
-        //don't support updating on milisecond basis -> big performance hit
+        format.replace(regexp, QString());
+        //don't support updating on millisecond basis -> big performance hit
         if (format.contains(QLatin1String("s")))
             update_interval = 1000;
         else if (format.contains(QLatin1String("m")))
@@ -396,7 +393,10 @@ void LXQtWorldClock::activated(ActivationReason reason)
     if (!mPopup)
     {
         mPopup = new LXQtWorldClockPopup(mContent);
-        connect(mPopup, SIGNAL(deactivated()), SLOT(deletePopup()));
+        connect(mPopup, &QObject::destroyed, this, [this]() {
+            mPopupContent = nullptr;
+            mPopup = nullptr;
+        });
 
         if (reason == ILXQtPanelPlugin::Trigger)
         {
@@ -413,7 +413,7 @@ void LXQtWorldClock::activated(ActivationReason reason)
                 timeZoneName = QString::fromLatin1(QTimeZone::systemTimeZoneId());
 
             QTimeZone timeZone(timeZoneName.toLatin1());
-            calendarWidget->setFirstDayOfWeek(QLocale(QLocale::AnyLanguage, timeZone.country()).firstDayOfWeek());
+            calendarWidget->setFirstDayOfWeek(QLocale{}.firstDayOfWeek());
             calendarWidget->setSelectedDate(QDateTime::currentDateTime().toTimeZone(timeZone).date());
         }
         else
@@ -435,22 +435,15 @@ void LXQtWorldClock::activated(ActivationReason reason)
     }
     else
     {
-        deletePopup();
+        delete mPopup;
     }
-}
-
-void LXQtWorldClock::deletePopup()
-{
-    mPopupContent = nullptr;
-    mPopup->deleteLater();
-    mPopup = nullptr;
 }
 
 QString LXQtWorldClock::formatDateTime(const QDateTime &datetime, const QString &timeZoneName)
 {
     QTimeZone timeZone(timeZoneName.toLatin1());
     QDateTime tzNow = datetime.toTimeZone(timeZone);
-    return tzNow.toString(preformat(mFormat, timeZone, tzNow));
+    return QLocale::system().toString(tzNow, preformat(mFormat, timeZone, tzNow));
 }
 
 void LXQtWorldClock::updatePopupContent()
@@ -461,7 +454,7 @@ void LXQtWorldClock::updatePopupContent()
         QStringList allTimeZones;
         bool hasTimeZone = formatHasTimeZone(mFormat);
 
-        for (QString timeZoneName : qAsConst(mTimeZones))
+        for (QString timeZoneName : std::as_const(mTimeZones))
         {
             if (timeZoneName == QLatin1String("local"))
                 timeZoneName = QString::fromLatin1(QTimeZone::systemTimeZoneId());
@@ -480,7 +473,8 @@ void LXQtWorldClock::updatePopupContent()
 
 bool LXQtWorldClock::formatHasTimeZone(QString format)
 {
-    format.replace(QRegExp(QLatin1String("'[^']*'")), QString());
+    static const QRegularExpression regexp(QLatin1String("'[^']*'"));
+    format.replace(regexp, QString());
     return format.contains(QLatin1Char('t'), Qt::CaseInsensitive);
 }
 
@@ -595,7 +589,11 @@ ActiveLabel::ActiveLabel(QWidget *parent) :
 
 void ActiveLabel::wheelEvent(QWheelEvent *event)
 {
-    emit wheelScrolled(event->delta());
+    QPoint angleDelta = event->angleDelta();
+    Qt::Orientation orient = (qAbs(angleDelta.x()) > qAbs(angleDelta.y()) ? Qt::Horizontal : Qt::Vertical);
+    int delta = (orient == Qt::Horizontal ? angleDelta.x() : angleDelta.y());
+
+    emit wheelScrolled(delta);
 
     QLabel::wheelEvent(event);
 }
@@ -608,7 +606,7 @@ void ActiveLabel::mouseReleaseEvent(QMouseEvent* event)
         emit leftMouseButtonClicked();
         break;
 
-    case Qt::MidButton:
+    case Qt::MiddleButton:
         emit middleMouseButtonClicked();
         break;
 
@@ -621,22 +619,15 @@ void ActiveLabel::mouseReleaseEvent(QMouseEvent* event)
 LXQtWorldClockPopup::LXQtWorldClockPopup(QWidget *parent) :
     QDialog(parent, Qt::Window | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint | Qt::Popup | Qt::X11BypassWindowManagerHint)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     setLayout(new QHBoxLayout(this));
-    layout()->setMargin(1);
+    layout()->setContentsMargins(1, 1, 1, 1);
 }
 
 void LXQtWorldClockPopup::show()
 {
     QDialog::show();
     activateWindow();
-}
-
-bool LXQtWorldClockPopup::event(QEvent *event)
-{
-    if (event->type() == QEvent::Close)
-        emit deactivated();
-
-    return QDialog::event(event);
 }
 
 bool LXQtWorldClock::eventFilter(QObject * watched, QEvent * event)
@@ -650,7 +641,7 @@ bool LXQtWorldClock::eventFilter(QObject * watched, QEvent * event)
             timeZoneName = QString::fromLatin1(QTimeZone::systemTimeZoneId());
         QTimeZone timeZone(timeZoneName.toLatin1());
         QDateTime tzNow = now.toTimeZone(timeZone);
-        QToolTip::showText(helpEvent->globalPos(), tzNow.toString(QLocale(QLocale::AnyLanguage, QLocale().country()).dateTimeFormat(QLocale::ShortFormat)));
+        QToolTip::showText(helpEvent->globalPos(), QLocale::system().toString(tzNow, QLocale::ShortFormat));
         return false;
     }
     return QObject::eventFilter(watched, event);

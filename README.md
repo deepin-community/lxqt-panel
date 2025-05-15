@@ -8,10 +8,9 @@ The elements available in lxqt-panel are called "plugin" technically. This appli
 Configuration dialogue "Add Plugins", see [below](https://github.com/lxqt/lxqt-panel#customizing), is listing all available plugins plus a short description and hence provides an overview of the available ones.
 Notes on some of the plugins, sorted by terms used within the GUI in alphabetical order, technical term in parenthesis:
 
-#### Date & time (plugin-clock) / World clock (plugin-worldclock)
+#### Date & time / World clock (plugin-worldclock)
 
-Both provide clock and calendar functionality. plugin-worldclock can display various time zones in addition but lacks a tooltip displaying current date and time upon hovering.
-These plugins will probably be merged into one, see https://github.com/lxqt/lxqt/issues/312.
+Provides clock and calendar functionality and can display various time zones in addition.
 
 #### Quick launch (plugin-quicklaunch)
 
@@ -19,8 +18,11 @@ A plugin to launch applications from the panel. By default it is empty and displ
 
 #### Status Notifier Plugin (plugin-statusnotifier) / System Tray (plugin-tray)
 
-Both provide a notification area within the panel, that is an area where arbitrary applications can place informational icons. This is frequently used e. g. by chat or mail clients to inform about incoming messages or tools configuring the network to inform about connections. (So it's some kind of counterpart to the desktop notifications displayed by [lxqt-notificationd](https://github.com/lxqt/lxqt-notificationd)).
-The difference between the two plugins is a technical one. **plugin-tray** is implementing the so-called [System Tray Protocol](https://www.freedesktop.org/wiki/Specifications/systemtray-spec). It's a specification that has been around for years but has some serious technical limitations and in particular won't work under Wayland. **plugin-statusnotifier** on the other hand is implementing the so-called [StatusNotifierItem (SNI)](https://www.freedesktop.org/wiki/Specifications/StatusNotifierItem) specification which can be considered a successor of the System Tray Protocol.
+Status notifier plugin provides a notification area within the panel, that is an area where arbitrary applications can place informational icons. This is frequently used e. g. by chat or mail clients to inform about incoming messages or tools configuring the network to inform about connections. (So it's some kind of counterpart to the desktop notifications displayed by [lxqt-notificationd](https://github.com/lxqt/lxqt-notificationd)).
+The difference between the two plugins is a technical one:
+* **plugin-tray** is implementing the so-called [System Tray Protocol](https://www.freedesktop.org/wiki/Specifications/systemtray-spec). It's a specification that has been around for years but has some serious technical limitations and in particular won't work under Wayland. This plugin only translates "System Tray Protocol" entities into SNI ones, so it does not provide any visible area in panel.
+* **plugin-statusnotifier** is implementing the so-called [StatusNotifierItem (SNI)](https://www.freedesktop.org/wiki/Specifications/StatusNotifierItem) specification which can be considered a successor of the System Tray Protocol.
+
 Both plugins are maintained in parallel as not all relevant applications are compatible with SNI so far. In particular both Qt 4 and all GTK applications need some kind of wrapper to deal with it. Both plugins can be used in parallel without any issue, applications supporting both specifications will normally chose to display their icons in plugin-statusnotifier.
 
 #### Volume control (plugin-volume)
@@ -31,9 +33,9 @@ As indicated by the name, a volume control. Technically Alsa, OSS and PulseAudio
 
 ### Compiling source code
 
-The runtime dependencies are libxcomposite, libdbusmenu-qt5, KGuiAddons, KWindowSystem, Solid, menu-cache, lxmenu-data, [liblxqt](https://github.com/lxqt/liblxqt) and [lxqt-globalkeys](https://github.com/lxqt/lxqt-globalkeys).
+The runtime dependencies are libxcomposite, layershell-qt, KGuiAddons, KWindowSystem, Solid, menu-cache, [lxqt-menu-data](https://github.com/lxqt/lxqt-menu-data), [liblxqt](https://github.com/lxqt/liblxqt), [libdbusmenu-lxqt](https://github.com/lxqt/libdbusmenu-lxqt) and [lxqt-globalkeys](https://github.com/lxqt/lxqt-globalkeys).
 Several plugins or features thereof are optional and need additional runtime dependencies. Namely these are (plugin / feature in parenthesis) Alsa library (Alsa support in plugin-volume), PulseAudio client library (PulseAudio support in plugin-volume), lm-sensors (plugin-sensors), libstatgrab (plugin-cpuload, plugin-networkmonitor), [libsysstat](https://github.com/lxqt/libsysstat) (plugin-sysstat). All of them are enabled by default and have to be disabled by CMake variables as required, see below.
-In addition CMake is a mandatory build dependency. Git is optionally needed to pull latest VCS checkouts. The localization files were outsourced to repository [lxqt-l10n](https://github.com/lxqt/lxqt-l10n) so the corresponding dependencies are needed, too. Please refer to this repository's `README.md` for further information.
+In addition CMake and [lxqt-build-tools](https://github.com/lxqt/lxqt-build-tools) are mandatory build dependencies. Git is optionally needed to pull latest VCS checkouts.
 
 Code configuration is handled by CMake. CMake variable `CMAKE_INSTALL_PREFIX` has to be set to `/usr` on most operating systems, depending on the way library paths are dealt with on 64bit systems variables like CMAKE_INSTALL_LIBDIR may have to be set as well.
 By default all available plugins and features thereof are built and CMake fails when dependencies aren't met. Building particular plugins can be disabled by boolean CMake variables `<plugin>_PLUGIN` where the plugin is referred by its technical term like e. g. in `SYSSTAT_PLUGIN`. Alsa and PulseAudio support in plugin-volume can be disabled by boolean CMake variables `VOLUME_USE_ALSA` and `VOLUME_USE_PULSEAUDIO`.
@@ -42,7 +44,7 @@ To build run `make`, to install `make install` which accepts variable `DESTDIR` 
 
 ### Binary packages
 
-Official binary packages are provided by all major Linux distributions like Arch Linux, Debian (as of Debian stretch only), Fedora and openSUSE. Just use your package manager to search for string `lxqt-panel`.
+Official binary packages are provided by all major Linux and BSD distributions. Just use your package manager to search for string  `lxqt-panel`.
 
 ## Configuration, Usage
 

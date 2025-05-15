@@ -16,7 +16,7 @@
     <message>
         <location filename="../lxqtsysstatcolours.ui" line="30"/>
         <source>&amp;Grid</source>
-        <translation>&amp;Koordinatsystem</translation>
+        <translation>&amp;Rutenett</translation>
     </message>
     <message>
         <location filename="../lxqtsysstatcolours.ui" line="40"/>
@@ -73,7 +73,7 @@
     <message>
         <location filename="../lxqtsysstatcolours.ui" line="172"/>
         <source>Memory</source>
-        <translation>Hukommelse</translation>
+        <translation>Minne</translation>
     </message>
     <message>
         <location filename="../lxqtsysstatcolours.ui" line="185"/>
@@ -141,17 +141,17 @@
     <message>
         <location filename="../lxqtsysstatconfiguration.ui" line="64"/>
         <source>&amp;Grid lines</source>
-        <translation>&amp;Linjer i koordinatsystemet</translation>
+        <translation>&amp;Rutenettlinjer</translation>
     </message>
     <message>
         <location filename="../lxqtsysstatconfiguration.ui" line="80"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimal width if the panel is horizontal.&lt;/p&gt;&lt;p&gt;Minimal height if the panel is vertical.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimal bredde hvis panelet er horisontalt.&lt;/p&gt;&lt;p&gt;Minimal høyde hvis panelet er vertikalt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../lxqtsysstatconfiguration.ui" line="83"/>
         <source> px</source>
-        <translation> pk</translation>
+        <translation> px</translation>
     </message>
     <message>
         <location filename="../lxqtsysstatconfiguration.ui" line="99"/>
@@ -200,7 +200,7 @@
     </message>
     <message>
         <location filename="../lxqtsysstatconfiguration.ui" line="312"/>
-        <source>Colours</source>
+        <source>Colors</source>
         <translation>Farger</translation>
     </message>
     <message>
@@ -226,7 +226,7 @@
     <message>
         <location filename="../lxqtsysstatconfiguration.cpp" line="42"/>
         <source>Memory</source>
-        <translation>Hukommelse</translation>
+        <translation>Minne</translation>
     </message>
     <message>
         <location filename="../lxqtsysstatconfiguration.cpp" line="43"/>
@@ -361,7 +361,7 @@
     <message>
         <location filename="../lxqtsysstatconfiguration.cpp" line="79"/>
         <source>memory</source>
-        <translation>hukommelse</translation>
+        <translation>minne</translation>
     </message>
     <message>
         <location filename="../lxqtsysstatconfiguration.cpp" line="80"/>
@@ -372,31 +372,31 @@
 <context>
     <name>LXQtSysStatContent</name>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="397"/>
+        <location filename="../lxqtsysstat.cpp" line="407"/>
         <source>system: %1%&lt;br&gt;user: %2%&lt;br&gt;nice: %3%&lt;br&gt;other: %4%&lt;br&gt;freq: %5%</source>
         <comment>CPU tooltip information</comment>
         <translation>system: %1%&lt;br&gt;bruker: %2%&lt;br&gt;prioritering: %3%&lt;br&gt;andre: %4%&lt;br&gt;frekv: %5%</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="446"/>
+        <location filename="../lxqtsysstat.cpp" line="456"/>
         <source>system: %1%&lt;br&gt;user: %2%&lt;br&gt;nice: %3%&lt;br&gt;other: %4%&lt;br&gt;freq: n/a</source>
         <comment>CPU tooltip information</comment>
         <translation>system: %1%&lt;br&gt;bruker: %2%&lt;br&gt;prioritering: %3%&lt;br&gt;andre: %4%&lt;br&gt;frekv: n/a</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="488"/>
+        <location filename="../lxqtsysstat.cpp" line="498"/>
         <source>apps: %1%&lt;br&gt;buffers: %2%&lt;br&gt;cached: %3%</source>
         <comment>Memory tooltip information</comment>
         <translation>apper: %1%&lt;br&gt;buffere: %2%&lt;br&gt;hurtigbufret: %3%</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="522"/>
+        <location filename="../lxqtsysstat.cpp" line="532"/>
         <source>used: %1%</source>
         <comment>Swap tooltip information</comment>
         <translation>brukt: %1%</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="552"/>
+        <location filename="../lxqtsysstat.cpp" line="562"/>
         <source>min: %1%&lt;br&gt;max: %2%</source>
         <comment>Network tooltip information</comment>
         <translation>min: %1%&lt;br&gt;maks: %2%</translation>

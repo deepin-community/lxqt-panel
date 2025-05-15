@@ -4,14 +4,14 @@
 <context>
     <name>DesktopSwitch</name>
     <message>
-        <location filename="../desktopswitch.cpp" line="85"/>
+        <location filename="../desktopswitch.cpp" line="95"/>
         <source>Switch to desktop %1</source>
         <translatorcomment>Перейти на стільницю %1 </translatorcomment>
-        <translation></translation>
+        <translation>Перемкнутися до стільниці %1</translation>
     </message>
     <message>
-        <location filename="../desktopswitch.cpp" line="144"/>
-        <location filename="../desktopswitch.cpp" line="155"/>
+        <location filename="../desktopswitch.cpp" line="170"/>
+        <location filename="../desktopswitch.cpp" line="181"/>
         <source>Desktop %1</source>
         <translation>Стільниця %1</translation>
     </message>
@@ -20,7 +20,7 @@
     <name>DesktopSwitchConfiguration</name>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="14"/>
-        <source>DesktopSwitch settings</source>
+        <source>DesktopSwitch Settings</source>
         <translation>Налаштування перемикача стільниць</translation>
     </message>
     <message>
@@ -51,22 +51,40 @@
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="64"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Немає</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="72"/>
         <source>If checked, widget will be just an indicator</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо позначити, віджет буде лише покажчиком</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="75"/>
         <source>Show only active desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Показувати лише активну стільницю</translation>
     </message>
     <message>
         <location filename="../desktopswitchconfiguration.ui" line="85"/>
         <source>Desktop names</source>
         <translation>Назви стільниць</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitchconfiguration.cpp" line="78"/>
+        <source>Desktop %1:</source>
+        <translation>Стільниця %1:</translation>
+    </message>
+</context>
+<context>
+    <name>DesktopSwitchUnsupported</name>
+    <message>
+        <location filename="../desktopswitch.cpp" line="342"/>
+        <source>n/a</source>
+        <translation>н/д</translation>
+    </message>
+    <message>
+        <location filename="../desktopswitch.cpp" line="344"/>
+        <source>DesktopSwitch is unsupported on current platform: %1</source>
+        <translation>DesktopSwitch не підтримується на цій платформі: %1</translation>
     </message>
 </context>
 </TS>

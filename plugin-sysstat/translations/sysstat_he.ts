@@ -200,7 +200,7 @@
     </message>
     <message>
         <location filename="../lxqtsysstatconfiguration.ui" line="312"/>
-        <source>Colours</source>
+        <source>Colors</source>
         <translation>צבעים</translation>
     </message>
     <message>
@@ -372,31 +372,31 @@
 <context>
     <name>LXQtSysStatContent</name>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="397"/>
+        <location filename="../lxqtsysstat.cpp" line="407"/>
         <source>system: %1%&lt;br&gt;user: %2%&lt;br&gt;nice: %3%&lt;br&gt;other: %4%&lt;br&gt;freq: %5%</source>
         <comment>CPU tooltip information</comment>
         <translation>מערכת: %1%&lt;br&gt;משתמש: %2%&lt;br&gt;nice: %3%&lt;br&gt;אחר: %4%&lt;br&gt;תדירות: %5%</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="446"/>
+        <location filename="../lxqtsysstat.cpp" line="456"/>
         <source>system: %1%&lt;br&gt;user: %2%&lt;br&gt;nice: %3%&lt;br&gt;other: %4%&lt;br&gt;freq: n/a</source>
         <comment>CPU tooltip information</comment>
         <translation>מערכת: %1%&lt;br&gt;משתמש: %2%&lt;br&gt;nice: %3%&lt;br&gt;אחר: %4%&lt;br&gt;תדירות: לא זמינה</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="488"/>
+        <location filename="../lxqtsysstat.cpp" line="498"/>
         <source>apps: %1%&lt;br&gt;buffers: %2%&lt;br&gt;cached: %3%</source>
         <comment>Memory tooltip information</comment>
         <translation>יישומים: %1%&lt;br&gt;חוצצים: %2%&lt;br&gt;במטמון: %3%</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="522"/>
+        <location filename="../lxqtsysstat.cpp" line="532"/>
         <source>used: %1%</source>
         <comment>Swap tooltip information</comment>
         <translation>מנוצל: %1%</translation>
     </message>
     <message>
-        <location filename="../lxqtsysstat.cpp" line="552"/>
+        <location filename="../lxqtsysstat.cpp" line="562"/>
         <source>min: %1%&lt;br&gt;max: %2%</source>
         <comment>Network tooltip information</comment>
         <translation>מזערי: %1%&lt;br&gt;מרבי: %2%</translation>

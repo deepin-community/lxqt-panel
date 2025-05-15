@@ -4,9 +4,9 @@
 <context>
     <name>LXQtWorldClock</name>
     <message>
-        <location filename="../lxqtworldclock.cpp" line="246"/>
+        <location filename="../lxqtworldclock.cpp" line="245"/>
         <source>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM yyyy&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</source>
-        <translation>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM rrrr&apos;&lt;br/&gt;&apos;ČČ&apos;&lt;/font&gt;&apos;</translation>
+        <translation>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM yyyy&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</translation>
     </message>
 </context>
 <context>
@@ -118,7 +118,7 @@
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="201"/>
         <location filename="../lxqtworldclockconfiguration.ui" line="436"/>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="586"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="585"/>
         <source>Custom name</source>
         <translation>Užívateľom určený názov</translation>
     </message>
@@ -179,7 +179,7 @@
     </message>
     <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="377"/>
-        <source>&amp;Customise ...</source>
+        <source>&amp;Customize ...</source>
         <translation>&amp;Prispôsobiť...</translation>
     </message>
     <message>
@@ -218,32 +218,37 @@
         <translation>&amp;Posunúť smerom dole</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="519"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="518"/>
+        <source>&lt;b&gt;Note:&lt;/b&gt; Middle-click the clock to view the time and date for all configured timezones.</source>
+        <translation>&lt;b&gt;Poznámka:&lt;/b&gt; Kliknutím na hodiny prostredným tlačidlom zobrazíte čas a dátum pre všetky nastavené časové pásma.</translation>
+    </message>
+    <message>
+        <location filename="../lxqtworldclockconfiguration.ui" line="529"/>
         <source>&amp;General</source>
         <translation>&amp;Všeobecné</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="525"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="535"/>
         <source>Auto&amp;rotate when the panel is vertical</source>
         <translation>&amp;Pri zvisle orientovanom paneli natočiť tak, aby boli vodorovne</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.ui" line="535"/>
-        <source>Show &amp;week numbers in popup calendar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../lxqtworldclockconfiguration.ui" line="545"/>
-        <source>S&amp;how tooltip</source>
-        <translation type="unfinished"></translation>
+        <source>Show &amp;week numbers in popup calendar</source>
+        <translation>V &amp;kalendári zobraziť čísla týždňov</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="107"/>
+        <location filename="../lxqtworldclockconfiguration.ui" line="555"/>
+        <source>S&amp;how tooltip</source>
+        <translation>&amp;Zobraziť popisy ikon</translation>
+    </message>
+    <message>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="106"/>
         <source>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM yyyy&apos;&lt;br/&gt;&apos;TT&apos;&lt;/font&gt;&apos;</source>
         <translation>&apos;&lt;b&gt;&apos;HH:mm:ss&apos;&lt;/b&gt;&lt;br/&gt;&lt;font size=&quot;-2&quot;&gt;&apos;ddd, d MMM rrrr&apos;&lt;br/&gt;&apos;ČČ&apos;&lt;/font&gt;&apos;</translation>
     </message>
     <message>
-        <location filename="../lxqtworldclockconfiguration.cpp" line="585"/>
+        <location filename="../lxqtworldclockconfiguration.cpp" line="584"/>
         <source>Input custom time zone name</source>
         <translation>Zadať užívateľom stanovený názov časového pásma</translation>
     </message>

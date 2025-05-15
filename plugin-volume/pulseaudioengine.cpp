@@ -129,19 +129,19 @@ static void contextSubscriptionCallback(pa_context * /*context*/, pa_subscriptio
 
 PulseAudioEngine::PulseAudioEngine(QObject *parent) :
     AudioEngine(parent),
-    m_context(0),
+    m_context(nullptr),
     m_contextState(PA_CONTEXT_UNCONNECTED),
     m_ready(false),
-    m_maximumVolume(PA_VOLUME_UI_MAX)
+    m_maximumVolume(PA_VOLUME_NORM)
 {
     qRegisterMetaType<pa_context_state_t>("pa_context_state_t");
 
     m_reconnectionTimer.setSingleShot(true);
     m_reconnectionTimer.setInterval(100);
-    connect(&m_reconnectionTimer, SIGNAL(timeout()), this, SLOT(connectContext()));
+    connect(&m_reconnectionTimer, &QTimer::timeout, this, &PulseAudioEngine::connectContext);
 
     m_mainLoop = pa_threaded_mainloop_new();
-    if (m_mainLoop == 0) {
+    if (m_mainLoop == nullptr) {
         qWarning("Unable to create pulseaudio mainloop");
         return;
     }
@@ -149,13 +149,13 @@ PulseAudioEngine::PulseAudioEngine(QObject *parent) :
     if (pa_threaded_mainloop_start(m_mainLoop) != 0) {
         qWarning("Unable to start pulseaudio mainloop");
         pa_threaded_mainloop_free(m_mainLoop);
-        m_mainLoop = 0;
+        m_mainLoop = nullptr;
         return;
     }
 
     m_mainLoopApi = pa_threaded_mainloop_get_api(m_mainLoop);
 
-    connect(this, SIGNAL(contextStateChanged(pa_context_state_t)), this, SLOT(handleContextStateChanged()));
+    connect(this, &PulseAudioEngine::contextStateChanged, this, &PulseAudioEngine::handleContextStateChanged);
 
     connectContext();
 }
@@ -164,12 +164,12 @@ PulseAudioEngine::~PulseAudioEngine()
 {
     if (m_context) {
         pa_context_unref(m_context);
-        m_context = 0;
+        m_context = nullptr;
     }
 
     if (m_mainLoop) {
         pa_threaded_mainloop_free(m_mainLoop);
-        m_mainLoop = 0;
+        m_mainLoop = nullptr;
     }
 }
 
@@ -179,19 +179,19 @@ void PulseAudioEngine::removeSink(uint32_t idx)
     if (m_sinks.end() == dev_i)
         return;
 
-    QScopedPointer<AudioDevice> dev{*dev_i};
-    m_cVolumeMap.remove(dev.data());
+    std::unique_ptr<AudioDevice> dev{*dev_i};
+    m_cVolumeMap.remove(dev.get());
     m_sinks.erase(dev_i);
     emit sinkListChanged();
 }
 
 void PulseAudioEngine::addOrUpdateSink(const pa_sink_info *info)
 {
-    AudioDevice *dev = 0;
+    AudioDevice *dev = nullptr;
     bool newSink = false;
     QString name = QString::fromUtf8(info->name);
 
-    for (AudioDevice *device : qAsConst(m_sinks)) {
+    for (AudioDevice *device : std::as_const(m_sinks)) {
         if (device->name() == name) {
             dev = device;
             break;
@@ -314,7 +314,7 @@ void PulseAudioEngine::connectContext()
 
     if (m_context) {
         pa_context_unref(m_context);
-        m_context = 0;
+        m_context = nullptr;
     }
 
     m_context = pa_context_new(m_mainLoopApi, "lxqt-volume");
@@ -420,10 +420,13 @@ void PulseAudioEngine::setContextState(pa_context_state_t state)
 
 void PulseAudioEngine::setIgnoreMaxVolume(bool ignore)
 {
+    int oldMax = m_maximumVolume;
     if (ignore)
         m_maximumVolume = PA_VOLUME_UI_MAX;
     else
-        m_maximumVolume = pa_sw_volume_from_dB(0);
+        m_maximumVolume = PA_VOLUME_NORM;
+    if (oldMax != m_maximumVolume)
+        retrieveSinks();
 }
 
 

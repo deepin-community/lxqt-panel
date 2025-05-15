@@ -28,6 +28,8 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "lxqttaskbar.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QSignalMapper>
@@ -37,15 +39,19 @@
 #include <QMimeData>
 #include <QWheelEvent>
 #include <QFlag>
-#include <QX11Info>
 #include <QTimer>
+
+#include "../panel/ilxqtpanelplugin.h"
+#include "../panel/pluginsettings.h"
 
 #include <lxqt-globalkeys.h>
 #include <LXQt/GridLayout>
-#include <XdgIcon>
 
-#include "lxqttaskbar.h"
 #include "lxqttaskgroup.h"
+#include "../panel/pluginsettings.h"
+
+#include "../panel/backends/ilxqtabstractwmiface.h"
+#include "../panel/lxqtpanelapplication.h"
 
 using namespace LXQt;
 
@@ -56,7 +62,7 @@ LXQtTaskBar::LXQtTaskBar(ILXQtPanelPlugin *plugin, QWidget *parent) :
     QFrame(parent),
     mSignalMapper(new QSignalMapper(this)),
     mButtonStyle(Qt::ToolButtonTextBesideIcon),
-    mButtonWidth(400),
+    mButtonWidth(220),
     mButtonHeight(100),
     mCloseOnMiddleClick(true),
     mRaiseOnCurrentDesktop(true),
@@ -73,12 +79,13 @@ LXQtTaskBar::LXQtTaskBar(ILXQtPanelPlugin *plugin, QWidget *parent) :
     mWheelDeltaThreshold(300),
     mPlugin(plugin),
     mPlaceHolder(new QWidget(this)),
-    mStyle(new LeftAlignedTextStyle())
+    mStyle(new LeftAlignedTextStyle()),
+    mBackend(nullptr)
 {
     setStyle(mStyle);
     mLayout = new LXQt::GridLayout(this);
     setLayout(mLayout);
-    mLayout->setMargin(0);
+    mLayout->setContentsMargins(QMargins());
     mLayout->setStretch(LXQt::GridLayout::StretchHorizontal | LXQt::GridLayout::StretchVertical);
     realign();
 
@@ -87,16 +94,26 @@ LXQtTaskBar::LXQtTaskBar(ILXQtPanelPlugin *plugin, QWidget *parent) :
     mPlaceHolder->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     mLayout->addWidget(mPlaceHolder);
 
-    QTimer::singleShot(0, this, SLOT(settingsChanged()));
+    // Get backend
+    LXQtPanelApplication *a = static_cast<LXQtPanelApplication*>(qApp);
+    mBackend = a->getWMBackend();
+
+    QTimer::singleShot(0, this, &LXQtTaskBar::settingsChanged);
     setAcceptDrops(true);
 
-    connect(mSignalMapper, static_cast<void (QSignalMapper::*)(int)>(&QSignalMapper::mapped), this, &LXQtTaskBar::activateTask);
+    connect(mSignalMapper, &QSignalMapper::mappedInt, this, &LXQtTaskBar::activateTask);
     QTimer::singleShot(0, this, &LXQtTaskBar::registerShortcuts);
 
-    connect(KWindowSystem::self(), static_cast<void (KWindowSystem::*)(WId, NET::Properties, NET::Properties2)>(&KWindowSystem::windowChanged)
-            , this, &LXQtTaskBar::onWindowChanged);
-    connect(KWindowSystem::self(), &KWindowSystem::windowAdded, this, &LXQtTaskBar::onWindowAdded);
-    connect(KWindowSystem::self(), &KWindowSystem::windowRemoved, this, &LXQtTaskBar::onWindowRemoved);
+    connect(mBackend, &ILXQtAbstractWMInterface::windowPropertyChanged, this, &LXQtTaskBar::onWindowChanged);
+    connect(mBackend, &ILXQtAbstractWMInterface::windowAdded, this, &LXQtTaskBar::onWindowAdded);
+    connect(mBackend, &ILXQtAbstractWMInterface::windowRemoved, this, &LXQtTaskBar::onWindowRemoved);
+
+    // Consider already fetched windows
+    const auto initialWindows = mBackend->getCurrentWindows();
+    for(WId windowId : initialWindows)
+    {
+        onWindowAdded(windowId);
+    }
 }
 
 /************************************************
@@ -110,51 +127,12 @@ LXQtTaskBar::~LXQtTaskBar()
 /************************************************
 
  ************************************************/
-bool LXQtTaskBar::acceptWindow(WId window) const
-{
-    QFlags<NET::WindowTypeMask> ignoreList;
-    ignoreList |= NET::DesktopMask;
-    ignoreList |= NET::DockMask;
-    ignoreList |= NET::SplashMask;
-    ignoreList |= NET::ToolbarMask;
-    ignoreList |= NET::MenuMask;
-    ignoreList |= NET::PopupMenuMask;
-    ignoreList |= NET::NotificationMask;
-
-    KWindowInfo info(window, NET::WMWindowType | NET::WMState, NET::WM2TransientFor);
-    if (!info.valid())
-        return false;
-
-    if (NET::typeMatchesMask(info.windowType(NET::AllTypesMask), ignoreList))
-        return false;
-
-    if (info.state() & NET::SkipTaskbar)
-        return false;
-
-    // WM_TRANSIENT_FOR hint not set - normal window
-    WId transFor = info.transientFor();
-    if (transFor == 0 || transFor == window || transFor == (WId) QX11Info::appRootWindow())
-        return true;
-
-    info = KWindowInfo(transFor, NET::WMWindowType);
-
-    QFlags<NET::WindowTypeMask> normalFlag;
-    normalFlag |= NET::NormalMask;
-    normalFlag |= NET::DialogMask;
-    normalFlag |= NET::UtilityMask;
-
-    return !NET::typeMatchesMask(info.windowType(NET::AllTypesMask), normalFlag);
-}
-
-/************************************************
-
- ************************************************/
 void LXQtTaskBar::dragEnterEvent(QDragEnterEvent* event)
 {
     if (event->mimeData()->hasFormat(LXQtTaskGroup::mimeDataFormat()))
     {
         event->acceptProposedAction();
-        buttonMove(nullptr, qobject_cast<LXQtTaskGroup *>(event->source()), event->pos());
+        buttonMove(nullptr, qobject_cast<LXQtTaskGroup *>(event->source()), event->position().toPoint());
     } else
         event->ignore();
     QWidget::dragEnterEvent(event);
@@ -166,7 +144,7 @@ void LXQtTaskBar::dragEnterEvent(QDragEnterEvent* event)
 void LXQtTaskBar::dragMoveEvent(QDragMoveEvent * event)
 {
     //we don't get any dragMoveEvents if dragEnter wasn't accepted
-    buttonMove(nullptr, qobject_cast<LXQtTaskGroup *>(event->source()), event->pos());
+    buttonMove(nullptr, qobject_cast<LXQtTaskGroup *>(event->source()), event->position().toPoint());
     QWidget::dragMoveEvent(event);
 }
 
@@ -184,7 +162,7 @@ void LXQtTaskBar::buttonMove(LXQtTaskGroup * dst, LXQtTaskGroup * src, QPoint co
 
     const int size = mLayout->count();
     Q_ASSERT(0 < size);
-    //dst is nullptr in case the drop occured on empty space in taskbar
+    //dst is nullptr in case the drop occurred on empty space in taskbar
     int dst_index;
     if (nullptr == dst)
     {
@@ -270,8 +248,10 @@ void LXQtTaskBar::groupBecomeEmptySlot()
  ************************************************/
 void LXQtTaskBar::addWindow(WId window)
 {
+    if (mExcludedList.contains(mBackend->getWindowClass(window), Qt::CaseInsensitive))
+        return;
     // If grouping disabled group behaves like regular button
-    const QString group_id = mGroupingEnabled ? QString::fromUtf8(KWindowInfo(window, NET::Properties(), NET::WM2WindowClass).windowClassClass()) : QString::number(window);
+    const QString group_id = mGroupingEnabled ? mBackend->getWindowClass(window) : QString::number(window);
 
     LXQtTaskGroup *group = nullptr;
     auto i_group = mKnownWindows.find(window);
@@ -299,10 +279,10 @@ void LXQtTaskBar::addWindow(WId window)
     if (!group)
     {
         group = new LXQtTaskGroup(group_id, window, this);
-        connect(group, SIGNAL(groupBecomeEmpty(QString)), this, SLOT(groupBecomeEmptySlot()));
-        connect(group, SIGNAL(visibilityChanged(bool)), this, SLOT(refreshPlaceholderVisibility()));
-        connect(group, &LXQtTaskGroup::popupShown, this, &LXQtTaskBar::popupShown);
-        connect(group, &LXQtTaskButton::dragging, this, [this] (QObject * dragSource, QPoint const & pos) {
+        connect(group, &LXQtTaskGroup::groupBecomeEmpty,  this, &LXQtTaskBar::groupBecomeEmptySlot);
+        connect(group, &LXQtTaskGroup::visibilityChanged, this, &LXQtTaskBar::refreshPlaceholderVisibility);
+        connect(group, &LXQtTaskGroup::popupShown,        this, &LXQtTaskBar::popupShown);
+        connect(group, &LXQtTaskButton::dragging,         this, [this] (QObject * dragSource, QPoint const & pos) {
             buttonMove(qobject_cast<LXQtTaskGroup *>(sender()), qobject_cast<LXQtTaskGroup *>(dragSource), pos);
         });
         mLayout->addWidget(group);
@@ -310,7 +290,7 @@ void LXQtTaskBar::addWindow(WId window)
 
         if (mUngroupedNextToExisting)
         {
-            const QString window_class = QString::fromUtf8(KWindowInfo(window, NET::Properties(), NET::WM2WindowClass).windowClassClass());
+            const QString window_class = mBackend->getWindowClass(window);
             int src_index = mLayout->count() - 1;
             int dst_index = src_index;
             for (int i = mLayout->count() - 2; 0 <= i; --i)
@@ -318,7 +298,7 @@ void LXQtTaskBar::addWindow(WId window)
                 LXQtTaskGroup * current_group = qobject_cast<LXQtTaskGroup*>(mLayout->itemAt(i)->widget());
                 if (nullptr != current_group)
                 {
-                    const QString current_class = QString::fromUtf8(KWindowInfo((current_group->groupName()).toUInt(), NET::Properties(), NET::WM2WindowClass).windowClassClass());
+                    const QString current_class = mBackend->getWindowClass(current_group->groupName().toULong());
                     if(current_class == window_class)
                     {
                         dst_index = i + 1;
@@ -352,43 +332,14 @@ auto LXQtTaskBar::removeWindow(windowMap_t::iterator pos) -> windowMap_t::iterat
 /************************************************
 
  ************************************************/
-void LXQtTaskBar::refreshTaskList()
-{
-    QList<WId> new_list;
-    // Just add new windows to groups, deleting is up to the groups
-    const auto wnds = KWindowSystem::stackingOrder();
-    for (auto const wnd: wnds)
-    {
-        if (acceptWindow(wnd))
-        {
-            new_list << wnd;
-            addWindow(wnd);
-        }
-    }
-
-    //emulate windowRemoved if known window not reported by KWindowSystem
-    for (auto i = mKnownWindows.begin(), i_e = mKnownWindows.end(); i != i_e; )
-    {
-        if (0 > new_list.indexOf(i.key()))
-        {
-            i = removeWindow(i);
-        } else
-            ++i;
-    }
-
-    refreshPlaceholderVisibility();
-}
-
-/************************************************
-
- ************************************************/
-void LXQtTaskBar::onWindowChanged(WId window, NET::Properties prop, NET::Properties2 prop2)
+void LXQtTaskBar::onWindowChanged(WId window, int prop)
 {
     auto i = mKnownWindows.find(window);
     if (mKnownWindows.end() != i)
     {
-        if (!(*i)->onWindowChanged(window, prop, prop2) && acceptWindow(window))
-        { // window is removed from a group because of class change, so we should add it again
+        if (!(*i)->onWindowChanged(window, LXQtTaskBarWindowProperty(prop)))
+        {
+            // window is removed from a group because of class change, so we should add it again
             addWindow(window);
         }
     }
@@ -397,7 +348,7 @@ void LXQtTaskBar::onWindowChanged(WId window, NET::Properties prop, NET::Propert
 void LXQtTaskBar::onWindowAdded(WId window)
 {
     auto const pos = mKnownWindows.find(window);
-    if (mKnownWindows.end() == pos && acceptWindow(window))
+    if (mKnownWindows.end() == pos)
         addWindow(window);
 }
 
@@ -433,7 +384,7 @@ void LXQtTaskBar::refreshPlaceholderVisibility()
     bool haveVisibleWindow = false;
     for (auto i = mKnownWindows.cbegin(), i_e = mKnownWindows.cend(); i_e != i; ++i)
     {
-        if ((*i)->isVisible())
+        if ((*i)->isVisibleTo(this))
         {
             haveVisibleWindow = true;
             break;
@@ -474,7 +425,7 @@ void LXQtTaskBar::settingsChanged()
     bool showOnlyMinimizedTasksOld = mShowOnlyMinimizedTasks;
     const bool iconByClassOld = mIconByClass;
 
-    mButtonWidth = mPlugin->settings()->value(QStringLiteral("buttonWidth"), 400).toInt();
+    mButtonWidth = mPlugin->settings()->value(QStringLiteral("buttonWidth"), 220).toInt();
     mButtonHeight = mPlugin->settings()->value(QStringLiteral("buttonHeight"), 100).toInt();
     QString s = mPlugin->settings()->value(QStringLiteral("buttonStyle")).toString().toUpper();
 
@@ -485,10 +436,10 @@ void LXQtTaskBar::settingsChanged()
     else
         setButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    mShowOnlyOneDesktopTasks = mPlugin->settings()->value(QStringLiteral("showOnlyOneDesktopTasks"), mShowOnlyOneDesktopTasks).toBool();
-    mShowDesktopNum = mPlugin->settings()->value(QStringLiteral("showDesktopNum"), mShowDesktopNum).toInt();
-    mShowOnlyCurrentScreenTasks = mPlugin->settings()->value(QStringLiteral("showOnlyCurrentScreenTasks"), mShowOnlyCurrentScreenTasks).toBool();
-    mShowOnlyMinimizedTasks = mPlugin->settings()->value(QStringLiteral("showOnlyMinimizedTasks"), mShowOnlyMinimizedTasks).toBool();
+    mShowOnlyOneDesktopTasks = mPlugin->settings()->value(QStringLiteral("showOnlyOneDesktopTasks"), false).toBool();
+    mShowDesktopNum = mPlugin->settings()->value(QStringLiteral("showDesktopNum"), 0).toInt();
+    mShowOnlyCurrentScreenTasks = mPlugin->settings()->value(QStringLiteral("showOnlyCurrentScreenTasks"), false).toBool();
+    mShowOnlyMinimizedTasks = mPlugin->settings()->value(QStringLiteral("showOnlyMinimizedTasks"), false).toBool();
     mAutoRotate = mPlugin->settings()->value(QStringLiteral("autoRotate"), true).toBool();
     mCloseOnMiddleClick = mPlugin->settings()->value(QStringLiteral("closeOnMiddleClick"), true).toBool();
     mRaiseOnCurrentDesktop = mPlugin->settings()->value(QStringLiteral("raiseOnCurrentDesktop"), false).toBool();
@@ -498,6 +449,17 @@ void LXQtTaskBar::settingsChanged()
     mIconByClass = mPlugin->settings()->value(QStringLiteral("iconByClass"), false).toBool();
     mWheelEventsAction = mPlugin->settings()->value(QStringLiteral("wheelEventsAction"), 1).toInt();
     mWheelDeltaThreshold = mPlugin->settings()->value(QStringLiteral("wheelDeltaThreshold"), 300).toInt();
+
+    mExcludedList = mPlugin->settings()->value(QStringLiteral("excludedList")).toString()
+                    .split(QRegularExpression(QStringLiteral("\\s*,\\s*")), Qt::SkipEmptyParts);
+    const auto wins = mBackend->getCurrentWindows();
+    for(WId win : wins)
+    {
+        if (mExcludedList.contains(mBackend->getWindowClass(win), Qt::CaseInsensitive))
+            onWindowRemoved(win);
+        else
+            onWindowAdded(win);
+    }
 
     // Delete all groups if grouping or ungrouped next to existing feature toggled and start over
     if (groupingEnabledOld != mGroupingEnabled || ungroupedNextToExistingOld != mUngroupedNextToExisting)
@@ -523,7 +485,8 @@ void LXQtTaskBar::settingsChanged()
     if (iconByClassOld != mIconByClass)
         emit iconByClassChanged();
 
-    refreshTaskList();
+    mBackend->reloadWindows();
+    refreshPlaceholderVisibility();
 }
 
 /************************************************
@@ -581,6 +544,11 @@ void LXQtTaskBar::realign()
     //our placement on screen could have been changed
     emit showOnlySettingChanged();
     emit refreshIconGeometry();
+}
+
+ILXQtPanel *LXQtTaskBar::panel() const
+{
+    return mPlugin->panel();
 }
 
 /************************************************
@@ -680,7 +648,7 @@ void LXQtTaskBar::registerShortcuts()
         path = QStringLiteral("/panel/%1/task_%2").arg(mPlugin->settings()->group()).arg(i);
         description = tr("Activate task %1").arg(i);
 
-        gshortcut = GlobalKeyShortcut::Client::instance()->addAction(QStringLiteral(), path, description, this);
+        gshortcut = GlobalKeyShortcut::Client::instance()->addAction(QLatin1String(""), path, description, this);
 
         if (nullptr != gshortcut)
         {

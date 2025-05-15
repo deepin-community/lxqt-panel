@@ -5,14 +5,14 @@
     <name>TreeWindow</name>
     <message>
         <location filename="../treewindow.ui" line="14"/>
-        <source>Panel DOM tree</source>
+        <source>Panel DOM Tree</source>
         <translation>DOM strom panelu</translation>
     </message>
     <message>
         <location filename="../treewindow.ui" line="63"/>
         <location filename="../treewindow.ui" line="96"/>
         <source>Property</source>
-        <translation>Vlastnictví</translation>
+        <translation>Vlastnost</translation>
     </message>
     <message>
         <location filename="../treewindow.ui" line="68"/>

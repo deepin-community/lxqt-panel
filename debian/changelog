@@ -1,14 +1,153 @@
-lxqt-panel (0.16.1-2) UNRELEASED; urgency=medium
+lxqt-panel (2.1.4-1) unstable; urgency=medium
 
-  * update
+  [ Macy Lin ]
+  * New upstream version 2.1.4
+  * debian/control: remove  myself from the list of uploaders.
+  * debian/copyright: update.
 
- -- LXQt Packaging Team <pkg-lxqt-devel@lists.alioth.debian.org>  Mon, 01 Aug 2022 14:24:23 +0800
+  [ Andrew Lee (李健秋) ]
+  * 01-lxqt-panel-desktop.patch: fix missing required key entries.
 
-lxqt-panel (0.16.1-2) unstable; urgency=medium
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 01 Mar 2025 11:38:00 +0100
 
-  * fix up make error.
+lxqt-panel (2.1.3-1) unstable; urgency=medium
 
- -- wangxiangyu <wangxiangyu@uniontech.com>  Fri, 29 Jul 2022 14:11:22 +0800
+  [ Macy Lin ]
+  * New upstream version 2.1.3.
+  * build-deps on liblayershellqtinterface-dev (>= 6.2.4~).
+  * build-deps on liblxqt-dev (>= 2.1.0~).
+  * build-deps on liblxqt-globalkeys-dev (>= 2.1.0~).
+  * build-deps on liblxqt-globalkeys-ui-dev (>= 2.1.0~).
+  * build-deps on libsysstat-qt6-1-dev (>= 1.1.0~).
+
+  [ ChangZhuo Chen (陳昌倬) ]
+  * d/control: Add Macy to Uploaders
+  * d/control: Add missing Build-Depends
+  * d/install: Add usr/share/applications/lxqt-panel.desktop
+
+ -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Wed, 11 Dec 2024 16:23:42 +0800
+
+lxqt-panel (2.0.1-1) unstable; urgency=medium
+
+  * Migrate to unstable.
+  * Run wrap-and-sort.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Thu, 28 Nov 2024 21:19:07 +0100
+
+lxqt-panel (2.0.1-1~exp1) experimental; urgency=medium
+
+  [ Severus Septimius ]
+  * New upstream version 2.0.1
+  * debian/control: bump dep on qttranslations5-l10n ->
+    qt6-translations-l10n
+  * debian/control: replace dep on lxmenu-data with lxqt-menu-data
+  * debian/control: bump dep on libsysstat-qt5-0-dev -> libsysstat-
+    qt6-1-dev
+  * debian/control: bump dep on liblxqt1-dev -> liblxqt2-dev
+  * debian/control: bump dep to liblxqt-globalkeys-dev (>= 2.0.0~)
+  * debian/control: bump dep to liblxqt-globalkeys-ui-dev (>= 2.0.0~)
+  * debian/control: replace dep libdbusmenu-qt5-dev -> libdbusmenu-lxqt-
+    dev
+  * debian/control: bump dep libkf5windowsystem-dev -> libkf6windowsystem-
+    dev
+  * debian/control: bump dep libkf5solid-dev -> libkf6solid-dev
+  * debian/control: bump dep libqt5svg5-dev -> qt6-svg-dev
+  * debian/control: remove dependency on libqt5x11extras5-dev
+  * debian/control: add dep on liblayershellqtinterface-dev (>=6.0.0~)
+  * debian/control: bump dep on qttools5-dev -> qt6-tools-dev
+
+  [ Andrew Lee (李健秋) ]
+  * debian/control: build-deps liblxqt-dev (>= 2.0.0~).
+  * debian/salsa-ci.yml: build against to experimental.
+  * debian/copyright: update.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Mon, 07 Oct 2024 19:48:14 +0200
+
+lxqt-panel (1.4.0-2) unstable; urgency=medium
+
+  * debian/control: build-deps on qttools5-dev. (Closes:#1078298)
+  * debian/copyright: added myself.
+
+ -- Macy Lin <macy@debconf.org>  Mon, 09 Sep 2024 20:45:56 +0800
+
+lxqt-panel (1.4.0-1) unstable; urgency=medium
+
+  [ ChangZhuo Chen (陳昌倬) ]
+  * New upstream release (Closes: #1071145, #1071146).
+  * Bump Standards-Version to 4.7.0.
+  * d/control: Add Build-Depends lxqt-menu-data.
+
+  [ Andrew Lee (李健秋) ]
+  * debian/control: build-deps on liblxqt1-dev (>= 1.4.0~).
+  * debian/control: build-deps on liblxqt-globalkeys1-dev (>= 1.4.0~).
+  * debian/control: build-deps on liblxqt-globalkeys-ui1-dev (>= 1.4.0~).
+  * debian/control: improve package descriptions.
+  * Clean up of group membership after two calls.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sun, 19 May 2024 13:36:09 +0200
+
+lxqt-panel (1.3.0-1) unstable; urgency=medium
+
+  [ ChangZhuo Chen (陳昌倬) ]
+  * New upstream version 1.3.0
+  * Change team email to <team+lxqt@tracker.debian.org>.
+  * Update d/upstream/metadata.
+  * Update Build-Depends:
+    * Change libxcb-util0-dev to libxcb-util-dev.
+  * Suppress blhc error.
+
+  [ Andrew Lee (李健秋) ]
+  * debian/upstream/metadata: correct the git Repository url as itʼs
+    different from Repository-Browse.
+  * debian/copyright: update.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 26 Aug 2023 05:54:32 +0200
+
+lxqt-panel (1.2.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Bump Standards-Version to 4.6.2.
+
+ -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Thu, 05 Jan 2023 00:10:18 +0800
+
+lxqt-panel (1.2.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Bump Standards-Version to 4.6.1.
+    * Add Rules-Requires-Root: no
+  * Bump compat to 13.
+    * Remove unnecessary -Wl,--as-needed in d/rules
+    * Remove unnecessary --fail-missing in d/rules
+  * Fix d/upstream/metadata.
+  * Update d/copyright.
+  * Update d/watch for GitHub.
+
+ -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Fri, 16 Dec 2022 01:24:07 +0800
+
+lxqt-panel (1.1.0-2) unstable; urgency=medium
+
+  * Merge to unstable.
+
+ -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Sat, 19 Nov 2022 16:14:37 +0800
+
+lxqt-panel (1.1.0-1) experimental; urgency=medium
+
+  * Add debian/salsa-ci.yml file.
+  * Update debian/upstream/signing-key.asc.
+  * New upstream version 1.0.0
+  * New upstream version 1.1.0
+  * Build-deps on liblxqt1-dev (>= 1.1.0~).
+  * Build-deps on liblxqt-globalkeys1-dev (>= 1.1.0~).
+  * Build-deps on liblxqt-globalkeys-ui1-dev (>= 1.1.0~).
+  * Build-deps on libsysstat-qt5-0-dev (>= 0.4.6~).
+  * Drop obsoleted Breaks and Replaces lines.
+  * debian/copyright: update years.
+  * Build-deps on libxcb-randr0-dev.
+  * Build-deps on libxcb-image0-dev.
+  * Build-deps on libxtst-dev.
+  * Build-deps on libxcb-composite0-dev.
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 16 Jul 2022 00:26:18 +0800
 
 lxqt-panel (0.16.1-1) unstable; urgency=medium
 

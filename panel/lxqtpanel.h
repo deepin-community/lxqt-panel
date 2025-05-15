@@ -42,6 +42,10 @@ class QMenu;
 class Plugin;
 class QAbstractItemModel;
 
+namespace LayerShellQt {
+class Window;
+}
+
 namespace LXQt {
 class Settings;
 class PluginInfo;
@@ -135,10 +139,11 @@ public:
      * is given as parameter, the menu will be divided in two groups:
      * plugin-specific options and panel-related options. As these two are
      * shown together, this menu has to be created by LXQtPanel.
+     * @param cursorPos The global cursor pos
      * @param plugin The plugin whose menu options will be included in the
      * context menu.
      */
-    void showPopupMenu(Plugin *plugin = 0);
+    void showPopupMenu(const QPoint &cursorPos, Plugin *plugin = nullptr);
 
     // ILXQtPanel overrides ........
     ILXQtPanel::Position position() const override { return mPosition; }
@@ -223,6 +228,7 @@ public:
     int reserveSpace() const { return mReserveSpace; }
     bool hidable() const { return mHidable; }
     bool visibleMargin() const { return mVisibleMargin; }
+    bool hideOnOverlap() const { return mHideOnOverlap; }
     int animationTime() const { return mAnimationTime; }
     int showDelay() const { return mShowDelayTimer.interval(); }
     QString iconTheme() const;
@@ -235,7 +241,7 @@ public:
      * \return true if the Plugin is running and has the
      * ILXQtPanelPlugin::SingleInstance flag set, false otherwise.
      */
-    bool isPluginSingletonAndRunnig(QString const & pluginId) const;
+    bool isPluginSingletonAndRunning(QString const & pluginId) const;
     /*!
      * \brief Updates the config dialog. Used for updating its icons
      * when the panel-specific icon theme changes.
@@ -307,13 +313,14 @@ public slots:
     void setReserveSpace(bool reserveSpace, bool save); //!< \sa setPanelSize()
     void setHidable(bool hidable, bool save); //!< \sa setPanelSize()
     void setVisibleMargin(bool visibleMargin, bool save); //!< \sa setPanelSize()
+    void setHideOnOverlap(bool hideOnOverlap, bool save);
     void setAnimationTime(int animationTime, bool save); //!< \sa setPanelSize()
     void setShowDelay(int showDelay, bool save); //!< \sa setPanelSize()
     void setIconTheme(const QString& iconTheme);
 
     /**
      * @brief Saves the current configuration, i.e. writes the current
-     * configuration varibles to mSettings.
+     * configuration variables to mSettings.
      * @param later Determines if the settings are written immediately or
      * after a short delay. If later==true, the QTimer mDelaySave is started.
      * As soon as this timer times out, saveSettings(false) will be called. If
@@ -435,7 +442,7 @@ private slots:
     /**
      * @brief Removes this panel's entries from the config file and emits
      * the deletedByUser signal.
-     * The "Remove Panel" button in the panel's contex menu will
+     * The "Remove Panel" button in the panel's context menu will
      * be connected to this slot, so this method will be called whenever
      * the user clicks "Remove Panel".
      */
@@ -468,12 +475,12 @@ private:
      * @brief Pointer to the PanelPluginsModel which will store all the Plugins
      * that are loaded.
      */
-    QScopedPointer<PanelPluginsModel> mPlugins;
+    std::unique_ptr<PanelPluginsModel> mPlugins;
     /**
      * @brief object for storing info if some standalone window is shown
      * (for preventing hide)
      */
-    QScopedPointer<WindowNotifier> mStandaloneWindows;
+    std::unique_ptr<WindowNotifier> mStandaloneWindows;
 
     /**
      * @brief Returns the screen index of a screen on which this panel could
@@ -526,6 +533,18 @@ private:
      */
     int getReserveDimension();
 
+    /**
+     * @brief Calculates the margins of the layer window under Wayland
+     * by considering the hidden state of the panel.
+     * @return The margins of the layer window.
+     */
+    QMargins layerWindowMargins();
+
+    /**
+     * @brief Stores the geometry of the non-hidden panel, for use in
+     * calculatePopupWindowPos()
+     */
+    QRect mGeometry;
     /**
      * @brief Stores the size of the panel, i.e. the height of a horizontal
      * panel or the width of a vertical panel in pixels. If the panel is
@@ -621,6 +640,12 @@ private:
      */
     bool mVisibleMargin;
     /**
+     * @brief Stores if the panel should hide on overlapping a window.
+     *
+     * \sa mHidable, mHidden, mHideTimer, showPanel(), hidePanel(), hidePanelWork()
+     */
+    bool mHideOnOverlap;
+    /**
      * @brief Stores if the panel is currently hidden.
      *
      * \sa mHidable, mVisibleMargin, mHideTimer, showPanel(), hidePanel(), hidePanelWork()
@@ -641,7 +666,7 @@ private:
      */
     int mAnimationTime;
     /**
-     * @brief The timer used for showing an auto-hiding panel wih delay.
+     * @brief The timer used for showing an auto-hiding panel with delay.
      *
      * \sa showPanel()
      */
@@ -674,7 +699,10 @@ private:
     /**
      * @brief The animation used for showing/hiding an auto-hiding panel.
      */
-    QPropertyAnimation *mAnimation;
+    QPropertyAnimation *mAnimation; // on X11
+    QVariantAnimation *mWAnimation; // on Wayland
+
+    LayerShellQt::Window *mLayerWindow;
 
     /**
      * @brief Flag for providing the configuration options in panel's context menu
@@ -687,6 +715,11 @@ private:
      * QWidget::setStyleSheet().
      */
     void updateStyleSheet();
+
+    /**
+     * @brief Checks if the panel overlaps a window.
+     */
+    bool isPanelOverlapped() const;
 
     // settings should be kept private for security
     LXQt::Settings *settings() const { return mSettings; }

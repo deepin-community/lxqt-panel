@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.18.0 FATAL_ERROR)
 # CMP0000: Call the cmake_minimum_required() command at the beginning of the top-level
 # CMakeLists.txt file even before calling the project() command.
 # The cmake_minimum_required(VERSION) command implicitly invokes the cmake_policy(VERSION)
@@ -9,7 +9,7 @@ project(lxqt-panel)
 option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files" OFF)
 option(WITH_SCREENSAVER_FALLBACK "Include support for converting the deprecated 'screensaver' plugin to 'quicklaunch'. This requires the lxqt-leave (lxqt-session) to be installed in runtime." ON)
 # plugin-mainmenu
-option(USE_MENU_CACHE "Use menu-cached (no noticable penalty even on a 2004 single core pentium if not used)" OFF)
+option(USE_MENU_CACHE "Use menu-cached (no noticeable penalty even on a 2004 single core pentium if not used)" OFF)
 
 
 # additional cmake files
@@ -29,22 +29,24 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-set(REQUIRED_QT_VERSION "5.12")
-set(KF5_MINIMUM_VERSION "5.36.0")
-set(LXQT_GLOBALKEYS_MINIMUM_VERSION "0.16.0")
-set(LXQT_MINIMUM_VERSION "0.16.0")
+set(REQUIRED_QT_VERSION "6.6.0")
+set(KF6_MINIMUM_VERSION "6.0.0")
+set(LXQT_GLOBALKEYS_MINIMUM_VERSION "2.1.0")
+set(LXQT_MINIMUM_VERSION "2.1.0")
 
-find_package(Qt5DBus ${REQUIRED_QT_VERSION} REQUIRED)
-find_package(Qt5LinguistTools ${REQUIRED_QT_VERSION} REQUIRED)
-find_package(Qt5Widgets ${REQUIRED_QT_VERSION} REQUIRED)
-find_package(Qt5X11Extras ${REQUIRED_QT_VERSION} REQUIRED)
-find_package(Qt5Xml ${REQUIRED_QT_VERSION} REQUIRED)
-find_package(KF5WindowSystem ${KF5_MINIMUM_VERSION} REQUIRED)
+find_package(Qt6DBus ${REQUIRED_QT_VERSION} REQUIRED)
+find_package(Qt6LinguistTools ${REQUIRED_QT_VERSION} REQUIRED)
+find_package(Qt6Widgets ${REQUIRED_QT_VERSION} REQUIRED)
+find_package(Qt6Xml ${REQUIRED_QT_VERSION} REQUIRED)
+find_package(KF6WindowSystem ${KF6_MINIMUM_VERSION} REQUIRED)
 find_package(lxqt ${LXQT_MINIMUM_VERSION} REQUIRED)
 find_package(lxqt-globalkeys-ui ${LXQT_GLOBALKEYS_MINIMUM_VERSION} REQUIRED)
+find_package(lxqt-menu-data ${LXQT_MINIMUM_VERSION} REQUIRED)
+
+find_package(LayerShellQt REQUIRED)
 
 # Patch Version
-set(LXQT_PANEL_PATCH_VERSION 1)
+set(LXQT_PANEL_PATCH_VERSION 4)
 set(LXQT_PANEL_VERSION ${LXQT_MAJOR_VERSION}.${LXQT_MINOR_VERSION}.${LXQT_PANEL_PATCH_VERSION})
 add_definitions("-DLXQT_PANEL_VERSION=\"${LXQT_PANEL_VERSION}\"")
 
@@ -97,13 +99,19 @@ if(CPULOAD_PLUGIN)
     add_subdirectory(plugin-cpuload)
 endif()
 
+setByDefault(CUSTOMCOMMAND_PLUGIN Yes)
+if(CUSTOMCOMMAND_PLUGIN)
+    list(APPEND ENABLED_PLUGINS "Custom Command")
+    add_subdirectory(plugin-customcommand)
+endif()
+
 setByDefault(DIRECTORYMENU_PLUGIN Yes)
 if(DIRECTORYMENU_PLUGIN)
     list(APPEND ENABLED_PLUGINS "Directory menu")
     add_subdirectory(plugin-directorymenu)
 endif()
 
-setByDefault(DOM_PLUGIN No)
+setByDefault(DOM_PLUGIN Yes)
 if(DOM_PLUGIN)
     list(APPEND ENABLED_PLUGINS "DOM")
     add_subdirectory(plugin-dom)
@@ -115,6 +123,14 @@ if(DESKTOPSWITCH_PLUGIN)
     add_definitions(-DWITH_DESKTOPSWITCH_PLUGIN)
     list(APPEND ENABLED_PLUGINS "Desktop Switcher")
     add_subdirectory(plugin-desktopswitch)
+endif()
+
+setByDefault(FANCYMENU_PLUGIN Yes)
+if(FANCYMENU_PLUGIN)
+    list(APPEND STATIC_PLUGINS "fancymenu")
+    add_definitions(-DWITH_FANCYMENU_PLUGIN)
+    list(APPEND ENABLED_PLUGINS "Application fancy menu")
+    add_subdirectory(plugin-fancymenu)
 endif()
 
 setByDefault(KBINDICATOR_PLUGIN Yes)
@@ -150,7 +166,7 @@ if(SENSORS_PLUGIN)
     find_library(SENSORS_LIB sensors)
 
     if(NOT SENSORS_LIB)
-        message(FATAL_ERROR "Sensors plugin requires lm_sensors")
+        message(FATAL_ERROR "Sensors plugin requires libsensors")
     endif()
     list(APPEND ENABLED_PLUGINS "Sensors")
     add_subdirectory(plugin-sensors)
@@ -163,6 +179,13 @@ if(SHOWDESKTOP_PLUGIN)
     list(APPEND ENABLED_PLUGINS "Show Desktop")
     add_subdirectory(plugin-showdesktop)
 endif()
+
+setByDefault(QEYES_PLUGIN Yes)
+if(QEYES_PLUGIN)
+    list(APPEND ENABLED_PLUGINS "QEyes")
+    add_subdirectory(plugin-qeyes)
+endif()
+
 
 setByDefault(NETWORKMONITOR_PLUGIN Yes)
 if(NETWORKMONITOR_PLUGIN)
@@ -266,4 +289,3 @@ add_subdirectory(panel)
 
 # merged from lxqt-common
 add_subdirectory(autostart)
-add_subdirectory(menu)

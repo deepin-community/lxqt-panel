@@ -1,0 +1,23 @@
+Description: Add missing required-key Name
+Author: Andrew Lee (李健秋) <ajqlee@debian.org>
+
+---
+Origin: debian
+Last-Update: 2025-03-01
+
+--- a/autostart/lxqt-panel.desktop.in
++++ b/autostart/lxqt-panel.desktop.in
+@@ -1,4 +1,5 @@
+ [Desktop Entry]
++Name=LXQt desktop panel
+ Type=Application
+ TryExec=lxqt-panel
+ Exec=lxqt-panel
+--- a/autostart/lxqt-panel_wayland.desktop.in
++++ b/autostart/lxqt-panel_wayland.desktop.in
+@@ -1,4 +1,5 @@
+ [Desktop Entry]
++Name=LXQt desktop panel
+ Type=Application
+ TryExec=lxqt-panel
+ NoDisplay=true

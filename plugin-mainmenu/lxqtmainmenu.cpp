@@ -40,8 +40,9 @@
 #include <QLineEdit>
 #include <lxqt-globalkeys.h>
 #include <algorithm> // for find_if()
-#include <KWindowSystem/KWindowSystem>
 #include <QApplication>
+#include <QMetaEnum>
+#include <QStringBuilder>
 
 #include <XdgMenuWidget>
 #include <XdgIcon>
@@ -53,6 +54,7 @@
     #include <QClipboard>
     #include <QMimeData>
     #include <XdgAction>
+    #include <QFile>
 #endif
 
 #define DEFAULT_SHORTCUT "Alt+F1"
@@ -60,8 +62,8 @@
 LXQtMainMenu::LXQtMainMenu(const ILXQtPanelPluginStartupInfo &startupInfo):
     QObject(),
     ILXQtPanelPlugin(startupInfo),
-    mMenu(0),
-    mShortcut(0),
+    mMenu(nullptr),
+    mShortcut(nullptr),
     mSearchEditAction{new QWidgetAction{this}},
     mSearchViewAction{new QWidgetAction{this}},
     mMakeDirtyAction{new QAction{this}},
@@ -93,32 +95,48 @@ LXQtMainMenu::LXQtMainMenu(const ILXQtPanelPluginStartupInfo &startupInfo):
     //   (while setting icon we also need to set the style)
     //2. delaying of installEventFilter because in c-tor mButton has no parent widget
     //   (parent is assigned in panel's logic after widget() call)
-    QTimer::singleShot(0, [this] { Q_ASSERT(mButton.parentWidget()); mButton.parentWidget()->installEventFilter(this); });
+    QTimer::singleShot(0, mButton.parentWidget(), [this] {
+        Q_ASSERT(mButton.parentWidget());
+        mButton.parentWidget()->installEventFilter(this);
+    });
 
     connect(&mButton, &QToolButton::clicked, this, &LXQtMainMenu::showHideMenu);
 
     mSearchView = new ActionView;
     mSearchView->setVisible(false);
+    // NOTE: Qt 6.8.0 has a bug that does not allow context menus with the Qt::Popup flag.
+    // As a workaround, we at least fully handle the the RightButton releases in eventFilter.
+    mSearchView->setContextMenuPolicy(Qt::CustomContextMenu);
+    mSearchView->viewport()->installEventFilter(this);
     connect(mSearchView, &QAbstractItemView::activated, this, &LXQtMainMenu::showHideMenu);
+    connect(mSearchView, &ActionView::requestShowHideMenu, this, &LXQtMainMenu::showHideMenu);
+    connect(mSearchView, &QWidget::customContextMenuRequested, this, std::bind(&LXQtMainMenu::onRequestingCustomMenu, this, std::placeholders::_1, mSearchView));
     mSearchViewAction->setDefaultWidget(mSearchView);
     mSearchEdit = new QLineEdit;
     mSearchEdit->setClearButtonEnabled(true);
     mSearchEdit->setPlaceholderText(LXQtMainMenu::tr("Search..."));
-    connect(mSearchEdit, &QLineEdit::textChanged, [this] (QString const &) {
+    connect(mSearchEdit, &QLineEdit::textChanged, this, [this] (QString const &) {
         mSearchTimer.start();
     });
     connect(mSearchEdit, &QLineEdit::returnPressed, mSearchView, &ActionView::activateCurrent);
     mSearchEditAction->setDefaultWidget(mSearchEdit);
-    QTimer::singleShot(0, [this] { settingsChanged(); });
+    QTimer::singleShot(0, this, [this] {
+        settingsChanged();
+    });
 
     mShortcut = GlobalKeyShortcut::Client::instance()->addAction(QString{}, QStringLiteral("/panel/%1/show_hide").arg(settings()->group()), LXQtMainMenu::tr("Show/hide main menu"), this);
     if (mShortcut)
     {
-        connect(mShortcut, &GlobalKeyShortcut::Action::registrationFinished, [this] {
+        connect(mShortcut, &GlobalKeyShortcut::Action::shortcutChanged, this, [this](const QString &, const QString & shortcut) {
+                mShortcutSeq = shortcut;
+        });
+        connect(mShortcut, &GlobalKeyShortcut::Action::registrationFinished, this, [this] {
             if (mShortcut->shortcut().isEmpty())
                 mShortcut->changeShortcut(QStringLiteral(DEFAULT_SHORTCUT));
+            else
+                mShortcutSeq = mShortcut->shortcut();
         });
-        connect(mShortcut, &GlobalKeyShortcut::Action::activated, [this] {
+        connect(mShortcut, &GlobalKeyShortcut::Action::activated, this, [this] {
             if (!mHideTimer.isActive())
                 // Delay this a little -- if we don't do this, search field
                 // won't be able to capture focus
@@ -245,7 +263,7 @@ void LXQtMainMenu::settingsChanged()
         }
         else
         {
-            QMessageBox::warning(0, QStringLiteral("Parse error"), mXdgMenu.errorString());
+            QMessageBox::warning(nullptr, QStringLiteral("Parse error"), mXdgMenu.errorString());
             return;
         }
 #endif
@@ -416,7 +434,7 @@ void LXQtMainMenu::buildMenu()
     mMenu->addSeparator();
 
     menuInstallEventFilter(mMenu, this);
-    connect(mMenu, &QMenu::aboutToHide, &mHideTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
+    connect(mMenu, &QMenu::aboutToHide, &mHideTimer, QOverload<>::of(&QTimer::start));
     connect(mMenu, &QMenu::aboutToShow, &mHideTimer, &QTimer::stop);
 
     mMenu->addSeparator();
@@ -427,7 +445,7 @@ void LXQtMainMenu::buildMenu()
     //(if the readOnly is not set, the "blink" timer is active also in case the menu is not shown ->
     //QWidgetLineControl::updateNeeded is performed w/o any need)
     //https://bugreports.qt.io/browse/QTBUG-52021
-    connect(mMenu, &QMenu::aboutToHide, [this] {
+    connect(mMenu, &QMenu::aboutToHide, mSearchEdit, [this] {
         mSearchEdit->setReadOnly(true);
         if (mFilterClear)
             mSearchEdit->clear();
@@ -450,26 +468,42 @@ void LXQtMainMenu::addContextMenu(QMenu *menu)
     {
         if (action->menu())
         {
+            // NOTE: Qt 6.8.0 has a bug that does not allow context menus with the Qt::Popup flag.
+            // As a workaround, we at least fully handle the the RightButton releases in eventFilter.
             action->menu()->setContextMenuPolicy(Qt::CustomContextMenu);
-            connect(action->menu(), &QWidget::customContextMenuRequested,
-                    this, &LXQtMainMenu::onRequestingCustomMenu);
+            connect(action->menu(), &QWidget::customContextMenuRequested, this, std::bind(&LXQtMainMenu::onRequestingCustomMenu, this, std::placeholders::_1, action->menu()));
             addContextMenu(action->menu());
         }
     }
 }
 
-void LXQtMainMenu::onRequestingCustomMenu(const QPoint& p)
+void LXQtMainMenu::onRequestingCustomMenu(const QPoint& p, QObject * sender)
 {
 #ifdef HAVE_MENU_CACHE
     Q_UNUSED(p)
     return;
 #else
-    QMenu *parentMenu = static_cast<QMenu*>(QObject::sender());
-    if (parentMenu == nullptr)
+    QMenu *parentMenu = qobject_cast<QMenu*>(sender);
+    ActionView *parentView = qobject_cast<ActionView*>(sender);
+    QAction *action;
+    QPoint globalPos;
+    if (parentView != nullptr) {
+        action = parentView->currentIndex().data(ActionView::ActionRole).value<QAction*>();
+        if (action == nullptr)
+            return;
+        globalPos = parentView->mapToGlobal(p);
+    }
+    else if (parentMenu != nullptr) {
+        action = parentMenu->activeAction();
+        if (action == nullptr)
+            action = parentMenu->actionAt(p);
+        if (action == nullptr || action->menu() != nullptr || action->isSeparator())
+            return;
+        globalPos = parentMenu->mapToGlobal(parentMenu->actionGeometry(action).center());
+    }
+    else {
         return;
-    QAction *action = parentMenu->actionAt(p);
-    if (action == nullptr || action->menu() != nullptr || action->isSeparator())
-        return;
+    }
     XdgAction *xdgAction = qobject_cast<XdgAction *>(action);
     if (xdgAction == nullptr)
         return;
@@ -483,10 +517,10 @@ void LXQtMainMenu::onRequestingCustomMenu(const QPoint& p)
     {
         for (int i = 0; i < df.actions().count(); ++i)
         {
-            QString action(df.actions().at(i));
-            a = menu.addAction(df.actionIcon(action), df.actionName(action));
-            connect(a, &QAction::triggered, [this, df, action] {
-                df.actionActivate(action, QStringList());
+            QString actionString(df.actions().at(i));
+            a = menu.addAction(df.actionIcon(actionString), df.actionName(actionString));
+            connect(a, &QAction::triggered, this, [this, df, actionString] {
+                df.actionActivate(actionString, QStringList());
                 mMenu->hide();
             });
         }
@@ -516,14 +550,14 @@ void LXQtMainMenu::onRequestingCustomMenu(const QPoint& p)
         QFile::copy(file, desktopFile);
     });
     a = menu.addAction(XdgIcon::fromTheme(QLatin1String("edit-copy")), tr("Copy"));
-    connect(a, &QAction::triggered, [file] {
+    connect(a, &QAction::triggered, this, [file] {
         QClipboard* clipboard = QApplication::clipboard();
         QMimeData* data = new QMimeData();
         data->setData(QStringLiteral("text/uri-list"), QUrl::fromLocalFile(file).toEncoded()
                                                        + QByteArray("\r\n"));
         clipboard->setMimeData(data);
     });
-    menu.exec(parentMenu->mapToGlobal(p));
+    menu.exec(globalPos);
 #endif
 }
 
@@ -577,7 +611,7 @@ void LXQtMainMenu::setButtonIcon()
     if (settings()->value(QStringLiteral("ownIcon"), false).toBool())
     {
         mButton.setStyleSheet(QStringLiteral("#MainMenu { qproperty-icon: url(%1); }")
-                .arg(settings()->value(QLatin1String("icon"), QLatin1String(LXQT_GRAPHICS_DIR"/helix.svg")).toString()));
+                .arg(settings()->value(QLatin1String("icon"), QLatin1String(LXQT_GRAPHICS_DIR "/helix.svg")).toString()));
     } else
     {
         mButton.setStyleSheet(QString());
@@ -617,31 +651,57 @@ bool LXQtMainMenu::eventFilter(QObject *obj, QEvent *event)
     }
     else if(QMenu* menu = qobject_cast<QMenu*>(obj))
     {
-        if(event->type() == QEvent::KeyPress)
+        if(event->type() == QEvent::KeyRelease)
         {
-            // if our shortcut key is pressed while the menu is open, close the menu
-            QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-            if (keyEvent->modifiers() & ~Qt::ShiftModifier)
-            {
-                mHideTimer.start();
-                mMenu->hide(); // close the app menu
-                return true;
-            }
-            else // go to the menu item which starts with the pressed key if there is an active action.
-            {
-                QString key = keyEvent->text();
-                if(key.isEmpty())
-                    return false;
-                QAction* action = menu->activeAction();
-                if(action !=0) {
-                    QList<QAction*> actions = menu->actions();
-                    QList<QAction*>::iterator it = std::find(actions.begin(), actions.end(), action);
-                    it = std::find_if(it + 1, actions.end(), MatchAction(key));
-                    if(it == actions.end())
-                        it = std::find_if(actions.begin(), it, MatchAction(key));
-                    if(it != actions.end())
-                        menu->setActiveAction(*it);
+           QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+
+           // if our shortcut key is pressed while the menu is open, close the menu
+            if (!mShortcutSeq.isEmpty()) {
+                static const auto key_meta = QMetaEnum::fromType<Qt::Key>();
+                QFlags<Qt::KeyboardModifier> mod = keyEvent->modifiers();
+                QList<Qt::Key> keys = {static_cast<Qt::Key>(keyEvent->key())};
+                switch (keyEvent->key()) {
+                    case Qt::Key_Alt:
+                        mod &= ~Qt::AltModifier;
+                        break;
+                    case Qt::Key_Control:
+                        mod &= ~Qt::ControlModifier;
+                        break;
+                    case Qt::Key_Shift:
+                        mod &= ~Qt::ShiftModifier;
+                        break;
+                    case Qt::Key_Meta:
+                        keys << Qt::Key_Super_L << Qt::Key_Super_R;
+                        [[fallthrough]];
+                    case Qt::Key_Super_L:
+                    case Qt::Key_Super_R:
+                        mod &= ~Qt::MetaModifier;
+                        break;
                 }
+                for (const auto & key : std::as_const(keys))
+                {
+                    const QString press = QKeySequence{static_cast<int>(mod)}.toString() % QString::fromLatin1(key_meta.valueToKey(key)).remove(0, 4);
+                    if (press == mShortcutSeq)
+                    {
+                        mMenu->hide(); // close the app menu
+                        return true;
+                    }
+                }
+            }
+
+            // go to the menu item which starts with the pressed key if there is an active action.
+            QString key = keyEvent->text();
+            if(key.isEmpty())
+                return false;
+            QAction* action = menu->activeAction();
+            if(action !=nullptr) {
+                QList<QAction*> actions = menu->actions();
+                QList<QAction*>::iterator it = std::find(actions.begin(), actions.end(), action);
+                it = std::find_if(it + 1, actions.end(), MatchAction(key));
+                if(it == actions.end())
+                    it = std::find_if(actions.begin(), it, MatchAction(key));
+                if(it != actions.end())
+                    menu->setActiveAction(*it);
             }
         }
 
@@ -675,6 +735,31 @@ bool LXQtMainMenu::eventFilter(QObject *obj, QEvent *event)
             }
         }
     }
+    if (event->type() == QEvent::MouseButtonRelease)
+    {
+        QMenu * menu = qobject_cast<QMenu*>(obj);
+        QObject * sender = (obj == mSearchView->viewport() ? static_cast<QObject *>(mSearchView) : (menu != nullptr ? menu : nullptr));
+        QMouseEvent * e = static_cast<QMouseEvent *>(event);
+        if (sender != nullptr && e->button() == Qt::RightButton)
+        {
+            QPoint p = e->position().toPoint();
+            if (mSearchView == sender)
+            {
+                const auto & index = mSearchView->indexAt(p);
+                if (index != mSearchView->currentIndex())
+                    mSearchView->setCurrentIndex(index);
+            } else if (menu != nullptr)
+            {
+                const auto & action = menu->actionAt(p);
+                if (menu->activeAction() != action)
+                    menu->setActiveAction(action);
+            }
+            QTimer::singleShot(0, this, [this, sender, p]() {onRequestingCustomMenu(p, sender);});
+            e->accept();
+            return true;
+        }
+    }
+
     return false;
 }
 

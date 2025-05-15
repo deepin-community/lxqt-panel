@@ -55,34 +55,52 @@ QuickLaunchButton::QuickLaunchButton(QuickLaunchAction * act, ILXQtPanelPlugin *
     const QString dndStr = QStringLiteral(" ") + tr("(Ctrl + DND)");
 
     mMoveLeftAct = new QAction(XdgIcon::fromTheme(QStringLiteral("go-previous")), tr("Move left") + dndStr, this);
-    connect(mMoveLeftAct, SIGNAL(triggered()), this, SIGNAL(movedLeft()));
+    connect(mMoveLeftAct, &QAction::triggered, this, &QuickLaunchButton::movedLeft);
 
     mMoveRightAct = new QAction(XdgIcon::fromTheme(QStringLiteral("go-next")), tr("Move right") + dndStr, this);
-    connect(mMoveRightAct, SIGNAL(triggered()), this, SIGNAL(movedRight()));
-
+    connect(mMoveRightAct, &QAction::triggered, this, &QuickLaunchButton::movedRight);
 
     mDeleteAct = new QAction(XdgIcon::fromTheme(QStringLiteral("dialog-close")), tr("Remove from quicklaunch"), this);
-    connect(mDeleteAct, SIGNAL(triggered()), this, SLOT(selfRemove()));
+    connect(mDeleteAct, &QAction::triggered, this, &QuickLaunchButton::selfRemove);
 
     mMenu = new QMenu(this);
     mMenu->addAction(mAct);
-    mMenu->addActions(mAct->addtitionalActions());
-    mMenu->addSeparator();
+    mMenu->addActions(mAct->additionalActions());
+    mFirstSep = mMenu->addSeparator();
+    if (mAct->type() == QuickLaunchAction::ActionType::ActionXdg)
+    {
+        auto updateAct = new QAction(XdgIcon::fromTheme(QStringLiteral("view-refresh")), tr("Refresh"), this);
+        connect(updateAct, &QAction::triggered, this, [this]
+        {
+            const auto actions = mMenu->actions();
+            for (const auto &action : actions)
+            {
+                if (action->isSeparator()) // mFirstSep
+                {
+                    break;
+                }
+                mMenu->removeAction(action);
+            }
+            mAct->updateXdgAction();
+            mMenu->insertAction(mFirstSep, mAct);
+            const auto extraActions = mAct->additionalActions();
+            for (const auto &action : extraActions)
+            {
+                mMenu->insertAction(mFirstSep, action);
+            }
+        });
+        mMenu->addAction(updateAct);
+    }
     mMenu->addAction(mMoveLeftAct);
     mMenu->addAction(mMoveRightAct);
     mMenu->addSeparator();
     mMenu->addAction(mDeleteAct);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-            this, SLOT(this_customContextMenuRequested(const QPoint&)));
+    connect(this, &QuickLaunchButton::customContextMenuRequested, this, &QuickLaunchButton::this_customContextMenuRequested);
 }
 
-
-QuickLaunchButton::~QuickLaunchButton()
-{
-    //m_act->deleteLater();
-}
+QuickLaunchButton::~QuickLaunchButton() = default;
 
 
 QHash<QString,QString> QuickLaunchButton::settingsMap()
@@ -100,7 +118,7 @@ void QuickLaunchButton::this_customContextMenuRequested(const QPoint & /*pos*/)
     mMoveRightAct->setEnabled(!mPlugin->panel()->isLocked() && panel && panel->indexOfButton(this) < panel->countOfButtons() - 1);
     mDeleteAct->setEnabled(!mPlugin->panel()->isLocked());
     mPlugin->willShowWindow(mMenu);
-    mMenu->popup(mPlugin->panel()->calculatePopupWindowPos(mapToGlobal({0, 0}), mMenu->sizeHint()).topLeft());
+    mMenu->popup(mPlugin->panel()->calculatePopupWindowPos(mapToGlobal(QPoint(0, 0)), mMenu->sizeHint()).topLeft());
 }
 
 
@@ -114,7 +132,7 @@ void QuickLaunchButton::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton && e->modifiers() == Qt::ControlModifier)
     {
-        mDragStart = e->pos();
+        mDragStart = e->position().toPoint();
         return;
     }
 
@@ -129,7 +147,7 @@ void QuickLaunchButton::mouseMoveEvent(QMouseEvent *e)
         return;
     }
 
-    if ((e->pos() - mDragStart).manhattanLength() < QApplication::startDragDistance())
+    if ((e->position().toPoint() - mDragStart).manhattanLength() < QApplication::startDragDistance())
     {
         return;
     }
@@ -146,7 +164,7 @@ void QuickLaunchButton::mouseMoveEvent(QMouseEvent *e)
 
     drag->exec(Qt::MoveAction);
 
-    // Icon was droped outside the panel, remove button
+    // Icon was dropped outside the panel, remove button
     if (!drag->target())
     {
         selfRemove();

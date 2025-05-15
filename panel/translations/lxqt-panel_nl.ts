@@ -6,7 +6,7 @@
     <message>
         <location filename="../config/addplugindialog.ui" line="14"/>
         <source>Add Plugins</source>
-        <translation>Invoegtoepassingen toevoegen</translation>
+        <translation>Invoegtoepassingen</translation>
     </message>
     <message>
         <location filename="../config/addplugindialog.ui" line="22"/>
@@ -14,12 +14,12 @@
         <translation>Zoeken:</translation>
     </message>
     <message>
-        <location filename="../config/addplugindialog.ui" line="98"/>
+        <location filename="../config/addplugindialog.ui" line="102"/>
         <source>Add Widget</source>
-        <translation>Bedieningselement invoegen</translation>
+        <translation>Widget toevoegen</translation>
     </message>
     <message>
-        <location filename="../config/addplugindialog.ui" line="105"/>
+        <location filename="../config/addplugindialog.ui" line="112"/>
         <source>Close</source>
         <translation>Sluiten</translation>
     </message>
@@ -34,278 +34,213 @@
     <message>
         <location filename="../config/configpaneldialog.cpp" line="31"/>
         <source>Configure Panel</source>
-        <translation>Werkbalk instellen</translation>
+        <translation>Paneel instellen</translation>
     </message>
     <message>
-        <location filename="../config/configpaneldialog.cpp" line="38"/>
-        <source>Panel</source>
-        <translation>Werkbalk</translation>
+        <location filename="../config/configpaneldialog.cpp" line="39"/>
+        <source>Placement</source>
+        <translation>Positie</translation>
     </message>
     <message>
-        <location filename="../config/configpaneldialog.cpp" line="42"/>
+        <location filename="../config/configpaneldialog.cpp" line="43"/>
+        <source>Styling</source>
+        <translation>Stijl</translation>
+    </message>
+    <message>
+        <location filename="../config/configpaneldialog.cpp" line="47"/>
         <source>Widgets</source>
-        <translation>Bedieningselementen</translation>
+        <translation>Widgets</translation>
     </message>
 </context>
 <context>
-    <name>ConfigPanelWidget</name>
+    <name>ConfigPlacement</name>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="20"/>
-        <source>Configure panel</source>
-        <translation>Werkbalk instellen</translation>
+        <location filename="../config/configplacement.ui" line="20"/>
+        <source>Configure Placement</source>
+        <translation>Positie instellen</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="44"/>
+        <location filename="../config/configplacement.ui" line="44"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="68"/>
+        <location filename="../config/configplacement.ui" line="68"/>
         <source>&lt;p&gt;Negative pixel value sets the panel length to that many pixels less than available screen space.&lt;/p&gt;&lt;p/&gt;&lt;p&gt;&lt;i&gt;E.g. &quot;Length&quot; set to -100px, screen size is 1000px, then real panel length will be 900 px.&lt;/i&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Negatieve pixelwaarden stellen de werkbalklengte in op beschikbare schermruimte minus het opgegeven aantal pixels.&lt;/p&gt;&lt;p/&gt;&lt;p&gt;&lt;i&gt;Bijvoorbeeld bij &quot;Lengte&quot; ingesteld op -100px en een schermgrootte van 1000px, heeft de werkbalk een lengte van 900 px.&lt;/i&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Negatieve pixelwaarden stellen de paneellengte in op de beschikbare schermruimte, minus het opgegeven aantal pixels.&lt;/p&gt;&lt;p/&gt;&lt;p&gt;&lt;i&gt;Voorbeeld: bij een &apos;Lengte&apos; van -100px en een schermgrootte van 1000px, heeft het paneel een lengte van 900 px.&lt;/i&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="81"/>
+        <location filename="../config/configplacement.ui" line="81"/>
         <source>Size:</source>
         <translation>Grootte:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="88"/>
+        <location filename="../config/configplacement.ui" line="88"/>
         <source>Length:</source>
         <translation>Lengte:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="96"/>
+        <location filename="../config/configplacement.ui" line="96"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="101"/>
+        <location filename="../config/configplacement.ui" line="101"/>
         <source>px</source>
         <translation>px</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="109"/>
-        <location filename="../config/configpanelwidget.ui" line="153"/>
+        <location filename="../config/configplacement.ui" line="109"/>
+        <location filename="../config/configplacement.ui" line="153"/>
         <source> px</source>
         <translation> px</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="166"/>
+        <location filename="../config/configplacement.ui" line="166"/>
         <source>Icon size:</source>
         <translation>Pictogramgrootte:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="202"/>
-        <source>Alignment &amp;&amp; position</source>
-        <translation>Uitlijning en positie</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="250"/>
-        <source>A&amp;uto-hide</source>
-        <translation>Automatisch verbergen</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="262"/>
-        <location filename="../config/configpanelwidget.ui" line="285"/>
-        <source>Zero means no animation</source>
-        <translation>Nul betekent geen animatie</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="288"/>
-        <location filename="../config/configpanelwidget.ui" line="314"/>
-        <source> ms</source>
-        <translation> ms</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="301"/>
-        <location filename="../config/configpanelwidget.ui" line="311"/>
-        <source>Zero means no delay</source>
-        <translation>Nul betekent geen vertraging</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="304"/>
-        <source>Show with delay:</source>
-        <translation>Toon met vertraging:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="327"/>
-        <source>Visible thin margin for hidden panel</source>
-        <translation>Zichtbaar dunne marge voor verborgen paneel</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="337"/>
-        <source>Don&apos;t allow maximized windows go under the panel window</source>
-        <translation>Sta gemaximaliseerde vensters niet toe om onder het paneelvenster te duiken</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="340"/>
-        <source>Reserve space on display</source>
-        <translation>Reserveer ruimte op scherm</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="237"/>
-        <source>Position:</source>
-        <translation>Positie:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="265"/>
-        <source>Animation duration:</source>
-        <translation>Animatieduur:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="208"/>
-        <source>Alignment:</source>
-        <translation>Uitlijning:</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.ui" line="173"/>
+        <location filename="../config/configplacement.ui" line="173"/>
         <source>Rows:</source>
         <translation>Rijen:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="219"/>
-        <location filename="../config/configpanelwidget.cpp" line="211"/>
+        <location filename="../config/configplacement.ui" line="202"/>
+        <source>Alignment &amp;&amp; position</source>
+        <translation>Uitlijning en positie</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="208"/>
+        <source>Alignment:</source>
+        <translation>Uitlijning:</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="219"/>
+        <location filename="../config/configplacement.cpp" line="188"/>
         <source>Left</source>
         <translation>Links</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="224"/>
-        <location filename="../config/configpanelwidget.cpp" line="212"/>
-        <location filename="../config/configpanelwidget.cpp" line="218"/>
+        <location filename="../config/configplacement.ui" line="224"/>
+        <location filename="../config/configplacement.cpp" line="189"/>
+        <location filename="../config/configplacement.cpp" line="195"/>
         <source>Center</source>
         <translation>Midden</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="229"/>
-        <location filename="../config/configpanelwidget.cpp" line="213"/>
+        <location filename="../config/configplacement.ui" line="229"/>
+        <location filename="../config/configplacement.cpp" line="190"/>
         <source>Right</source>
         <translation>Rechts</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="356"/>
-        <source>Custom styling</source>
-        <translation>Eigen stijl</translation>
+        <location filename="../config/configplacement.ui" line="237"/>
+        <source>Position:</source>
+        <translation>Positie:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="377"/>
-        <source>Font color:</source>
-        <translation>Tekstkleur:</translation>
+        <location filename="../config/configplacement.ui" line="250"/>
+        <source>A&amp;uto-hide</source>
+        <translation>Automatisch verbergen</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="417"/>
-        <source>Background color:</source>
-        <translation>Achtergrondkleur:</translation>
+        <location filename="../config/configplacement.ui" line="262"/>
+        <location filename="../config/configplacement.ui" line="285"/>
+        <source>Zero means no animation</source>
+        <translation>Nul = geen animatie</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="456"/>
-        <source>Background opacity:</source>
-        <translation>Ondoorzichtigheid van achtergrond:</translation>
+        <location filename="../config/configplacement.ui" line="265"/>
+        <source>Animation duration:</source>
+        <translation>Animatieduur:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="488"/>
-        <source>&lt;small&gt;Compositing is required for panel transparency.&lt;/small&gt;</source>
-        <translation>&lt;small&gt;Voor een doorzichtige werkbalk is beeldsamenstelling benodigd.&lt;/small&gt;</translation>
+        <location filename="../config/configplacement.ui" line="288"/>
+        <location filename="../config/configplacement.ui" line="314"/>
+        <source> ms</source>
+        <translation> ms</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="516"/>
-        <source>Background image:</source>
-        <translation>Achtergrondafbeelding:</translation>
+        <location filename="../config/configplacement.ui" line="301"/>
+        <location filename="../config/configplacement.ui" line="311"/>
+        <source>Zero means no delay</source>
+        <translation>Nul = geen vertraging</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="568"/>
-        <source>A partial workaround for widget styles that
-cannot give a separate theme to the panel.
-
-You might also want to disable:
-
-LXQt Appearance Configuration →
-Icons Theme →
-Colorize icons based on widget style (palette)</source>
-        <translation>Een gedeeltelijke noodoplossing voor
-widgetstijlen die geen afzonderlijk thema
-kunnen geven aan de werkbalk.
-U wilt wellicht ook het volgende uitzetten:
-Instellingen van LXQt-uiterlijk →
-Pictogrammenthema →
-Pictogrammen inkleuren op basis van
-widgetstijl (palet)</translation>
+        <location filename="../config/configplacement.ui" line="304"/>
+        <source>Show with delay:</source>
+        <translation>Vertraagd tonen:</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="578"/>
-        <source>Override icon &amp;theme</source>
-        <translation>Pictogramthema passeren</translation>
+        <location filename="../config/configplacement.ui" line="327"/>
+        <source>Visible thin margin for hidden panel</source>
+        <translation>Zichtbare dunne marge van verborgen paneel</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.ui" line="593"/>
-        <source>Icon theme for panels:</source>
-        <translation>Pictogramthema voor werkbalken:</translation>
+        <location filename="../config/configplacement.ui" line="334"/>
+        <source>Hide only on overlapping a window</source>
+        <translation>Alleen verbergen bij vensteroverlapping</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="177"/>
+        <location filename="../config/configplacement.ui" line="344"/>
+        <source>Don&apos;t allow maximized windows go under the panel window</source>
+        <translation>Niet toestaan dat gemaximaliseerde vensters onder het paneelvenster kunnen duiken</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.ui" line="347"/>
+        <source>Reserve space on display</source>
+        <translation>Ruimte reserveren op scherm</translation>
+    </message>
+    <message>
+        <location filename="../config/configplacement.cpp" line="154"/>
         <source>Top of desktop</source>
-        <translation>Bovenkant van bureaublad</translation>
+        <translation>Bovenkant van werkblad</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="178"/>
+        <location filename="../config/configplacement.cpp" line="155"/>
         <source>Left of desktop</source>
-        <translation>Linkerkant van bureaublad</translation>
+        <translation>Linkerkant van werkblad</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="179"/>
+        <location filename="../config/configplacement.cpp" line="156"/>
         <source>Right of desktop</source>
-        <translation>Rechterkant van bureaublad</translation>
+        <translation>Rechterkant van werkblad</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="180"/>
+        <location filename="../config/configplacement.cpp" line="157"/>
         <source>Bottom of desktop</source>
-        <translation>Onderkant van bureaublad</translation>
+        <translation>Onderkant van werkblad</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="189"/>
+        <location filename="../config/configplacement.cpp" line="166"/>
         <source>Top of desktop %1</source>
-        <translation>Bovenkant van bureaublad %1</translation>
+        <translation>Bovenkant van werkblad %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="190"/>
+        <location filename="../config/configplacement.cpp" line="167"/>
         <source>Left of desktop %1</source>
-        <translation>Linkerkant van bureaublad %1</translation>
+        <translation>Linkerkant van werkblad %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="191"/>
+        <location filename="../config/configplacement.cpp" line="168"/>
         <source>Right of desktop %1</source>
-        <translation>Rechterkant van bureaublad %1</translation>
+        <translation>Rechterkant van werkblad %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="192"/>
+        <location filename="../config/configplacement.cpp" line="169"/>
         <source>Bottom of desktop %1</source>
-        <translation>Onderkant van bureaublad %1</translation>
+        <translation>Onderkant van werkblad %1</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="217"/>
+        <location filename="../config/configplacement.cpp" line="194"/>
         <source>Top</source>
         <translation>Bovenaan</translation>
     </message>
     <message>
-        <location filename="../config/configpanelwidget.cpp" line="219"/>
+        <location filename="../config/configplacement.cpp" line="196"/>
         <source>Bottom</source>
         <translation>Onderaan</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.cpp" line="439"/>
-        <location filename="../config/configpanelwidget.cpp" line="455"/>
-        <source>Pick color</source>
-        <translation>Kies kleur</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.cpp" line="473"/>
-        <source>Pick image</source>
-        <translation>Kies afbeelding</translation>
-    </message>
-    <message>
-        <location filename="../config/configpanelwidget.cpp" line="473"/>
-        <source>Images (*.png *.gif *.jpg)</source>
-        <translation>Afbeeldingen (*.png *.gif *.jpg)</translation>
     </message>
 </context>
 <context>
@@ -318,12 +253,12 @@ widgetstijl (palet)</translation>
     <message>
         <location filename="../config/configpluginswidget.ui" line="84"/>
         <source>Note: changes made in this page cannot be reset.</source>
-        <translation>Let op: hier gemaakte veranderingen kunnen niet ongedaan worden gemaakt.</translation>
+        <translation>Let op: hier aangebrachte wijzigingen kunnen niet ongedaan worden gemaakt.</translation>
     </message>
     <message>
         <location filename="../config/configpluginswidget.ui" line="112"/>
         <source>Move up</source>
-        <translation>Naar boven verplaatsen</translation>
+        <translation>Omhoog verplaatsen</translation>
     </message>
     <message>
         <location filename="../config/configpluginswidget.ui" line="115"/>
@@ -332,12 +267,12 @@ widgetstijl (palet)</translation>
         <location filename="../config/configpluginswidget.ui" line="164"/>
         <location filename="../config/configpluginswidget.ui" line="185"/>
         <source>...</source>
-        <translation>...</translation>
+        <translation>…</translation>
     </message>
     <message>
         <location filename="../config/configpluginswidget.ui" line="126"/>
         <source>Move down</source>
-        <translation>Naar beneden verplaatsen</translation>
+        <translation>Omlaag verplaatsen</translation>
     </message>
     <message>
         <location filename="../config/configpluginswidget.ui" line="147"/>
@@ -356,80 +291,163 @@ widgetstijl (palet)</translation>
     </message>
 </context>
 <context>
+    <name>ConfigStyling</name>
+    <message>
+        <location filename="../config/configstyling.ui" line="20"/>
+        <source>Configure Styling</source>
+        <translation>Stijl instellen</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="44"/>
+        <source>Custom styling</source>
+        <translation>Eigen stijl</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="65"/>
+        <source>Font color:</source>
+        <translation>Tekstkleur:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="105"/>
+        <source>Background color:</source>
+        <translation>Achtergrondkleur:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="144"/>
+        <source>Background opacity:</source>
+        <translation>Ondoorzichtigheid van achtergrond:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="176"/>
+        <source>&lt;small&gt;Compositing is required for panel transparency.&lt;/small&gt;</source>
+        <translation>&lt;small&gt;Hardwareversnelling is vereist om het paneel doorzichtig te kunnen maken.&lt;/small&gt;</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="204"/>
+        <source>Background image:</source>
+        <translation>Achtergrondafbeelding:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="256"/>
+        <source>A partial workaround for widget styles that
+cannot give a separate theme to the panel.
+
+You might also want to disable:
+
+LXQt Appearance Configuration →
+Icons Theme →
+Colorize icons based on widget style (palette)</source>
+        <translation>Een gedeeltelijke noodoplossing voor widgetstijlen die het
+paneel niet van een afzonderlijk thema kunnen voorzien.
+
+U wilt wellicht ook het volgende uitschakelen:
+
+LXQt-vormgevingsinstellingen →
+Pictogramthema →
+Pictogrammen inkleuren op basis van elementstijl (palet)</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="266"/>
+        <source>Override icon &amp;theme</source>
+        <translation>Pictogram&amp;thema omzeilen</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.ui" line="281"/>
+        <source>Icon theme for panels:</source>
+        <translation>Pictogramthema van panelen:</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.cpp" line="189"/>
+        <location filename="../config/configstyling.cpp" line="205"/>
+        <source>Pick color</source>
+        <translation>Kies een kleur</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.cpp" line="223"/>
+        <source>Pick image</source>
+        <translation>Kies een afbeelding</translation>
+    </message>
+    <message>
+        <location filename="../config/configstyling.cpp" line="223"/>
+        <source>Images (*.png *.gif *.jpg *.svg)</source>
+        <translation>Afbeeldingen (*.png *.gif *.jpg *.svg)</translation>
+    </message>
+</context>
+<context>
     <name>LXQtPanel</name>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1130"/>
-        <location filename="../lxqtpanel.cpp" line="1156"/>
+        <location filename="../lxqtpanel.cpp" line="1419"/>
+        <location filename="../lxqtpanel.cpp" line="1445"/>
         <source>Panel</source>
-        <translation>Werkbalk</translation>
+        <translation>Paneel</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1159"/>
+        <location filename="../lxqtpanel.cpp" line="1448"/>
         <source>Configure Panel</source>
-        <translation>Werkbalk instellen</translation>
+        <translation>Paneel instellen</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1164"/>
+        <location filename="../lxqtpanel.cpp" line="1453"/>
         <source>Manage Widgets</source>
-        <translation>Bedieningselementen beheren</translation>
+        <translation>Widgets beheren</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1170"/>
+        <location filename="../lxqtpanel.cpp" line="1459"/>
         <source>Add New Panel</source>
-        <translation>Nieuwe werkbalk toevoegen</translation>
+        <translation>Paneel toevoegen</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1177"/>
+        <location filename="../lxqtpanel.cpp" line="1466"/>
         <source>Remove Panel</source>
         <comment>Menu Item</comment>
-        <translation>Werkbalk verwijderen</translation>
+        <translation>Paneel verwijderen</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1182"/>
+        <location filename="../lxqtpanel.cpp" line="1471"/>
         <source>Lock This Panel</source>
-        <translation>Vergrendel deze werkbalk</translation>
+        <translation>Paneel vergrendelen</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1338"/>
+        <location filename="../lxqtpanel.cpp" line="1634"/>
         <source>Remove Panel</source>
         <comment>Dialog Title</comment>
-        <translation>Werkbalk verwijderen</translation>
+        <translation>Paneel verwijderen</translation>
     </message>
     <message>
-        <location filename="../lxqtpanel.cpp" line="1339"/>
+        <location filename="../lxqtpanel.cpp" line="1635"/>
         <source>Removing a panel can not be undone.
 Do you want to remove this panel?</source>
-        <translation>Verwijdering van een werkbalk kan niet ongedaan worden gemaakt.
-Wilt u deze werkbalk verwijderen?</translation>
+        <translation>Het verwijderen van panelen kan niet ongedaan worden gemaakt.
+Weet u zeker dat u wilt doorgaan?</translation>
     </message>
 </context>
 <context>
     <name>Plugin</name>
     <message>
-        <location filename="../plugin.cpp" line="436"/>
+        <location filename="../plugin.cpp" line="445"/>
         <source>Configure &quot;%1&quot;</source>
-        <translation>&quot;%1&quot; instellen</translation>
+        <translation>‘%1’ instellen</translation>
     </message>
     <message>
-        <location filename="../plugin.cpp" line="441"/>
+        <location filename="../plugin.cpp" line="450"/>
         <source>Move &quot;%1&quot;</source>
-        <translation>&quot;%1&quot; verplaatsen</translation>
+        <translation>‘%1’ verplaatsen</translation>
     </message>
     <message>
-        <location filename="../plugin.cpp" line="449"/>
+        <location filename="../plugin.cpp" line="458"/>
         <source>Remove &quot;%1&quot;</source>
-        <translation>&quot;%1&quot; verwijderen</translation>
+        <translation>‘%1’ verwijderen</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
-        <location filename="../lxqtpanelapplication.cpp" line="95"/>
+        <location filename="../lxqtpanelapplication.cpp" line="340"/>
         <source>Use alternate configuration file.</source>
-        <translation>Gebruik alternatief instellingenbestand.</translation>
+        <translation>Gebruik een alternatief instellingenbestand.</translation>
     </message>
     <message>
-        <location filename="../lxqtpanelapplication.cpp" line="96"/>
+        <location filename="../lxqtpanelapplication.cpp" line="341"/>
         <source>Configuration file</source>
         <translation>Instellingenbestand</translation>
     </message>

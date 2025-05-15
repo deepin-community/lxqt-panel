@@ -5,7 +5,7 @@
     <name>TreeWindow</name>
     <message>
         <location filename="../treewindow.ui" line="14"/>
-        <source>Panel DOM tree</source>
+        <source>Panel DOM Tree</source>
         <translation>パネルの DOM ツリー</translation>
     </message>
     <message>
@@ -22,7 +22,7 @@
     <message>
         <location filename="../treewindow.ui" line="76"/>
         <source>All properties</source>
-        <translation>全てのプロパティ</translation>
+        <translation>すべてのプロパティ</translation>
     </message>
     <message>
         <location filename="../treewindow.ui" line="101"/>

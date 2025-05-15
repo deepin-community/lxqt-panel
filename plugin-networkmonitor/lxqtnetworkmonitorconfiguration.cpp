@@ -35,20 +35,21 @@ extern "C" {
 
 #ifdef __sg_public
 // since libstatgrab 0.90 this macro is defined, so we use it for version check
-#define STATGRAB_NEWER_THAN_0_90 	1
+#define STATGRAB_NEWER_THAN_0_90     1
 #endif
 
 LXQtNetworkMonitorConfiguration::LXQtNetworkMonitorConfiguration(PluginSettings *settings, QWidget *parent) :
     LXQtPanelPluginConfigDialog(settings, parent),
-    ui(new Ui::LXQtNetworkMonitorConfiguration)
+    ui(new Ui::LXQtNetworkMonitorConfiguration),
+    mLockSettingChanges(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setObjectName(QStringLiteral("NetworkMonitorConfigurationWindow"));
     ui->setupUi(this);
 
-    connect(ui->buttons, SIGNAL(clicked(QAbstractButton*)), this, SLOT(dialogButtonsAction(QAbstractButton*)));
-    connect(ui->iconCB, SIGNAL(currentIndexChanged(int)), SLOT(saveSettings()));
-    connect(ui->interfaceCB, SIGNAL(currentIndexChanged(int)), SLOT(saveSettings()));
+    connect(ui->buttons,     &QDialogButtonBox::clicked,                          this, &LXQtNetworkMonitorConfiguration::dialogButtonsAction);
+    connect(ui->iconCB,      QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LXQtNetworkMonitorConfiguration::saveSettings);
+    connect(ui->interfaceCB, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LXQtNetworkMonitorConfiguration::saveSettings);
 
     loadSettings();
 }
@@ -60,12 +61,17 @@ LXQtNetworkMonitorConfiguration::~LXQtNetworkMonitorConfiguration()
 
 void LXQtNetworkMonitorConfiguration::saveSettings()
 {
-    settings().setValue(QStringLiteral("icon"), ui->iconCB->currentIndex());
-    settings().setValue(QStringLiteral("interface"), ui->interfaceCB->currentText());
+    if (!mLockSettingChanges)
+    {
+        settings().setValue(QStringLiteral("icon"), ui->iconCB->currentIndex());
+        settings().setValue(QStringLiteral("interface"), ui->interfaceCB->currentText());
+    }
 }
 
 void LXQtNetworkMonitorConfiguration::loadSettings()
 {
+    mLockSettingChanges = true;
+
     ui->iconCB->setCurrentIndex(settings().value(QStringLiteral("icon"), 1).toInt());
 
     int count;
@@ -81,4 +87,6 @@ void LXQtNetworkMonitorConfiguration::loadSettings()
 
     QString interface = settings().value(QStringLiteral("interface")).toString();
     ui->interfaceCB->setCurrentIndex(qMax(qMin(0, count - 1), ui->interfaceCB->findText(interface)));
+
+    mLockSettingChanges = false;
 }

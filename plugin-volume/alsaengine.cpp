@@ -33,7 +33,33 @@
 #include <QSocketNotifier>
 #include <QtDebug>
 
-AlsaEngine *AlsaEngine::m_instance = 0;
+MixerHandler::MixerHandler(snd_mixer_t * mixer, QObject * parent /*= nullptr*/)
+    : QObject{parent}
+    , m_mixer{mixer}
+{
+    if (nullptr != m_mixer)
+    {
+        // setup eventloop handling
+        struct pollfd pfd;
+        if (snd_mixer_poll_descriptors(m_mixer, &pfd, 1)) {
+            QSocketNotifier *notifier = new QSocketNotifier(pfd.fd, QSocketNotifier::Read, this);
+            connect(notifier, &QSocketNotifier::activated, this, [this] {
+                const int err = snd_mixer_handle_events(m_mixer);
+                if (0 > err)
+                    emit handlingError(err);
+            });
+        }
+    }
+}
+
+MixerHandler::~MixerHandler()
+{
+    if (nullptr != m_mixer)
+        snd_mixer_close(m_mixer);
+}
+
+
+AlsaEngine *AlsaEngine::m_instance = nullptr;
 
 static int alsa_elem_event_callback(snd_mixer_elem_t *elem, unsigned int /*mask*/)
 {
@@ -70,7 +96,7 @@ int AlsaEngine::volumeMax(AudioDevice *device) const
 
 AlsaDevice *AlsaEngine::getDeviceByAlsaElem(snd_mixer_elem_t *elem) const
 {
-    for (AudioDevice *device : qAsConst(m_sinks)) {
+    for (AudioDevice *device : std::as_const(m_sinks)) {
         AlsaDevice *dev = qobject_cast<AlsaDevice*>(device);
         if (!dev || !dev->element())
             continue;
@@ -79,7 +105,7 @@ AlsaDevice *AlsaEngine::getDeviceByAlsaElem(snd_mixer_elem_t *elem) const
             return dev;
     }
 
-    return 0;
+    return nullptr;
 }
 
 void AlsaEngine::commitDeviceVolume(AudioDevice *device)
@@ -121,18 +147,17 @@ void AlsaEngine::updateDevice(AlsaDevice *device)
     }
 }
 
-void AlsaEngine::driveAlsaEventHandling(int fd)
-{
-    snd_mixer_handle_events(m_mixerMap.value(fd));
-}
-
 void AlsaEngine::discoverDevices()
 {
+    std::for_each(m_sinks.begin(), m_sinks.end(), std::default_delete<AudioDevice>{});
+    m_sinks.clear();
+    m_mixers.clear();
+
     int error;
     int cardNum = -1;
     const int BUFF_SIZE = 64;
 
-    while (1) {
+    while (true) {
         if ((error = snd_card_next(&cardNum)) < 0) {
             qWarning("Can't get the next card number: %s\n", snd_strerror(error));
             break;
@@ -174,15 +199,13 @@ void AlsaEngine::discoverDevices()
             // setup event handler for mixer
             snd_mixer_set_callback(mixer, alsa_mixer_event_callback);
 
-            // setup eventloop handling
-            struct pollfd pfd;
-            if (snd_mixer_poll_descriptors(mixer, &pfd, 1)) {
-                QSocketNotifier *notifier = new QSocketNotifier(pfd.fd, QSocketNotifier::Read, this);
-                connect(notifier, SIGNAL(activated(int)), this, SLOT(driveAlsaEventHandling(int)));
-                m_mixerMap.insert(pfd.fd, mixer);
-            }
+            m_mixers.emplace_back(mixer);
+            connect(&m_mixers.back(), &MixerHandler::handlingError, this, [this] (int err) {
+                qWarning() << "Mixer handling failed(" << snd_strerror(err) << "), reloading ...";
+                QTimer::singleShot(0, this, [this] { discoverDevices(); });
+            });
 
-            snd_mixer_elem_t *mixerElem = 0;
+            snd_mixer_elem_t *mixerElem = nullptr;
             mixerElem = snd_mixer_first_elem(mixer);
 
             while (mixerElem) {
@@ -219,4 +242,5 @@ void AlsaEngine::discoverDevices()
     }
 
     snd_config_update_free_global();
+    emit sinkListChanged();
 }

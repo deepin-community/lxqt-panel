@@ -4,47 +4,47 @@
 <context>
     <name>LXQtNetworkMonitor</name>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="161"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="159"/>
         <source>Network interface &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation>Netverksgrensesnitt &lt;b&gt;%1&lt;/b&gt;</translation>
+        <translation>Nettverksgrensesnitt &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="162"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="160"/>
         <source>Transmitted %1</source>
         <translation>Sendt %1</translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="163"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="161"/>
         <source>Received %1</source>
         <translation>Mottatt %1</translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="208"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="206"/>
         <source>B</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="209"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="207"/>
         <source>KiB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="209"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="207"/>
         <source>MiB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="209"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="207"/>
         <source>GiB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="209"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="207"/>
         <source>TiB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../lxqtnetworkmonitor.cpp" line="209"/>
+        <location filename="../lxqtnetworkmonitor.cpp" line="207"/>
         <source>PiB</source>
         <translation></translation>
     </message>
@@ -53,8 +53,8 @@
     <name>LXQtNetworkMonitorConfiguration</name>
     <message>
         <location filename="../lxqtnetworkmonitorconfiguration.ui" line="14"/>
-        <source>Network Monitor settings</source>
-        <translation>Nettverksovervåkingsinnstillinger</translation>
+        <source>Network Monitor Settings</source>
+        <translation>Nettverkovervåkingsinnstillinger</translation>
     </message>
     <message>
         <location filename="../lxqtnetworkmonitorconfiguration.ui" line="20"/>
@@ -89,7 +89,7 @@
     <message>
         <location filename="../lxqtnetworkmonitorconfiguration.ui" line="95"/>
         <source>Icon</source>
-        <translation>Symbol</translation>
+        <translation>Ikon</translation>
     </message>
 </context>
 </TS>

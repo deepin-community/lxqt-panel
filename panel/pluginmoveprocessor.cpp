@@ -49,9 +49,7 @@ PluginMoveProcessor::PluginMoveProcessor(LXQtPanelLayout *layout, Plugin *plugin
 /************************************************
 
  ************************************************/
-PluginMoveProcessor::~PluginMoveProcessor()
-{
-}
+PluginMoveProcessor::~PluginMoveProcessor() = default;
 
 
 /************************************************
@@ -62,7 +60,7 @@ void PluginMoveProcessor::start()
     // We have not memoryleaks there.
     // The animation will be automatically deleted when stopped.
     CursorAnimation *cursorAnimation = new CursorAnimation();
-    connect(cursorAnimation, SIGNAL(finished()), this, SLOT(doStart()));
+    connect(cursorAnimation, &CursorAnimation::finished, this, &PluginMoveProcessor::doStart);
     cursorAnimation->setEasingCurve(QEasingCurve::InOutQuad);
     cursorAnimation->setDuration(150);
 
@@ -88,12 +86,12 @@ void PluginMoveProcessor::doStart()
  ************************************************/
 void PluginMoveProcessor::mouseMoveEvent(QMouseEvent *event)
 {
-    QPoint mouse = mLayout->parentWidget()->mapFromGlobal(event->globalPos());
+    QPoint mouse = mLayout->parentWidget()->mapFromGlobal(event->globalPosition()).toPoint();
 
     MousePosInfo pos = itemByMousePos(mouse);
 
-    QLayoutItem *prevItem = 0;
-    QLayoutItem *nextItem = 0;
+    QLayoutItem *prevItem = nullptr;
+    QLayoutItem *nextItem = nullptr;
     if (pos.after)
     {
         mDestIndex = pos.index + 1;
@@ -204,9 +202,9 @@ PluginMoveProcessor::MousePosInfo PluginMoveProcessor::itemByMousePos(const QPoi
  ************************************************/
 void PluginMoveProcessor::drawMark(QLayoutItem *item, MarkType markType)
 {
-    QWidget *widget = (item) ? item->widget() : 0;
+    QWidget *widget = (item) ? item->widget() : nullptr;
 
-    static QWidget *prevWidget = 0;
+    static QWidget *prevWidget = nullptr;
     if (prevWidget && prevWidget != widget)
         prevWidget->setStyleSheet(QLatin1String(""));
 
@@ -245,9 +243,7 @@ void PluginMoveProcessor::drawMark(QLayoutItem *item, MarkType markType)
                                   "border-%2: 2px solid rgba(%4, %5, %6, %7); "
                                   "border-%3: -2px solid; "
                                   "background-color: transparent; }")
-                          .arg(widget->objectName())
-                          .arg(border1)
-                          .arg(border2)
+                          .arg(widget->objectName(), border1, border2)
                           .arg(Plugin::moveMarkerColor().red())
                           .arg(Plugin::moveMarkerColor().green())
                           .arg(Plugin::moveMarkerColor().blue())
@@ -295,7 +291,7 @@ void PluginMoveProcessor::doFinish(bool cancel)
 {
     releaseKeyboard();
 
-    drawMark(0, TopMark);
+    drawMark(nullptr, TopMark);
 
     if (!cancel)
     {

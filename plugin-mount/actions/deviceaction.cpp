@@ -48,9 +48,7 @@ DeviceAction::DeviceAction(LXQtMountPlugin *plugin, QObject *parent)
 {
 }
 
-DeviceAction::~DeviceAction()
-{
-}
+DeviceAction::~DeviceAction() = default;
 
 DeviceAction *DeviceAction::create(ActionId id, LXQtMountPlugin *plugin, QObject *parent)
 {
@@ -66,7 +64,7 @@ DeviceAction *DeviceAction::create(ActionId id, LXQtMountPlugin *plugin, QObject
         return new DeviceActionMenu(plugin, parent);
     }
 
-    return 0;
+    return nullptr;
 }
 
 QString DeviceAction::actionIdToString(DeviceAction::ActionId id)

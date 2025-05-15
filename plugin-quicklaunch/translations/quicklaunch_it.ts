@@ -4,20 +4,20 @@
 <context>
     <name>LXQtQuickLaunch</name>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="226"/>
+        <location filename="../lxqtquicklaunch.cpp" line="229"/>
         <source>Drop Error</source>
         <translation>Errore di rilascio</translation>
     </message>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="227"/>
+        <location filename="../lxqtquicklaunch.cpp" line="230"/>
         <source>File/URL &apos;%1&apos; cannot be embedded into QuickLaunch for now</source>
-        <translation>Il file/URL &apos;%1&apos; in questo momento non può essere inserito in Avvio rapido</translation>
+        <translation>Il file/URL &apos;%1&apos; al momento non può essere inserito in Avvio rapido</translation>
     </message>
     <message>
-        <location filename="../lxqtquicklaunch.cpp" line="333"/>
+        <location filename="../lxqtquicklaunch.cpp" line="336"/>
         <source>Drop application
 icons here</source>
-        <translation>Rilascia qui le icone
+        <translation>Trascina qui le icone
 delle applicazioni</translation>
     </message>
 </context>
@@ -39,9 +39,14 @@ delle applicazioni</translation>
         <translation>Sposta a destra</translation>
     </message>
     <message>
-        <location filename="../quicklaunchbutton.cpp" line="64"/>
+        <location filename="../quicklaunchbutton.cpp" line="63"/>
         <source>Remove from quicklaunch</source>
         <translation>Rimuovi da Avvio rapido</translation>
+    </message>
+    <message>
+        <location filename="../quicklaunchbutton.cpp" line="72"/>
+        <source>Refresh</source>
+        <translation>Ricarica</translation>
     </message>
 </context>
 </TS>

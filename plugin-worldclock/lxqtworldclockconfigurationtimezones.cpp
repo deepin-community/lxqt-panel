@@ -42,8 +42,8 @@ LXQtWorldClockConfigurationTimeZones::LXQtWorldClockConfigurationTimeZones(QWidg
     setWindowModality(Qt::WindowModal);
     ui->setupUi(this);
 
-    connect(ui->timeZonesTW, SIGNAL(itemSelectionChanged()), SLOT(itemSelectionChanged()));
-    connect(ui->timeZonesTW, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
+    connect(ui->timeZonesTW, &QTreeWidget::itemSelectionChanged, this, &LXQtWorldClockConfigurationTimeZones::itemSelectionChanged);
+    connect(ui->timeZonesTW, &QTreeWidget::itemDoubleClicked,    this, &LXQtWorldClockConfigurationTimeZones::itemDoubleClicked);
 }
 
 LXQtWorldClockConfigurationTimeZones::~LXQtWorldClockConfigurationTimeZones()
@@ -74,7 +74,7 @@ void LXQtWorldClockConfigurationTimeZones::itemDoubleClicked(QTreeWidgetItem* /*
 QTreeWidgetItem* LXQtWorldClockConfigurationTimeZones::makeSureParentsExist(const QStringList &parts, QMap<QString, QTreeWidgetItem*> &parentItems)
 {
     if (parts.length() == 1)
-        return 0;
+        return nullptr;
 
     QStringList parentParts = parts.mid(0, parts.length() - 1);
 
@@ -119,7 +119,7 @@ int LXQtWorldClockConfigurationTimeZones::updateAndExec()
         if (qStrings.size() == 1)
             qStrings.prepend(tr("Other"));
 
-        QTreeWidgetItem *tzItem = new QTreeWidgetItem(QStringList() << qStrings[qStrings.length() - 1] << timeZone.displayName(now) << timeZone.comment() << QLocale::countryToString(timeZone.country()));
+        QTreeWidgetItem *tzItem = new QTreeWidgetItem(QStringList() << qStrings[qStrings.length() - 1] << timeZone.displayName(now) << timeZone.comment() << QLocale::territoryToString(timeZone.territory()));
         tzItem->setData(0, Qt::UserRole, ianaId);
 
         makeSureParentsExist(qStrings, parentItems)->addChild(tzItem);

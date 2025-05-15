@@ -36,7 +36,8 @@
 
 LXQtSensorsConfiguration::LXQtSensorsConfiguration(PluginSettings *settings, QWidget *parent) :
     LXQtPanelPluginConfigDialog(settings, parent),
-    ui(new Ui::LXQtSensorsConfiguration)
+    ui(new Ui::LXQtSensorsConfiguration),
+    mLockSettingChanges(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setObjectName(QStringLiteral("SensorsConfigurationWindow"));
@@ -45,14 +46,14 @@ LXQtSensorsConfiguration::LXQtSensorsConfiguration(PluginSettings *settings, QWi
     // We load settings here cause we have to set up dynamic widgets
     loadSettings();
 
-    connect(ui->buttons, SIGNAL(clicked(QAbstractButton*)), this, SLOT(dialogButtonsAction(QAbstractButton*)));
-    connect(ui->updateIntervalSB, SIGNAL(valueChanged(int)), this, SLOT(saveSettings()));
-    connect(ui->tempBarWidthSB, SIGNAL(valueChanged(int)), this, SLOT(saveSettings()));
-    connect(ui->detectedChipsCB, SIGNAL(activated(int)), this, SLOT(detectedChipSelected(int)));
-    connect(ui->celsiusTempScaleRB, SIGNAL(toggled(bool)), this, SLOT(saveSettings()));
+    connect(ui->buttons,                        &QDialogButtonBox::clicked,                  this, &LXQtSensorsConfiguration::dialogButtonsAction);
+    connect(ui->updateIntervalSB,               QOverload<int>::of(&QSpinBox::valueChanged), this, &LXQtSensorsConfiguration::saveSettings);
+    connect(ui->tempBarWidthSB,                 QOverload<int>::of(&QSpinBox::valueChanged), this, &LXQtSensorsConfiguration::saveSettings);
+    connect(ui->detectedChipsCB,                QOverload<int>::of(&QComboBox::activated),   this, &LXQtSensorsConfiguration::detectedChipSelected);
+    connect(ui->celsiusTempScaleRB,             &QRadioButton::toggled,                      this, &LXQtSensorsConfiguration::saveSettings);
     // We don't need signal from the other radio box as celsiusTempScaleRB will send one
     //connect(ui->fahrenheitTempScaleRB, SIGNAL(toggled(bool)), this, SLOT(saveSettings()));
-    connect(ui->warningAboutHighTemperatureChB, SIGNAL(toggled(bool)), this, SLOT(saveSettings()));
+    connect(ui->warningAboutHighTemperatureChB, &QCheckBox::toggled,                         this, &LXQtSensorsConfiguration::saveSettings);
 
     /**
      * Signals for enable/disable and bar color change are set in the loadSettings method because
@@ -69,6 +70,8 @@ LXQtSensorsConfiguration::~LXQtSensorsConfiguration()
 
 void LXQtSensorsConfiguration::loadSettings()
 {
+    mLockSettingChanges = true;
+
     ui->updateIntervalSB->setValue(settings().value(QStringLiteral("updateInterval")).toInt());
     ui->tempBarWidthSB->setValue(settings().value(QStringLiteral("tempBarWidth")).toInt());
 
@@ -97,11 +100,16 @@ void LXQtSensorsConfiguration::loadSettings()
 
     ui->warningAboutHighTemperatureChB->setChecked(
             settings().value(QStringLiteral("warningAboutHighTemperature")).toBool());
+
+    mLockSettingChanges = false;
 }
 
 
 void LXQtSensorsConfiguration::saveSettings()
 {
+    if (mLockSettingChanges)
+        return;
+
     settings().setValue(QStringLiteral("updateInterval"), ui->updateIntervalSB->value());
     settings().setValue(QStringLiteral("tempBarWidth"), ui->tempBarWidthSB->value());
 
@@ -207,7 +215,11 @@ void LXQtSensorsConfiguration::detectedChipSelected(int index)
             enabledCheckbox = new QCheckBox(ui->chipFeaturesT);
             enabledCheckbox->setChecked(settings().value(QStringLiteral("enabled")).toBool());
             // Connect here after the setChecked call because we don't want to send signal
-            connect(enabledCheckbox, SIGNAL(stateChanged(int)), this, SLOT(saveSettings()));
+#if (QT_VERSION >= QT_VERSION_CHECK(6,7,0))
+            connect(enabledCheckbox, &QCheckBox::checkStateChanged, this, &LXQtSensorsConfiguration::saveSettings);
+#else
+            connect(enabledCheckbox, &QCheckBox::stateChanged, this, &LXQtSensorsConfiguration::saveSettings);
+#endif
             ui->chipFeaturesT->setCellWidget(j, 0, enabledCheckbox);
 
             chipFeatureLabel = new QTableWidgetItem(chipFeatureLabels[j]);
@@ -215,7 +227,7 @@ void LXQtSensorsConfiguration::detectedChipSelected(int index)
             ui->chipFeaturesT->setItem(j, 1, chipFeatureLabel);
 
             colorButton = new QPushButton(ui->chipFeaturesT);
-            connect(colorButton, SIGNAL(clicked()), this, SLOT(changeProgressBarColor()));
+            connect(colorButton, &QPushButton::clicked, this, &LXQtSensorsConfiguration::changeProgressBarColor);
             QPalette pal = colorButton->palette();
             pal.setColor(QPalette::Normal, QPalette::Button,
                          QColor(settings().value(QStringLiteral("color")).toString()));

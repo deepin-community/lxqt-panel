@@ -5,7 +5,7 @@
     <name>TreeWindow</name>
     <message>
         <location filename="../treewindow.ui" line="14"/>
-        <source>Panel DOM tree</source>
+        <source>Panel DOM Tree</source>
         <translation>Панель дерева DOM</translation>
     </message>
     <message>
@@ -32,7 +32,7 @@
     <message>
         <location filename="../treewindow.ui" line="106"/>
         <source>String value</source>
-        <translation>Значення стрічки</translation>
+        <translation>Значення рядка</translation>
     </message>
 </context>
 </TS>

@@ -65,26 +65,27 @@ MenuDiskItem::MenuDiskItem(Solid::Device device, Popup *popup):
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(mDiskButton);
     layout->addWidget(mEjectButton);
-    layout->setMargin(0);
+    layout->setContentsMargins(QMargins());
     layout->setSpacing(0);
     setLayout(layout);
 
-    connect(iface, &Solid::StorageAccess::setupDone, this, &MenuDiskItem::onMounted);
-    connect(iface, &Solid::StorageAccess::teardownDone, this, &MenuDiskItem::onUnmounted);
-    connect(iface, &Solid::StorageAccess::accessibilityChanged, [this] (bool /*accessible*/, QString const &) {
+    connect(iface, &Solid::StorageAccess::setupDone,            this, &MenuDiskItem::onMounted);
+    connect(iface, &Solid::StorageAccess::teardownDone,         this, &MenuDiskItem::onUnmounted);
+    connect(iface, &Solid::StorageAccess::accessibilityChanged, this, [this] (bool /*accessible*/, QString const &) {
         updateMountStatus();
     });
 
     updateMountStatus();
 }
 
-MenuDiskItem::~MenuDiskItem()
-{
-}
+MenuDiskItem::~MenuDiskItem() = default;
 
-void MenuDiskItem::setMountStatus(bool mounted)
+void MenuDiskItem::setMountStatus()
 {
-    mEjectButton->setEnabled(mounted);
+    if (mDevice.isValid())
+    {
+        mEjectButton->setEnabled(mDevice.as<Solid::StorageAccess>()->isAccessible() || !opticalParent().udi().isEmpty());
+    }
 }
 
 void MenuDiskItem::updateMountStatus()
@@ -98,7 +99,7 @@ void MenuDiskItem::updateMountStatus()
         mDiskButton->setIcon(icon);
         mDiskButton->setText(mDevice.description());
 
-        setMountStatus(mDevice.as<Solid::StorageAccess>()->isAccessible() || !opticalParent().udi().isEmpty());
+        setMountStatus();
     }
     else
         emit invalid(mDevice.udi());
@@ -153,7 +154,7 @@ void MenuDiskItem::onMounted(Solid::ErrorType error, QVariant resultData, const 
         else
         {
             QString errorMsg = tr("Mounting of <b><nobr>\"%1\"</nobr></b> failed: %2");
-            errorMsg = errorMsg.arg(mDevice.description()).arg(resultData.toString());
+            errorMsg = errorMsg.arg(mDevice.description(), resultData.toString());
             LXQt::Notification::notify(tr("Removable media/devices manager"), errorMsg, mDevice.icon());
         }
     }
@@ -174,7 +175,7 @@ void MenuDiskItem::onUnmounted(Solid::ErrorType error, QVariant resultData, cons
         else
         {
             QString errorMsg = tr("Unmounting of <strong><nobr>\"%1\"</nobr></strong> failed: %2");
-            errorMsg = errorMsg.arg(mDevice.description()).arg(resultData.toString());
+            errorMsg = errorMsg.arg(mDevice.description(), resultData.toString());
             LXQt::Notification::notify(tr("Removable media/devices manager"), errorMsg, mDevice.icon());
         }
     }

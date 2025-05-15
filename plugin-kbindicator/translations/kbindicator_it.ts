@@ -40,12 +40,12 @@
         <translation>Blocco scorrimento</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Layout</source>
         <translation>Mappatura</translation>
     </message>
     <message>
-        <location filename="../src/content.cpp" line="105"/>
+        <location filename="../src/content.cpp" line="104"/>
         <source>Variant</source>
         <translation>Variante</translation>
     </message>
@@ -54,7 +54,7 @@
     <name>KbdStateConfig</name>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="14"/>
-        <source>Keyboard state settings</source>
+        <source>Keyboard State Settings</source>
         <translation>Preferenze</translation>
     </message>
     <message>
@@ -95,7 +95,7 @@
     <message>
         <location filename="../src/kbdstateconfig.ui" line="106"/>
         <source>File path pattern for country flags. Must contain &lt;strong&gt;%1&lt;/strong&gt; which is replaced by the two letter ISO country code (lower case).&lt;br&gt;&lt;br&gt;Example: /usr/share/iso-flags-svg/country-squared/%1.svg</source>
-        <translation>Schema percorso per le bandiere dei paesi. Deve contenere &lt;strong&gt;%1&lt;/strong&gt; che sarà sostituio dal codice ISO del paese (in minuscolo).&lt;br&gt;&lt;br&gt;Esempio: /usr/share/iso-flags-svg/country-squared/%1.svg</translation>
+        <translation>Schema percorso per le bandiere dei paesi. Deve contenere &lt;strong&gt;%1&lt;/strong&gt; che sarà sostituito dal codice ISO del paese (in minuscolo).&lt;br&gt;&lt;br&gt;Esempio: /usr/share/iso-flags-svg/country-squared/%1.svg</translation>
     </message>
     <message>
         <location filename="../src/kbdstateconfig.ui" line="116"/>

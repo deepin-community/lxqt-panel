@@ -51,10 +51,10 @@
 LXQtVolume::LXQtVolume(const ILXQtPanelPluginStartupInfo &startupInfo):
         QObject(),
         ILXQtPanelPlugin(startupInfo),
-        m_engine(0),
+        m_engine(nullptr),
         m_defaultSinkIndex(0),
-        m_defaultSink(0),
-        m_allwaysShowNotifications(SETTINGS_DEFAULT_ALLWAYS_SHOW_NOTIFICATIONS),
+        m_defaultSink(nullptr),
+        m_alwaysShowNotifications(SETTINGS_DEFAULT_ALWAYS_SHOW_NOTIFICATIONS),
         m_showKeyboardNotifications(SETTINGS_DEFAULT_SHOW_KEYBOARD_NOTIFICATIONS)
 {
     m_volumeButton = new VolumeButton(this);
@@ -65,19 +65,19 @@ LXQtVolume::LXQtVolume(const ILXQtPanelPluginStartupInfo &startupInfo):
     if (m_keyVolumeUp)
     {
         connect(m_keyVolumeUp, &GlobalKeyShortcut::Action::registrationFinished, this, &LXQtVolume::shortcutRegistered);
-        connect(m_keyVolumeUp, SIGNAL(activated()), this, SLOT(handleShortcutVolumeUp()));
+        connect(m_keyVolumeUp, &GlobalKeyShortcut::Action::activated,            this, &LXQtVolume::handleShortcutVolumeUp);
     }
     m_keyVolumeDown = GlobalKeyShortcut::Client::instance()->addAction(QString(), QStringLiteral("/panel/%1/down").arg(settings()->group()), tr("Decrease sound volume"), this);
     if (m_keyVolumeDown)
     {
         connect(m_keyVolumeDown, &GlobalKeyShortcut::Action::registrationFinished, this, &LXQtVolume::shortcutRegistered);
-        connect(m_keyVolumeDown, SIGNAL(activated()), this, SLOT(handleShortcutVolumeDown()));
+        connect(m_keyVolumeDown, &GlobalKeyShortcut::Action::activated,            this, &LXQtVolume::handleShortcutVolumeDown);
     }
     m_keyMuteToggle = GlobalKeyShortcut::Client::instance()->addAction(QString(), QStringLiteral("/panel/%1/mute").arg(settings()->group()), tr("Mute/unmute sound volume"), this);
     if (m_keyMuteToggle)
     {
         connect(m_keyMuteToggle, &GlobalKeyShortcut::Action::registrationFinished, this, &LXQtVolume::shortcutRegistered);
-        connect(m_keyMuteToggle, SIGNAL(activated()), this, SLOT(handleShortcutVolumeMute()));
+        connect(m_keyMuteToggle, &GlobalKeyShortcut::Action::activated,            this, &LXQtVolume::handleShortcutVolumeMute);
     }
 
     settingsChanged();
@@ -156,9 +156,9 @@ void LXQtVolume::setAudioEngine(AudioEngine *engine)
         }
         m_volumeButton->volumePopup()->setDevice(m_defaultSink);
 
-        disconnect(m_engine, 0, 0, 0);
+        disconnect(m_engine, nullptr, nullptr, nullptr);
         delete m_engine;
-        m_engine = 0;
+        m_engine = nullptr;
     }
 
     m_engine = engine;
@@ -197,14 +197,13 @@ void LXQtVolume::settingsChanged()
 #endif
     }
 
-    m_volumeButton->setShowOnClicked(settings()->value(QStringLiteral(SETTINGS_SHOW_ON_LEFTCLICK), SETTINGS_DEFAULT_SHOW_ON_LEFTCLICK).toBool());
     m_volumeButton->setMuteOnMiddleClick(settings()->value(QStringLiteral(SETTINGS_MUTE_ON_MIDDLECLICK), SETTINGS_DEFAULT_MUTE_ON_MIDDLECLICK).toBool());
     m_volumeButton->setMixerCommand(settings()->value(QStringLiteral(SETTINGS_MIXER_COMMAND), QStringLiteral(SETTINGS_DEFAULT_MIXER_COMMAND)).toString());
     m_volumeButton->volumePopup()->setSliderStep(settings()->value(QStringLiteral(SETTINGS_STEP), SETTINGS_DEFAULT_STEP).toInt());
-    m_allwaysShowNotifications = settings()->value(QStringLiteral(SETTINGS_ALLWAYS_SHOW_NOTIFICATIONS), SETTINGS_DEFAULT_ALLWAYS_SHOW_NOTIFICATIONS).toBool();
+    m_alwaysShowNotifications = settings()->value(QStringLiteral(SETTINGS_ALWAYS_SHOW_NOTIFICATIONS), SETTINGS_DEFAULT_ALWAYS_SHOW_NOTIFICATIONS).toBool();
     m_showKeyboardNotifications = settings()->value(QStringLiteral(SETTINGS_SHOW_KEYBOARD_NOTIFICATIONS), SETTINGS_DEFAULT_SHOW_KEYBOARD_NOTIFICATIONS).toBool()
                                   // in case the config file was edited manually (see LXQtVolumeConfiguration)
-                                  || m_allwaysShowNotifications;
+                                  || m_alwaysShowNotifications;
 
     if (!new_engine)
         handleSinkListChanged();
@@ -284,7 +283,7 @@ QDialog *LXQtVolume::configureDialog()
 void LXQtVolume::showNotification(bool forceShow) const
 {
     if ((forceShow && m_showKeyboardNotifications)  // force only if volume change should be notified with keyboard
-        || m_allwaysShowNotifications)
+        || m_alwaysShowNotifications)
     {
         if (Q_LIKELY(m_defaultSink))
         {

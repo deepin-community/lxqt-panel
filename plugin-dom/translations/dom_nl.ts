@@ -5,8 +5,8 @@
     <name>TreeWindow</name>
     <message>
         <location filename="../treewindow.ui" line="14"/>
-        <source>Panel DOM tree</source>
-        <translation>DOM-boomstructuur voor werkbalk</translation>
+        <source>Panel DOM Tree</source>
+        <translation>DOM-boomweergave op paneel</translation>
     </message>
     <message>
         <location filename="../treewindow.ui" line="63"/>
